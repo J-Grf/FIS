@@ -16,18 +16,23 @@ class Matrix {
     const string inputDir;
 
 public:
-    Matrix(const string);
+    Matrix(const string _inputDir);
+    size_t getDim() const { return dim; };
 
     void print() const;
 
 friend void readFromFile (Matrix&);
-friend vector<double> vectorProductCSR (const Matrix&, const std::vector<double>);
-friend vector<double> vectorProductCSC (const Matrix&, const std::vector<double>);
 friend vector<double> vectorProduct (const Matrix&, const std::vector<double>);
 };
 
-void readFromFile(Matrix&);
+void readFromFile(Matrix& A);
 
-vector<double> vectorProductCSR(const Matrix&, const std::vector<double>);
-vector<double> vectorProductCSC(const Matrix&, const std::vector<double>);
+std::vector<double> vectorProductCSR (const size_t dim, const std::vector<double>& IA, const std::vector<double>& J,
+const std::vector<double>& V, const std::vector<double> x);
+
+std::vector<double> vectorProductCSC (const size_t dim, const std::vector<double>& IA, const std::vector<double>& J,
+const std::vector<double>& V, const std::vector<double> x);
+
 vector<double> vectorProduct(const Matrix&, const std::vector<double>);
+
+double dot(const std::vector<double>, const std::vector<double> );

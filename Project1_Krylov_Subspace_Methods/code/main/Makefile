@@ -1,6 +1,6 @@
 INCLUDE_DIR=../inc
 EXE=$(addsuffix .exe, $(basename $(wildcard *.cpp)))
-COMPILER_FLAGS=-g -O0 -Wall -Wextra -pedantic -std=c++20 
+COMPILER_FLAGS=-g -O0 -Wall -Wextra -pedantic -std=c++17 
 
 # for every objectfile execute recipe
 all : $(EXE)
@@ -11,7 +11,7 @@ all : $(EXE)
 
 #for clean up
 clean :
-	rm -f $(EXE)
+	rm -f *.exe
 
 .PHONY: all clean
 
