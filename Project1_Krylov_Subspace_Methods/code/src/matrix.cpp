@@ -1,4 +1,5 @@
 #include <cassert>
+#include <cmath>
 #include "matrix.hpp"
 
 Matrix::Matrix (const std::string _inputDir ) : inputDir(_inputDir) {}
@@ -48,7 +49,7 @@ void readFromFile (Matrix& A) {
 }
 
 std::vector<double> vectorProductCSR (const size_t dim, const std::vector<size_t>& IA, const std::vector<size_t>& J,
-const std::vector<double>& V, const std::vector<double> x) {
+const std::vector<double>& V, const std::vector<double>& x) {
     assert(dim == x.size() && "dimensions of matrix A and vector x differ!");
     
     std::vector<double> y(dim, 0.0);
@@ -81,7 +82,7 @@ const std::vector<double>& V, const std::vector<double> x) {
             i1++;
         }
         
-        y[i] = dot(tmpV, tmpX);
+        y[i] = dotP(tmpV, tmpX);
         tmpV.clear();
         tmpX.clear();
     }
@@ -90,7 +91,7 @@ const std::vector<double>& V, const std::vector<double> x) {
 }
 
 std::vector<double> vectorProductCSC (const size_t dim, const std::vector<size_t>& IA, const std::vector<size_t>& J,
-const std::vector<double>& V, const std::vector<double> x) {
+const std::vector<double>& V, const std::vector<double>& x) {
     assert(dim == x.size() && "dimensions of matrix A and vector x differ!");
     
     std::vector<double> y(dim, 0.0);
@@ -121,7 +122,7 @@ const std::vector<double>& V, const std::vector<double> x) {
     return y;
 }
 
-std::vector<double> vectorProduct (const Matrix& A, const std::vector<double> x) {
+std::vector<double> vectorProduct (const Matrix& A, const std::vector<double>& x) {
     assert(A.dim == x.size() && "dimensions of matrix A and vector x differ!");
 
     std::vector<double> y(A.dim, 0);
@@ -169,11 +170,19 @@ std::vector<double> vectorProduct (const Matrix& A, const std::vector<double> x)
     return y;
 }
 
-inline double dot(const std::vector<double> a, const std::vector<double> b){
+inline double dotP(const std::vector<double> a, const std::vector<double> b){
     assert(b.size()==a.size());
     double res = 0;
     for (size_t i = 0; i < a.size(); i++) {
         res += a[i]*b[i];
     }
     return res;
+}
+
+inline double norm2(const std::vector<double> a) {
+    double res = 0;
+    for( size_t i = 0; i < a.size(); i++) {
+        res += a[i] * a[i];
+    }
+    return sqrt(res);
 }

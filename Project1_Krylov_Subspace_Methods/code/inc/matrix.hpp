@@ -23,19 +23,22 @@ public:
     void print() const;
 
 friend void readFromFile (Matrix&);
-friend std::vector<double> vectorProduct (const Matrix&, const std::vector<double>);
+friend std::vector<double> vectorProduct (const Matrix&, const std::vector<double>&);
 };
 
 void readFromFile(Matrix& A);
 
+//vectorProducts in different formats
 std::vector<double> vectorProductCSR (const size_t dim, const std::vector<size_t>& IA, const std::vector<size_t>& J,
-const std::vector<double>& V, const std::vector<double> x);
+const std::vector<double>& V, const std::vector<double>& x);
 
 std::vector<double> vectorProductCSC (const size_t dim, const std::vector<size_t>& IA, const std::vector<size_t>& J,
-const std::vector<double>& V, const std::vector<double> x);
+const std::vector<double>& V, const std::vector<double>& x);
 
-std::vector<double> vectorProduct(const Matrix&, const std::vector<double>);
+std::vector<double> vectorProduct(const Matrix& A, const std::vector<double>& x);
 
-double dot(const std::vector<double>, const std::vector<double> );
+//helper functions
+inline double dotP(const std::vector<double> a, const std::vector<double> b);
+inline double norm2(const std::vector<double> a);
 
 #endif
