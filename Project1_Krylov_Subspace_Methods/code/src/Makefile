@@ -17,5 +17,4 @@ clean :
 .PHONY: all clean
 # DO NOT DELETE
 
-#active.o: ../inc/active.hpp ../inc/dag.hpp
-#dag.o: ../inc/dag.hpp
+matrix.o: ../inc/matrix.hpp

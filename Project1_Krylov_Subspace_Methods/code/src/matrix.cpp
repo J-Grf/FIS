@@ -1,7 +1,7 @@
 #include <cassert>
 #include "matrix.hpp"
 
-Matrix::Matrix (const string _inputDir ) : inputDir(_inputDir) {}
+Matrix::Matrix (const std::string _inputDir ) : inputDir(_inputDir) {}
 
 void Matrix::print() const {
 
@@ -47,19 +47,11 @@ void readFromFile (Matrix& A) {
     in.close();
 }
 
-std::vector<double> vectorProductCSR (const size_t dim, const std::vector<double>& IA, const std::vector<double>& J,
+std::vector<double> vectorProductCSR (const size_t dim, const std::vector<size_t>& IA, const std::vector<size_t>& J,
 const std::vector<double>& V, const std::vector<double> x) {
     assert(dim == x.size() && "dimensions of matrix A and vector x differ!");
     
     std::vector<double> y(dim, 0.0);
-    
-    //TO CSR-format
-    
-
-    //for(size_t i = 0; i < A.dim + 1; i++) {}
-    // IA = A.JM[0:A.dim]
-    // J = A.JM[A.dim+1 : A.array_size]
-    // V = A.VM[A.dim+1 : A.array_size]
     
     int i1 = -1;
     int i2 = -1;
@@ -75,26 +67,18 @@ const std::vector<double>& V, const std::vector<double> x) {
         tmplength = i2 - i1;
         tmplength++;
         
-        //std::cout << "i1: " << i1 << " i2: " << i2 << " tmplength : " << tmplength << std::endl;
-        
-        if (tmplength == 0 ) 
+        if (tmplength <= 0 ) 
             continue;
         
         tmpV.resize(tmplength);
         tmpX.resize(tmplength);
         
         for(size_t j = 0; j < tmplength; j++) {
-            //idx = A.dim + 1 + i1;
-            //std::cout << "idx: " << idx << std::endl;
-            tmpV[j] = V[i1];
-            //std::cout << "i1: " << i1 << std::endl;
-            //std::cout << "tmpV[" << j << "]: " << tmpV[j] << std::endl;
-            tmpX[j] = x[J[i1]]; 
-            //std::cout << "J[" << i1 << "]: " << J[i1] << std::endl;
-            //std::cout << " tmpX[ " << j << "]: " << tmpX[j] << std::endl;
-            i1++;
             if( i1 == J.size())
                 break;
+            tmpV[j] = V[i1];
+            tmpX[j] = x[J[i1]]; 
+            i1++;
         }
         
         y[i] = dot(tmpV, tmpX);
@@ -105,7 +89,7 @@ const std::vector<double>& V, const std::vector<double> x) {
     return y;
 }
 
-std::vector<double> vectorProductCSC (const size_t dim, const std::vector<double>& IA, const std::vector<double>& J,
+std::vector<double> vectorProductCSC (const size_t dim, const std::vector<size_t>& IA, const std::vector<size_t>& J,
 const std::vector<double>& V, const std::vector<double> x) {
     assert(dim == x.size() && "dimensions of matrix A and vector x differ!");
     
@@ -123,16 +107,14 @@ const std::vector<double>& V, const std::vector<double> x) {
         tmplength = i2 - i1;
         tmplength++;
         
-        //std::cout << "i1: " << i1 << " i2: " << i2 << " tmplength : " << tmplength << std::endl;
-        
-        if (tmplength == 0 ) 
+        if (tmplength <= 0 ) 
             continue;
         
         for(size_t j = 0; j < tmplength; j++) {
-            y[J[i1]] += V[i1] * x[i];
-            i1++;
             if( i1 == J.size())
                 break;
+            y[J[i1]] += V[i1] * x[i];
+            i1++;
         }
     }
 
@@ -149,34 +131,56 @@ std::vector<double> vectorProduct (const Matrix& A, const std::vector<double> x)
         y[i] = A.VM[i] * x[i];
     }
 
+    //2) Create CSR-like format for off-diagonal entries
+    std::vector<double> V;
+    std::vector<size_t> IA, J;
+    const int shift = A.dim + 2;
+    for(size_t i = 0; i < A.dim + 1; i++) {
+
+        IA.push_back(A.JM[i] - shift);
+    }
+
+    for(size_t i = A.dim + 1; i < A.array_size; i++) {
+        J.push_back(A.JM[i] - 1);
+        V.push_back(A.VM[i]);
+    }
+
+    std::string IAS = "[";
+    std::string JS = IAS;
+    std::string VS = IAS;
+    for(size_t i = 0; i < IA.size(); i++) {
+        IAS += std::to_string(IA[i]) + ", "; 
+    }
+    IAS += "]";
+    
+    for(size_t i = 0; i < J.size(); i++) {    
+        JS += std::to_string(J[i]) + ", ";
+        VS += std::to_string(V[i]) + ", ";
+    }
+    JS += "]";
+    VS += "]";
+    std::cout << IAS << std::endl
+              << JS << std::endl
+              << VS << std::endl;
 
     // 2) compute contribution of off-diagonal elements
     if(A.sym_flag == 's') {
         // Algorithm for symmetric matrix in the form of D * x + U^T * x + U * x = y
-        
         // CSR for U
-
+        std::vector<double> yoffUpper = vectorProductCSR(A.dim, IA, J, V, x);
         // CSC for U^T
+        std::vector<double> yoffLower = vectorProductCSC(A.dim, IA, J, V, x);
+
+        for(size_t i = 0; i < A.dim; i++) {
+            y[i] += yoffUpper[i] + yoffLower[i];
+        }
+
     } else {
         //CSR for off-diagonal entries
-        //Create CSR-like format for off-diagonal entries
-
-        std::vector<double> IA;
-        std::vector<double> J;
-        std::vector<double> V;
-        int shift = A.dim + 2;
-        for(size_t i = 0; i < A.dim + 1; i++) {
-
-            IA.push_back(A.JM[i] - shift);
-        }
-
-        for(size_t i = A.dim + 1; i < A.array_size; i++) {
-            J.push_back(A.JM[i]);
-            V.push_back(A.VM[i]);
-        }
         std::vector<double> yoff = vectorProductCSR(A.dim, IA, J, V, x);
         
         for(size_t i = 0; i < A.dim; i++) {
+            std::cout << "yoff " << i << " " << yoff[i] << std::endl;
             y[i] += yoff[i];
         }
     }
@@ -184,7 +188,7 @@ std::vector<double> vectorProduct (const Matrix& A, const std::vector<double> x)
     return y;
 }
 
-double dot(const std::vector<double> a, const std::vector<double> b){
+inline double dot(const std::vector<double> a, const std::vector<double> b){
     assert(b.size()==a.size());
     double res = 0;
     for (size_t i = 0; i < a.size(); i++) {
