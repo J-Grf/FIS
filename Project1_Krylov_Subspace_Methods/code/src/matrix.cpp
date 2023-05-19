@@ -145,24 +145,6 @@ std::vector<double> vectorProduct (const Matrix& A, const std::vector<double> x)
         V.push_back(A.VM[i]);
     }
 
-    std::string IAS = "[";
-    std::string JS = IAS;
-    std::string VS = IAS;
-    for(size_t i = 0; i < IA.size(); i++) {
-        IAS += std::to_string(IA[i]) + ", "; 
-    }
-    IAS += "]";
-    
-    for(size_t i = 0; i < J.size(); i++) {    
-        JS += std::to_string(J[i]) + ", ";
-        VS += std::to_string(V[i]) + ", ";
-    }
-    JS += "]";
-    VS += "]";
-    std::cout << IAS << std::endl
-              << JS << std::endl
-              << VS << std::endl;
-
     // 2) compute contribution of off-diagonal elements
     if(A.sym_flag == 's') {
         // Algorithm for symmetric matrix in the form of D * x + U^T * x + U * x = y
@@ -180,7 +162,6 @@ std::vector<double> vectorProduct (const Matrix& A, const std::vector<double> x)
         std::vector<double> yoff = vectorProductCSR(A.dim, IA, J, V, x);
         
         for(size_t i = 0; i < A.dim; i++) {
-            std::cout << "yoff " << i << " " << yoff[i] << std::endl;
             y[i] += yoff[i];
         }
     }
