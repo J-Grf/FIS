@@ -59,7 +59,6 @@ const std::vector<double>& V, const std::vector<double>& x) {
     std::vector<double> tmpV;
     std::vector<double> tmpX;
     int tmplength = 0;
-    size_t idx = 0;
     for(size_t i = 0; i < dim; i++) {
         
         i1 = IA[i];
@@ -99,7 +98,6 @@ const std::vector<double>& V, const std::vector<double>& x) {
     int i1 = -1;
     int i2 = -1;
     int tmplength = 0;
-    size_t idx = 0;
     for(size_t i = 0; i < dim; i++) {
         
         i1 = IA[i];
@@ -168,21 +166,4 @@ std::vector<double> vectorProduct (const Matrix& A, const std::vector<double>& x
     }
 
     return y;
-}
-
-inline double dotP(const std::vector<double> a, const std::vector<double> b){
-    assert(b.size()==a.size());
-    double res = 0;
-    for (size_t i = 0; i < a.size(); i++) {
-        res += a[i]*b[i];
-    }
-    return res;
-}
-
-inline double norm2(const std::vector<double> a) {
-    double res = 0;
-    for( size_t i = 0; i < a.size(); i++) {
-        res += a[i] * a[i];
-    }
-    return sqrt(res);
 }

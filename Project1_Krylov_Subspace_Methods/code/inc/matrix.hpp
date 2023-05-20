@@ -38,7 +38,17 @@ const std::vector<double>& V, const std::vector<double>& x);
 std::vector<double> vectorProduct(const Matrix& A, const std::vector<double>& x);
 
 //helper functions
-inline double dotP(const std::vector<double> a, const std::vector<double> b);
-inline double norm2(const std::vector<double> a);
+inline double dotP(const std::vector<double> a, const std::vector<double> b){
+    assert(b.size()==a.size());
+    double res = 0;
+    for (size_t i = 0; i < a.size(); i++) {
+        res += a.at(i)*b.at(i);
+    }
+    return res;
+}
+
+inline double norm2(const std::vector<double> a) {
+    return sqrt(dotP(a,a));
+}
 
 #endif
