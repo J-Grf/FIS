@@ -5,7 +5,11 @@
 #include <fstream>
 #include <vector>
 #include <string>
+#include <limits>
 
+template<typename T>
+const T eps = std::numeric_limits<T>::epsilon();
+//TODO: make template maybe
 class Matrix {
     char sym_flag = -1;
     size_t dim = 0;
@@ -49,6 +53,41 @@ inline double dotP(const std::vector<double> a, const std::vector<double> b){
 
 inline double norm2(const std::vector<double> a) {
     return sqrt(dotP(a,a));
+}
+
+//implement overloaded operators for std::vector
+template<typename T>
+std::vector<T>& operator-=(std::vector<T>& v, const std::vector<T>& a) {
+    assert(v.size() == a.size());
+    for(size_t i = 0; i < v.size(); i++)
+        v.at(i) -= a.at(i);
+    return v;
+}
+
+template<typename T>
+std::vector<T>& operator+=(std::vector<T>& v, const std::vector<T>& a) {
+    assert(v.size() == a.size());
+    for(size_t i = 0; i < v.size(); i++)
+        v.at(i) += a.at(i);
+    return v;
+}
+
+template<typename T>
+std::vector<T> operator-(const std::vector<T>& v, const std::vector<T>& a) {
+    assert(v.size() == a.size());
+    std::vector<T> res(v.size());
+    for(size_t i = 0; i < v.size(); i++)
+        res[i] = v.at(i) - a.at(i);
+    return res;
+}
+
+template<typename T>
+std::vector<T> operator*(const T& a, const std::vector<T>& v) {
+    std::vector<T> res(v.size());
+    for(size_t i = 0; i < v.size(); i++) {
+        res.at(i) = a * v.at(i);
+    }
+    return res;
 }
 
 #endif
