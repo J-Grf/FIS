@@ -1,7 +1,7 @@
 INCLUDE_DIR=../inc
-FLIST=$(basename $(wildcard *.cpp))
+FLIST=matrix #$(basename $(wildcard *.cpp))
 OBJS=$(addsuffix .o, $(FLIST))
-COMPILER_FLAGS=-g -O0 -Wall -Wextra -pedantic -std=c++17 
+COMPILER_FLAGS=-g -O0 -Wall -Wextra -pedantic -std=c++17
 
 # for every objectfile execute recipe
 all : $(OBJS)
@@ -18,3 +18,5 @@ clean :
 # DO NOT DELETE
 
 matrix.o: ../inc/matrix.hpp
+#gram_schmidt.o: ../inc/gram_schmidt.hpp ../inc/matrix.hpp
+#gmres.o: ../inc/gmres.hpp ../inc/matrix.hpp ../inc/gram_schmidt.hpp

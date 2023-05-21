@@ -55,12 +55,21 @@ const std::vector<T>& r0, const size_t m) {
 }
 
 template<typename T>
-inline bool checkOrthogonality(const std::vector<T> a, const std::vector<T> b) {
-    std::cout << "dotP: " << dotP(a, b) << std::endl;
-    if (abs(dotP(a, b)) < 10 * std::numeric_limits<T>::epsilon()) 
-        return true;
-    else 
-        return false; 
+void getKrylov(const Matrix& A, matrixType<T>& v, matrixType<T>& H, const size_t j) {
+    assert(A.getDim() == v[j].size());
+
+    std::vector<T> w;
+    
+    std::cout << "----j: " << j << std::endl;
+    w = vectorProduct(A, v[j]);
+    for(size_t i = 0; i < j + 1; i++) {
+        H.at(i).at(j) = dotP(v.at(i), w);
+        w -=  H.at(i).at(j) * v.at(i); 
+    }
+    H.at(j + 1).at(j) = norm2(w);
+    if (H.at(j + 1).at(j) > eps<T>) {
+        v.push_back((1.0 / H.at(j + 1).at(j)) * w);
+    }
 }
 
 template<typename T>
@@ -78,6 +87,15 @@ void printGM(std::pair<matrixType<T>, matrixType<T>> res, const size_t m) {
             std::cout << "V[" << i << "][" << j << "]: " << res.first.at(i).at(j) << std::endl;
         }
     }
+}
+
+template<typename T>
+inline bool checkOrthogonality(const std::vector<T> a, const std::vector<T> b) {
+    std::cout << "dotP: " << dotP(a, b) << std::endl;
+    if (abs(dotP(a, b)) < 10 * std::numeric_limits<T>::epsilon()) 
+        return true;
+    else 
+        return false; 
 }
 
 #endif

@@ -6,7 +6,7 @@
 #include "gmres.hpp"
 #include "cg.hpp"
 
-int main (int argc, char *argv[]) {
+int main (/*int argc, char *argv[]*/) {
 
     //For debugging with test matrix
     /* Matrix test("../../material/test.txt");
