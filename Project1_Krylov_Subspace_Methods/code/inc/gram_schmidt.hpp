@@ -55,20 +55,48 @@ const std::vector<T>& r0, const size_t m) {
 }
 
 template<typename T>
-void getKrylov(const Matrix& A, matrixType<T>& v, matrixType<T>& H, const size_t j) {
+std::vector<T> getKrylov(const Matrix& A, matrixType<T>& v, MatrixCoo& H, const size_t j) {
     assert(A.getDim() == v[j].size());
 
     std::vector<T> w;
+    std::vector<T> hj;
     
     std::cout << "----j: " << j << std::endl;
     w = vectorProduct(A, v[j]);
+
     for(size_t i = 0; i < j + 1; i++) {
-        H.at(i).at(j) = dotP(v.at(i), w);
-        w -=  H.at(i).at(j) * v.at(i); 
+        T value = dotP(v.at(i), w);
+
+        //store all non-zero values in sparse format
+        if(abs(value) > eps<T>) {
+            H.append(i, j, value);
+        }
+
+        hj.push_back(value);
+        
+        w -=  hj.at(i) * v.at(i); 
     }
-    H.at(j + 1).at(j) = norm2(w);
-    if (H.at(j + 1).at(j) > eps<T>) {
-        v.push_back((1.0 / H.at(j + 1).at(j)) * w);
+
+    T value2 = norm2(w);
+    if(value2 > eps<T>) {
+        hj.push_back(value2);
+        H.append(j + 1, j, value2);
+    }
+    
+    T invNormW = 1.0 / value2;
+    if (value2 > eps<T>) {
+        v.push_back(invNormW * w);
+    } 
+    return hj;
+}
+
+template<typename T>
+void printKrylov(const matrixType<T>& v, const size_t m) {
+    
+    for(size_t i = 0; i < v.size(); i++) {
+        for(size_t j = 0; j < v[0].size(); j++) {
+            std::cout << "V[" << i << "][" << j << "]: " << v[i][j] << std::endl;
+        }
     }
 }
 

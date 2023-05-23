@@ -16,10 +16,14 @@ void Matrix::print() const {
     }
     
     std::string JMS, VMS;
+    JMS += "[";
+    VMS = JMS;
     for(size_t i = 0; i < array_size; i++) {
-        JMS += std::to_string(JM[i]) + "\n";
-        VMS += std::to_string(VM[i]) + "\n";
+        JMS += std::to_string(JM[i]) + ", ";
+        VMS += std::to_string(VM[i]) + ", ";
     } 
+    JMS += "]";
+    VMS += "]";
 
     std::cout << "Matrix with input: " << inputDir << std::endl
               << "has type: " << sym << std::endl
@@ -30,6 +34,65 @@ void Matrix::print() const {
               << "----------------VM-array:-------" << std::endl
               << VMS << std::endl;
 
+}
+
+void MatrixCoo::detDimensions() {
+    std::vector<size_t>::const_iterator maxRow = std::max_element(std::begin(rows), std::end(rows));
+    m = *maxRow + 1;
+
+    std::vector<size_t>::const_iterator maxCol = std::max_element(std::begin(columns), std::end(columns));
+    n = *maxCol + 1;
+}
+
+double& MatrixCoo::setDiagonal(const size_t index) {
+    //assert(m == n && "not a quadratic matrix!");
+
+    for(size_t i = 0; i < rows.size(); i++) {
+        if(columns[i] == rows[i] && rows[i] == index) {
+            return values[i];
+        }
+    }
+
+}
+
+void MatrixCoo::append(const size_t i, const size_t j, const double value) {
+    rows.push_back(i);
+    columns.push_back(j);
+    values.push_back(value);
+}
+
+std::vector<double> MatrixCoo::getDiagonals() const {
+    assert(m - 1 == n && "not a quadratic matrix!");
+
+    std::vector<double> res;
+    for(size_t i = 0; i < rows.size(); i++) {
+        if(columns[i] == rows[i]) {
+            res.push_back(values[i]);
+        }
+    }
+
+    return res;
+}
+
+void MatrixCoo::print() const {
+
+    std::string IS, JS, VS;
+    IS += "[";
+    JS = IS;
+    VS = IS;
+    for(size_t i = 0; i < rows.size(); i++) {
+        IS += std::to_string(rows[i]) + ", ";
+        JS += std::to_string(columns[i]) + ", ";
+        VS += std::to_string(values[i]) + ", ";
+    }
+    IS += "]";
+    JS += "]";
+    VS += "]";
+
+    std::cout << "Matrix in coordinate format has dimensions m=" << m << " n=" << n << std::endl
+              << "rows array " << IS << std::endl
+              << "columns array " << JS << std::endl
+              << "values array " << VS << std::endl;
 }
 
 void readFromFile (Matrix& A) {

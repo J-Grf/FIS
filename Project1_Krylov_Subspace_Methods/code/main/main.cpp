@@ -75,9 +75,15 @@ int main (/*int argc, char *argv[]*/) {
               << checkOrthogonality(res.first[0], res.first[2]) << " " << std::endl;
 
     std::vector<double> x0 {0, 0 ,0};
-    std::vector<double> t {1.123123, 2.123213, 0.1323};
-    std::vector<double> x = MR_method(test, t, x0);
+    //std::vector<double> t {1.123123, 2.123213, 0.1323};
+    /* std::vector<double> x = MR_method(test, t, x0);
     for(size_t i = 0; i < x.size(); i++){
         std::cout << "x[" << i << "]: " << x[i] << std::endl;
+    } */
+
+    std::vector<double> xG = GMRES_Res(test, x0, r0, 2);
+    std::cout << "--------- FINAL -------" << std::endl;
+    for(size_t i = 0; i < xG.size(); i++){
+        std::cout << "xG[" << i << "]: " << xG[i] << std::endl;
     }
 }

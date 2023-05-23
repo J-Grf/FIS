@@ -5,10 +5,12 @@
 #include <fstream>
 #include <vector>
 #include <string>
-#include <limits>
+//#include <limits>
 
 template<typename T>
 const T eps = std::numeric_limits<T>::epsilon();
+
+const double Eps = 10E-8;
 //TODO: make template maybe
 class Matrix {
     char sym_flag = -1;
@@ -41,6 +43,22 @@ const std::vector<double>& V, const std::vector<double>& x);
 
 std::vector<double> vectorProduct(const Matrix& A, const std::vector<double>& x);
 
+struct MatrixCoo {
+    std::vector<size_t> rows;
+    std::vector<size_t> columns;
+    std::vector<double> values;
+
+    size_t m = 0;
+    size_t n = 0;
+
+    MatrixCoo() = default;
+    void detDimensions();
+    double& setDiagonal(const size_t index);
+    void append(const size_t i, const size_t j, const double value);
+    std::vector<double> getDiagonals() const;
+    void print() const;
+};
+
 //helper functions
 inline double dotP(const std::vector<double> a, const std::vector<double> b){
     assert(b.size()==a.size());
@@ -53,6 +71,19 @@ inline double dotP(const std::vector<double> a, const std::vector<double> b){
 
 inline double norm2(const std::vector<double> a) {
     return sqrt(dotP(a,a));
+}
+
+//conventional vectorProduct
+inline std::vector<double> VP(const std::vector<std::vector<double>>& A, const std::vector<double>& x) {
+    //assert(A[0].size() == x.size());
+
+    std::vector<double> res(x.size());
+    for(size_t i = 0; i < x.size(); i++) {
+        for(size_t j = 0; j < x.size(); j++) {
+            res[i] += A[i][j] * x[j];
+        }
+    }
+    return res;
 }
 
 //implement overloaded operators for std::vector
@@ -78,6 +109,15 @@ std::vector<T> operator-(const std::vector<T>& v, const std::vector<T>& a) {
     std::vector<T> res(v.size());
     for(size_t i = 0; i < v.size(); i++)
         res[i] = v.at(i) - a.at(i);
+    return res;
+}
+
+template<typename T>
+std::vector<T> operator+(const std::vector<T>& v, const std::vector<T>& a) {
+    assert(v.size() == a.size());
+    std::vector<T> res(v.size());
+    for(size_t i = 0; i < v.size(); i++)
+        res[i] = v.at(i) + a.at(i);
     return res;
 }
 
