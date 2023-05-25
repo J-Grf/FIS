@@ -66,22 +66,48 @@ int main (/*int argc, char *argv[]*/) {
     readFromFile(test);
     test.print();
 
-    std::vector<double> r0 {1, 1, 1};
+    //Test backward substitution
+    /* matrixType<double> A {{1, 2.3, 0.782, 212}, {0, 1, 0, 7}, {0, 0, 3 , 1}, {0 , 0 , 0 ,4}};
+    for(size_t i = 0; i < A.size(); i++) {
+        for(size_t j = 0; j < A[0].size(); j++){
+            std::cout << "A[" << i << "][" << j << "]: " << A[i][j] << std::endl;
+        }
+    }
+    std::vector<double> b {1.59934, -0.125656, 5.234, 2.13123, 0.0};
+
+    std::vector<double> x = backwardSub(A, b, 4);
+    for(size_t i = 0; i < x.size(); i++){
+        std::cout << "x[" << i << "]: " << x[i] << std::endl;
+    }
+
+    std::vector<double> b_test = VP(A,x);
+    for(size_t i = 0; i < b_test.size(); i++){
+        std::cout << "b_test[" << i << "]: " << b_test[i] << std::endl;
+    } */
+
+    //std::vector<double> r0 {1, 1, 1};
+    
+    //compute rhs b from prescribed solution vector
+    std::vector<double> xp {1, 1, 1};
+    std::vector<double> b = vectorProduct(test, xp);
+    std::vector<double> r0 = b;
     auto res = gramSchmidt(test, r0, 2);
     printGM(res, 2);
     std::cout << "orthogonality check: " << std::endl << std::boolalpha
               << checkOrthogonality(res.first.at(0), res.first.at(1)) << " "
               << checkOrthogonality(res.first[1], res.first[2]) << " "
-              << checkOrthogonality(res.first[0], res.first[2]) << " " << std::endl;
+              << checkOrthogonality(res.first[0], res.first[2]) << " " << std::endl; 
 
+    //initial guess
     std::vector<double> x0 {0, 0 ,0};
+
     //std::vector<double> t {1.123123, 2.123213, 0.1323};
-    /* std::vector<double> x = MR_method(test, t, x0);
+    std::vector<double> x = MR_method(test, b, x0);
     for(size_t i = 0; i < x.size(); i++){
         std::cout << "x[" << i << "]: " << x[i] << std::endl;
-    } */
+    }
 
-    std::vector<double> xG = GMRES_Res(test, x0, r0, 2);
+    std::vector<double> xG = GMRES_Res(test, x0, b, 3);
     std::cout << "--------- FINAL -------" << std::endl;
     for(size_t i = 0; i < xG.size(); i++){
         std::cout << "xG[" << i << "]: " << xG[i] << std::endl;

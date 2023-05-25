@@ -15,8 +15,7 @@ using matrixType = std::vector<std::vector<T>>;
    not per column, to allow a faster access in the architecture
 */
 template<typename T>
-std::pair<matrixType<T>, matrixType<T>> gramSchmidt(const Matrix& A, 
-const std::vector<T>& r0, const size_t m) {
+std::pair<matrixType<T>, matrixType<T>> gramSchmidt(const Matrix& A, const std::vector<T>& r0, const size_t m) {
     assert(A.getDim() == r0.size());
 
     using namespace std;
@@ -55,37 +54,39 @@ const std::vector<T>& r0, const size_t m) {
 }
 
 template<typename T>
-std::vector<T> getKrylov(const Matrix& A, matrixType<T>& v, MatrixCoo& H, const size_t j) {
-    assert(A.getDim() == v[j].size());
+std::vector<T> getKrylov(const Matrix& A, matrixType<T>& V, matrixType<T>& H, const size_t j) {
+    assert(A.getDim() == V[j].size());
 
     std::vector<T> w;
     std::vector<T> hj;
-    
-    std::cout << "----j: " << j << std::endl;
-    w = vectorProduct(A, v[j]);
+
+    //std::cout << "----j: " << j << std::endl;
+    w = vectorProduct(A, V[j]);
 
     for(size_t i = 0; i < j + 1; i++) {
-        T value = dotP(v.at(i), w);
+        T value = dotP(V.at(i), w);
 
         //store all non-zero values in sparse format
-        if(abs(value) > eps<T>) {
+        /* if(abs(value) > eps<T>) {
             H.append(i, j, value);
-        }
+        } */
 
         hj.push_back(value);
-        
-        w -=  hj.at(i) * v.at(i); 
+        H.at(i).at(j) = value;
+
+        w -=  hj.at(i) * V.at(i); 
     }
 
     T value2 = norm2(w);
     if(value2 > eps<T>) {
         hj.push_back(value2);
-        H.append(j + 1, j, value2);
+        H.at(j + 1).at(j) = value2;
+        //H.append(j + 1, j, value2);
     }
     
     T invNormW = 1.0 / value2;
     if (value2 > eps<T>) {
-        v.push_back(invNormW * w);
+        V.push_back(invNormW * w);
     } 
     return hj;
 }

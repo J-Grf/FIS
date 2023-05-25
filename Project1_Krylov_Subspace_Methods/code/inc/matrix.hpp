@@ -54,6 +54,7 @@ struct MatrixCoo {
     MatrixCoo() = default;
     void detDimensions();
     double& setDiagonal(const size_t index);
+    double& at(const size_t i, const size_t j);
     void append(const size_t i, const size_t j, const double value);
     std::vector<double> getDiagonals() const;
     void print() const;
@@ -73,14 +74,14 @@ inline double norm2(const std::vector<double> a) {
     return sqrt(dotP(a,a));
 }
 
-//conventional vectorProduct
+//conventional vectorProduct (but with transpose)
 inline std::vector<double> VP(const std::vector<std::vector<double>>& A, const std::vector<double>& x) {
-    //assert(A[0].size() == x.size());
+    assert(A[0].size() == x.size());
 
     std::vector<double> res(x.size());
     for(size_t i = 0; i < x.size(); i++) {
         for(size_t j = 0; j < x.size(); j++) {
-            res[i] += A[i][j] * x[j];
+            res[i] += A[j][i] * x[j];
         }
     }
     return res;

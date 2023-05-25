@@ -46,13 +46,23 @@ void MatrixCoo::detDimensions() {
 
 double& MatrixCoo::setDiagonal(const size_t index) {
     //assert(m == n && "not a quadratic matrix!");
-
     for(size_t i = 0; i < rows.size(); i++) {
         if(columns[i] == rows[i] && rows[i] == index) {
             return values[i];
+        } else {
+            std::cerr << "index not in Matrix!" << std::endl;
         }
     }
+}
 
+double& MatrixCoo::at(const size_t i, const size_t j) {
+    for(size_t k = 0; k < rows.size(); k++) {
+        if(rows[k] == i && columns[k] == j) {
+            return values[k];
+        } else {
+            std::cerr << "index not in Matrix!" << std::endl;
+        }
+    }
 }
 
 void MatrixCoo::append(const size_t i, const size_t j, const double value) {
@@ -62,7 +72,7 @@ void MatrixCoo::append(const size_t i, const size_t j, const double value) {
 }
 
 std::vector<double> MatrixCoo::getDiagonals() const {
-    assert(m - 1 == n && "not a quadratic matrix!");
+    //assert(m - 1 == n && "not a quadratic matrix!");
 
     std::vector<double> res;
     for(size_t i = 0; i < rows.size(); i++) {
