@@ -75,12 +75,12 @@ inline double norm2(const std::vector<double> a) {
 }
 
 //conventional vectorProduct (but with transpose)
-inline std::vector<double> VP(const std::vector<std::vector<double>>& A, const std::vector<double>& x) {
+inline std::vector<double> VP(const std::vector<std::vector<double>>& A, const std::vector<double>& x, const size_t m_t) {
     assert(A[0].size() == x.size());
 
     std::vector<double> res(x.size());
     for(size_t i = 0; i < x.size(); i++) {
-        for(size_t j = 0; j < x.size(); j++) {
+        for(size_t j = 0; j < m_t; j++) {
             res[i] += A[j][i] * x[j];
         }
     }

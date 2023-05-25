@@ -127,10 +127,10 @@ std::pair<std::vector<double>, double> GMRES(const Matrix& A, const std::vector<
         //H_u.print();
         /* for(size_t i = 0; i < hj.size(); i++) {
             std::cout << "hj[" << i << "]: " << hj[i] << std::endl;
-        } */
+        }
         
         //print upper Hessenberg
-        /* for(size_t i = 0; i < H.size(); i++) {
+        for(size_t i = 0; i < H.size(); i++) {
             for(size_t j = 0; j < H[0].size(); j++){
                 std::cout << "H[" << i << "][" << j << "]: " << H[i][j] << std::endl;
             }
@@ -170,7 +170,7 @@ std::pair<std::vector<double>, double> GMRES(const Matrix& A, const std::vector<
     }
     
     //print upper Hessenberg
-    /* for(size_t i = 0; i < H.size(); i++) {
+   /*  for(size_t i = 0; i < H.size(); i++) {
         for(size_t j = 0; j < H[0].size(); j++){
             std::cout << "H[" << i << "][" << j << "]: " << H[i][j] << std::endl;
         }
@@ -178,19 +178,22 @@ std::pair<std::vector<double>, double> GMRES(const Matrix& A, const std::vector<
 
     size_t m_tilde = min(j + 1 , m);
     //std::cout << "m_tilde: " << m_tilde << std::endl;
-    std::vector<double> xm(x0.size()), y;
+    std::vector<double> xm, y;
 
     // back ward substitution
     //y = backwardSub(H_u, g, m_tilde);
     y = backwardSub(H, g, m_tilde);
-    /* for(size_t i = x0.size(); i --> m_tilde; ) {
-        xm[i] = y[i];
-        std::cout << "result of backwardSub: " << xm[i] << std::endl;
+    /* for(size_t i = 0; i < y.size(); i++) {
+        std::cout << "result of backwardSub: " << y[i] << std::endl;
     } */
-    
-    std::vector<double> tmp = VP(V,y);
-    for(size_t i = 0; i < y.size(); i++) {
-        xm[i] = x0[i] + tmp[i];
+    for(size_t i = m_tilde; i < x0.size(); i++) {
+        y.push_back(0);
+    }
+
+    xm = x0;
+    std::vector<double> tmp = VP(V,y, m_tilde);
+    for(size_t i = 0; i < m_tilde; i++) {
+        xm[i] += tmp[i];
     }
 
     double rho = abs(g[m_tilde]);
@@ -224,6 +227,10 @@ std::vector<double> GMRES_Res(const Matrix& A, const std::vector<double>& x0, co
         for(size_t i = 0; i < x.size(); i++){
             std::cout << "x[" << i << "]: " << x[i] << std::endl;
         }
+
+        // for comparison with MR and GMRES(1)
+        if(m == 1)
+            break;
         
     }
 
