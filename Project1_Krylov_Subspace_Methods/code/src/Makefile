@@ -1,5 +1,5 @@
 INCLUDE_DIR=../inc
-FLIST=matrix #$(basename $(wildcard *.cpp))
+FLIST=$(basename $(wildcard *.cpp))
 OBJS=$(addsuffix .o, $(FLIST))
 COMPILER_FLAGS=-g -O0 -Wall -Wextra -pedantic -std=c++17
 
@@ -17,6 +17,6 @@ clean :
 .PHONY: all clean
 # DO NOT DELETE
 
-matrix.o: ../inc/matrix.hpp
-#gram_schmidt.o: ../inc/gram_schmidt.hpp ../inc/matrix.hpp
+#matrix.o: ../inc/matrix.hpp
+#gram_schmidt.o: ../inc/gram_schmidt.hpp
 #gmres.o: ../inc/gmres.hpp ../inc/matrix.hpp ../inc/gram_schmidt.hpp

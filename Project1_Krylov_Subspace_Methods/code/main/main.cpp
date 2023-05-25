@@ -94,7 +94,7 @@ int main (/*int argc, char *argv[]*/) {
     auto res = gramSchmidt(test, r0, 2);
     printGM(res, 2);
     std::cout << "orthogonality check: " << std::endl << std::boolalpha
-              << checkOrthogonality(res.first.at(0), res.first.at(1)) << " "
+              << checkOrthogonality(res.first[0], res.first[1]) << " "
               << checkOrthogonality(res.first[1], res.first[2]) << " "
               << checkOrthogonality(res.first[0], res.first[2]) << " " << std::endl; 
 

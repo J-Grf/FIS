@@ -65,7 +65,7 @@ inline double dotP(const std::vector<double> a, const std::vector<double> b){
     assert(b.size()==a.size());
     double res = 0;
     for (size_t i = 0; i < a.size(); i++) {
-        res += a.at(i)*b.at(i);
+        res += a[i]*b[i];
     }
     return res;
 }
@@ -92,7 +92,7 @@ template<typename T>
 std::vector<T>& operator-=(std::vector<T>& v, const std::vector<T>& a) {
     assert(v.size() == a.size());
     for(size_t i = 0; i < v.size(); i++)
-        v.at(i) -= a.at(i);
+        v[i] -= a[i];
     return v;
 }
 
@@ -100,7 +100,7 @@ template<typename T>
 std::vector<T>& operator+=(std::vector<T>& v, const std::vector<T>& a) {
     assert(v.size() == a.size());
     for(size_t i = 0; i < v.size(); i++)
-        v.at(i) += a.at(i);
+        v[i] += a[i];
     return v;
 }
 
@@ -109,7 +109,7 @@ std::vector<T> operator-(const std::vector<T>& v, const std::vector<T>& a) {
     assert(v.size() == a.size());
     std::vector<T> res(v.size());
     for(size_t i = 0; i < v.size(); i++)
-        res[i] = v.at(i) - a.at(i);
+        res[i] = v[i] - a[i];
     return res;
 }
 
@@ -118,7 +118,7 @@ std::vector<T> operator+(const std::vector<T>& v, const std::vector<T>& a) {
     assert(v.size() == a.size());
     std::vector<T> res(v.size());
     for(size_t i = 0; i < v.size(); i++)
-        res[i] = v.at(i) + a.at(i);
+        res[i] = v[i] + a[i];
     return res;
 }
 
@@ -126,7 +126,7 @@ template<typename T>
 std::vector<T> operator*(const T& a, const std::vector<T>& v) {
     std::vector<T> res(v.size());
     for(size_t i = 0; i < v.size(); i++) {
-        res.at(i) = a * v.at(i);
+        res[i] = a * v[i];
     }
     return res;
 }
