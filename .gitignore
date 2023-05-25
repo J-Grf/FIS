@@ -5,4 +5,4 @@ build/*
 *.out
 *.tgz
 *.exe*
-a
+a.txt
