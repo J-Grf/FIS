@@ -20,3 +20,4 @@ clean :
 #matrix.o: ../inc/matrix.hpp
 #gram_schmidt.o: ../inc/gram_schmidt.hpp
 #gmres.o: ../inc/gmres.hpp ../inc/matrix.hpp ../inc/gram_schmidt.hpp
+#cg.o: ../inc/cg.hpp ../inc/matrix.hpp

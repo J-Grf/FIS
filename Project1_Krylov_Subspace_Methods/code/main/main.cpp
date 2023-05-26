@@ -62,7 +62,7 @@ int main (/*int argc, char *argv[]*/) {
 
     //debug
     //construct orthonormal basis
-    Matrix test("../../material/test3.txt");
+    Matrix test("../../material/test3_sym.txt");
     readFromFile(test);
     test.print();
 
@@ -90,6 +90,7 @@ int main (/*int argc, char *argv[]*/) {
     //compute rhs b from prescribed solution vector
     std::vector<double> xp {1, 1, 1};
     std::vector<double> b = vectorProduct(test, xp);
+
     std::vector<double> r0 = b;
     auto res = gramSchmidt(test, r0, 2);
     printGM(res, 2);
@@ -105,11 +106,17 @@ int main (/*int argc, char *argv[]*/) {
     std::vector<double> x = MR_method(test, b, x0);
     for(size_t i = 0; i < x.size(); i++){
         std::cout << "x[" << i << "]: " << x[i] << std::endl;
-    }
+    }   
 
-    std::vector<double> xG = GMRES_Res(test, x0, b, 3);
+    size_t m = 3;
+    std::vector<double> xG = GMRES_Res(test, x0, b, m);
     std::cout << "--------- FINAL -------" << std::endl;
     for(size_t i = 0; i < xG.size(); i++){
         std::cout << "xG[" << i << "]: " << xG[i] << std::endl;
     }
+
+    for(size_t i = 0; i < b.size(); i++){
+        std::cout << "b[" << i << "]: " << b[i] << std::endl;
+    } 
+    auto resCG = CGMethod(test, b, x0, m);
 }

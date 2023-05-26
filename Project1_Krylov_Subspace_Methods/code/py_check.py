@@ -8,6 +8,15 @@ xp = np.array([1,1,1])
 b = np.matmul(A,xp)
 x0 = np.array([0,0,0])
 
+C = np.array([[1, 0, 4, 0], 
+              [0, 2, 2, 0],
+              [4, 2, 1, 0],
+              [0, 0, 0, 2]])
+
+print("Test vectorroducts")
+
+
+
 def arnoldi_iteration(A, b, n: int):
     """Compute a basis of the (n + 1)-Krylov subspace of the matrix A.
 
@@ -117,3 +126,12 @@ xa = np.linalg.solve(R, g)
 b_test = np.matmul(R, xa)
 print(xa)
 print(b_test)
+
+B = np.array([[1, 0, 4], 
+              [0, 2, 2], 
+              [4, 2, 1]])
+print("----------------ref CG---------")
+b = np.matmul(B, xp)
+print(b)
+xc = linalg.cg(B, b, maxiter = 2)
+print(xc)
