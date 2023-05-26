@@ -92,11 +92,15 @@ std::vector<double> MR_method(const Matrix& A, const std::vector<double>& b, con
     return x;
 }
 
-std::pair<std::vector<double>, double> GMRES(const Matrix& A, const std::vector<double>& x0, const std::vector<double>& b, const size_t m) {
+std::pair<std::vector<double>, double> GMRES(const Matrix& A, const std::vector<double>& x0, const std::vector<double>& b, const size_t m, 
+const PreConditioner PreCon = NONE) {
     using namespace std;
     const size_t num = m + 1;
 
     std::vector<double> r0 = b - vectorProduct(A, x0);
+    if(PreCon != NONE) {
+        applyPreConditioner(A, r0, PreCon);
+    }
 
     matrixType<double> V(1);
     const double InvNormR0 = 1.0 / norm2(r0); 
@@ -121,7 +125,7 @@ std::pair<std::vector<double>, double> GMRES(const Matrix& A, const std::vector<
     for(j = 0; j < m ; j++) {
 
         std::cout << "-------GMRES sub-iteration " << j << " --------" <<  std::endl;
-        hj = getKrylov(A, V, H, j);
+        hj = getKrylov(A, V, H, j, PreCon);
     
         //H_u.detDimensions();
         //H_u.print();

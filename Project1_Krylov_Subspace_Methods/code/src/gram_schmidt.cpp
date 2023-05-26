@@ -41,13 +41,16 @@ std::pair<matrixType<double>, matrixType<double>> gramSchmidt(const Matrix& A, c
     return make_pair(v,H);
 }
 
-std::vector<double> getKrylov(const Matrix& A, matrixType<double>& V, matrixType<double>& H, const size_t j) {
+std::vector<double> getKrylov(const Matrix& A, matrixType<double>& V, matrixType<double>& H, const size_t j, const PreConditioner PreCon) {
     assert(A.getDim() == V[j].size());
 
     std::vector<double> w;
     std::vector<double> hj;
 
     w = vectorProduct(A, V[j]);
+    if(PreCon != NONE) {
+        applyPreConditioner(A, w, PreCon);
+    }
 
     for(size_t i = 0; i < j + 1; i++) {
         double value = dotP(V[i], w);

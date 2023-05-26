@@ -11,7 +11,7 @@ template<typename T>
 const T eps = std::numeric_limits<T>::epsilon();
 
 const double Eps = 10E-8;
-//TODO: make template maybe
+//TODO: add copy-constructor and mabye assignment operator;
 class Matrix {
     char sym_flag = -1;
     size_t dim = 0;
@@ -20,16 +20,20 @@ class Matrix {
     std::vector<int> JM = {};
     std::vector<double> VM = {};
 
-    const std::string inputDir;
+    std::string inputDir = "";
 
 public:
-    Matrix(const std::string _inputDir);
+    Matrix() = default;
+    Matrix(const std::string& _inputDir);
     size_t getDim() const { return dim; };
+    double getVM(const size_t i) const { return VM[i]; };
 
     void print() const;
+    Matrix& operator=(const Matrix&) = default;
 
 friend void readFromFile (Matrix&);
 friend std::vector<double> vectorProduct (const Matrix&, const std::vector<double>&);
+friend Matrix JacobiPre (const Matrix&);
 };
 
 void readFromFile(Matrix& A);

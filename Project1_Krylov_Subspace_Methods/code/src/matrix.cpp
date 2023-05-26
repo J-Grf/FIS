@@ -2,7 +2,20 @@
 #include <cmath>
 #include "matrix.hpp"
 
-Matrix::Matrix (const std::string _inputDir ) : inputDir(_inputDir) {}
+Matrix::Matrix (const std::string& _inputDir ) : inputDir(_inputDir) {}
+
+/* Matrix& Matrix::operator=(const Matrix& _A) {
+    if(this != & _A){
+        sym_flag = _A.sym_flag;
+        dim = _A.dim;
+        array_size = _A.array_size;
+        JM = _A.JM;
+        VM = _A.VM;
+        inputDir = _A.inputDir;
+
+    }
+    return *this;
+}  */
 
 void Matrix::print() const {
 
