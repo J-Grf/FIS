@@ -92,7 +92,7 @@ int main (/*int argc, char *argv[]*/) {
     
     //compute rhs b from prescribed solution vector
     //std::vector<double> xp {1.567, 4.562, 8.312};
-    std::vector<double> b = {1.0, 11.0, 30.4, 62.8};//vectorProduct(testlow, xp);
+    std::vector<double> b = {43.9, 86.6, 121.4, 147.2};//vectorProduct(testlow, xp);
 
     /* std::vector<double> r0 = b;
     auto res = gramSchmidt(test, r0, 2);
@@ -125,7 +125,14 @@ int main (/*int argc, char *argv[]*/) {
 
     //auto resCG = CGMethod(test, b, x0, m);
     //check forward and backward substitutions:
-    std::vector<double> x = forwardSubMSR(test, b, test.getDim());
+    std::vector<double> b1 {1.3,  12.5, 33.1, 193.1};
+    std::vector<double> w = forwardSubMSR(test, b1, test.getDim());
+    for(size_t i = 0; i < w.size(); i++){
+        std::cout << "w[" << i << "]: " << w[i] << std::endl;
+    }
+
+    std::vector<double> b2 = {43.9, 86.6, 121.4, 147.2};
+    std::vector<double> x = backwardSubMSR(test, b2, test.getDim());
     for(size_t i = 0; i < x.size(); i++){
         std::cout << "x[" << i << "]: " << x[i] << std::endl;
     }

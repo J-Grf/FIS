@@ -254,36 +254,53 @@ std::vector<double> vectorProduct (const Matrix& A, const std::vector<double>& x
     return y;
 }
 
-
+//works!!!
 std::vector<double> backwardSubMSR(const Matrix& A, const std::vector<double>& b, const size_t m) {
-    /* assert(A.getDim() == b.size() - 1 && "Dimensions of A and b do not coincide, backwardSub not possible!");
+    assert(A.getDim() == b.size() && "Dimensions of A and b do not coincide, backwardSub not possible!");
     assert(A.sym_flag == 'n' && "backwardSub only applicable for upper triangular Matrix (non-sym)");
 
     std::vector<double> x(m, 0);
-    int idx = m - 1;
+    size_t i1 = m - 1;
+    size_t i2 = 0;
+    size_t k = 1;
+    int tmplength = 0;
 
-    x[idx] = b[idx] / A.VM[idx]; //here m should correspond to A.dim
-    size_t j = 0;
-    for(int i = idx - 1 ; i >= 0; i--, j++) {
+    //Get first entry of x, bottom of upper triangle
+    x[i1] = b[i1] / A.VM[i1]; //here m should correspond to A.dim
+
+    //next compute all the following rows
+    for(int i = m - 2; i >= 0; i--, k++) {
         x[i] = b[i];
-        if(A.JM[])
-        x[i] -= A.VM[A.array_size - j] * x[i];
+
+        //find start and end index of off-diagonal elements in rows
+        i1 = A.JM[A.dim - k - 1] - 1;
+        i2 = A.JM[A.dim - k] - 1;
+        tmplength = i2 - i1;
+        
+        if (tmplength <= 0 ) 
+            continue;
+
+        for(size_t j = 0; j < tmplength; j++) {
+            // extract upper diagonal entries by checking if column index is larger than the row index
+            if(A.JM[i1] - 1 > i) {
+                //get off-diagonal element and multiply with corresponding x element at column index of A
+                x[i] -= A.VM[i1] * x[A.JM[i1] - 1];
+            }
+            i1++;
+        }
         x[i] /= A.VM[i];
     }
-
-    return x; */
-
+    return x;
 }
 
 //works!!!
 std::vector<double> forwardSubMSR(const Matrix& A, const std::vector<double>& b, const size_t m) {
     assert(A.getDim() == b.size() && "Dimensions of A and b do not coincide, forwardSub not possible!");
-    assert(A.sym_flag == 'n' && "backwardSub only applicable for upper triangular Matrix (non-sym)");
+    assert(A.sym_flag == 'n' && "forwardSub only applicable for lower triangular Matrix (non-sym)");
 
     std::vector<double> x(m, 0);
     size_t i1 = 0;
     size_t i2 = 0;
-    //size_t idx = 0;
     int tmplength = 0;
 
     //Get first entry of x, top of lower triangle
@@ -303,7 +320,7 @@ std::vector<double> forwardSubMSR(const Matrix& A, const std::vector<double>& b,
 
         for(size_t j = 0; j < tmplength; j++) {
             // extract lower diagonal entries by checking if column index is smaller than the row index
-            if(A.JM[i1] < (i1 - A.dim - 1)) {
+            if(A.JM[i1] - 1 < i) {
                 //get off-diagonal element and multiply with corresponding x element at column index of A
                 x[i] -= A.VM[i1] * x[A.JM[i1] - 1];
             }

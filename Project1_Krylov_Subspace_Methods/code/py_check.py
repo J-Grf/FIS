@@ -141,10 +141,17 @@ print(xc)
 y = np.matmul(np.linalg.inv(C),A)
 print(y)
 
-print("------------forwardSub--------")
-
+print("------------forwardSub + backwardSub--------")
+xp = np.array([1.3, 1, 1, 9.2])
 D = np.array([[1,0,0,0], [5,6,0,0], [9,10.4,11,0], [13, 14,15,16]])
-xp = np.array([1,1,1,1.3])
-b = np.matmul(D, xp)
+k = np.matmul(D, xp)
+print(k)
+
+F = np.array([[1, 2.4, 3.4, 4], [0, 6, 7, 8], [0,0,11,12], [0,0,0,16]])
+b = np.matmul(F, xp)
 print(b)
-print(np.linalg.solve(D, b))
+
+#E = np.array([[1, 7, 5], [0, 2, 0],[0,0,3]])
+
+print(np.linalg.solve(D, k))
+print(np.linalg.solve(F, b))
