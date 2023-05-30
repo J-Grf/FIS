@@ -49,6 +49,7 @@ std::vector<double> getKrylov(const Matrix& A, matrixType<double>& V, matrixType
 
     w = vectorProduct(A, V[j]);
     if(PreCon != NONE) {
+        // w will be modified wbar
         applyPreConditioner(A, w, PreCon);
     }
 

@@ -33,7 +33,10 @@ public:
 
 friend void readFromFile (Matrix&);
 friend std::vector<double> vectorProduct (const Matrix&, const std::vector<double>&);
-friend Matrix JacobiPre (const Matrix&);
+friend std::vector<double> backwardSubMSR(const Matrix&, const std::vector<double>&, const size_t);
+friend std::vector<double> forwardSubMSR(const Matrix&, const std::vector<double>&, const size_t);
+
+friend Matrix Ilu(const Matrix&);
 };
 
 void readFromFile(Matrix& A);
@@ -46,6 +49,9 @@ std::vector<double> vectorProductCSC (const size_t dim, const std::vector<size_t
 const std::vector<double>& V, const std::vector<double>& x);
 
 std::vector<double> vectorProduct(const Matrix& A, const std::vector<double>& x);
+
+std::vector<double> backwardSubMSR(const Matrix& A, const std::vector<double>& b, const size_t m);
+std::vector<double> forwardSubMSR(const Matrix& A, const std::vector<double>& b, const size_t m);
 
 struct MatrixCoo {
     std::vector<size_t> rows;

@@ -11,7 +11,6 @@ enum PreConditioner {
 };
 
 void applyPreConditioner(const Matrix& A, std::vector<double>& x, const PreConditioner PreCon);
-Matrix JacobiPre(const Matrix& A);
-Matrix GaussSeiderPre(const Matrix& A);
+Matrix Ilu(const Matrix& A);
 
 #endif

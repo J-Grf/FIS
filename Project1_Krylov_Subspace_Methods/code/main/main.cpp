@@ -62,10 +62,13 @@ int main (/*int argc, char *argv[]*/) {
 
     //debug
     //construct orthonormal basis
-    Matrix test("../../material/test3_sym.txt");
+    Matrix test("../../material/test4.txt");
     readFromFile(test);
     test.print();
 
+    //Matrix testlow("../../material/test_lower.txt");
+    //readFromFile(testlow);
+    //testlow.print();
     //Test backward substitution
     /* matrixType<double> A {{1, 2.3, 0.782, 212}, {0, 1, 0, 7}, {0, 0, 3 , 1}, {0 , 0 , 0 ,4}};
     for(size_t i = 0; i < A.size(); i++) {
@@ -88,10 +91,10 @@ int main (/*int argc, char *argv[]*/) {
     //std::vector<double> r0 {1, 1, 1};
     
     //compute rhs b from prescribed solution vector
-    std::vector<double> xp {1, 1, 1};
-    std::vector<double> b = vectorProduct(test, xp);
+    //std::vector<double> xp {1.567, 4.562, 8.312};
+    std::vector<double> b = {1.0, 11.0, 30.4, 62.8};//vectorProduct(testlow, xp);
 
-    std::vector<double> r0 = b;
+    /* std::vector<double> r0 = b;
     auto res = gramSchmidt(test, r0, 2);
     printGM(res, 2);
     std::cout << "orthogonality check: " << std::endl << std::boolalpha
@@ -115,8 +118,15 @@ int main (/*int argc, char *argv[]*/) {
         std::cout << "xG[" << i << "]: " << xG[i] << std::endl;
     }
 
+    */
     for(size_t i = 0; i < b.size(); i++){
         std::cout << "b[" << i << "]: " << b[i] << std::endl;
     } 
-    auto resCG = CGMethod(test, b, x0, m);
+
+    //auto resCG = CGMethod(test, b, x0, m);
+    //check forward and backward substitutions:
+    std::vector<double> x = forwardSubMSR(test, b, test.getDim());
+    for(size_t i = 0; i < x.size(); i++){
+        std::cout << "x[" << i << "]: " << x[i] << std::endl;
+    }
 }

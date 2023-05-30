@@ -98,16 +98,17 @@ const PreConditioner PreCon = NONE) {
     const size_t num = m + 1;
 
     std::vector<double> r0 = b - vectorProduct(A, x0);
+    matrixType<double> V(1);
     if(PreCon != NONE) {
+        // left-preconditioning: in this case, r0 will be rbar -> v1
         applyPreConditioner(A, r0, PreCon);
     }
 
-    matrixType<double> V(1);
-    const double InvNormR0 = 1.0 / norm2(r0); 
+    const double invBeta = 1.0 / norm2(r0); 
     
     // v1
     for(size_t i = 0; i < r0.size(); i++) {
-        V[0].push_back(InvNormR0 * r0[i]);
+        V[0].push_back(invBeta * r0[i]);
     }
     
     // H_u: upper Hessenberg 

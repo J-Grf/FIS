@@ -130,8 +130,21 @@ print(b_test)
 B = np.array([[1, 0, 4], 
               [0, 2, 2], 
               [4, 2, 1]])
+C = np.array([[1,0,0], [0, 2, 0], [4, 2, 1]])
+print(np.linalg.inv(C))
 print("----------------ref CG---------")
 b = np.matmul(B, xp)
 print(b)
 xc = linalg.cg(B, b, maxiter = 2)
 print(xc)
+
+y = np.matmul(np.linalg.inv(C),A)
+print(y)
+
+print("------------forwardSub--------")
+
+D = np.array([[1,0,0,0], [5,6,0,0], [9,10.4,11,0], [13, 14,15,16]])
+xp = np.array([1,1,1,1.3])
+b = np.matmul(D, xp)
+print(b)
+print(np.linalg.solve(D, b))

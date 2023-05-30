@@ -253,3 +253,63 @@ std::vector<double> vectorProduct (const Matrix& A, const std::vector<double>& x
 
     return y;
 }
+
+
+std::vector<double> backwardSubMSR(const Matrix& A, const std::vector<double>& b, const size_t m) {
+    /* assert(A.getDim() == b.size() - 1 && "Dimensions of A and b do not coincide, backwardSub not possible!");
+    assert(A.sym_flag == 'n' && "backwardSub only applicable for upper triangular Matrix (non-sym)");
+
+    std::vector<double> x(m, 0);
+    int idx = m - 1;
+
+    x[idx] = b[idx] / A.VM[idx]; //here m should correspond to A.dim
+    size_t j = 0;
+    for(int i = idx - 1 ; i >= 0; i--, j++) {
+        x[i] = b[i];
+        if(A.JM[])
+        x[i] -= A.VM[A.array_size - j] * x[i];
+        x[i] /= A.VM[i];
+    }
+
+    return x; */
+
+}
+
+//works!!!
+std::vector<double> forwardSubMSR(const Matrix& A, const std::vector<double>& b, const size_t m) {
+    assert(A.getDim() == b.size() && "Dimensions of A and b do not coincide, forwardSub not possible!");
+    assert(A.sym_flag == 'n' && "backwardSub only applicable for upper triangular Matrix (non-sym)");
+
+    std::vector<double> x(m, 0);
+    size_t i1 = 0;
+    size_t i2 = 0;
+    //size_t idx = 0;
+    int tmplength = 0;
+
+    //Get first entry of x, top of lower triangle
+    x[i1] = b[i1] / A.VM[i1]; //here m should correspond to A.dim
+
+    //next compute all the following rows
+    for(size_t i = 1; i < A.dim; i++) {
+        x[i] = b[i];
+
+        //find start and end index of off-diagonal elements in rows
+        i1 = A.JM[i] - 1;
+        i2 = A.JM[i + 1] - 1;
+        tmplength = i2 - i1;
+        
+        if (tmplength <= 0 ) 
+            continue;
+
+        for(size_t j = 0; j < tmplength; j++) {
+            // extract lower diagonal entries by checking if column index is smaller than the row index
+            if(A.JM[i1] < (i1 - A.dim - 1)) {
+                //get off-diagonal element and multiply with corresponding x element at column index of A
+                x[i] -= A.VM[i1] * x[A.JM[i1] - 1];
+            }
+            i1++;
+        }
+        x[i] /= A.VM[i];
+    }
+    return x;
+}
