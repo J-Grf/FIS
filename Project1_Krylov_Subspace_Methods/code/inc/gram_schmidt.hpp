@@ -6,7 +6,7 @@
 #include <cassert>
 
 #include "matrix.hpp"
-#include "preconditoner.hpp"
+#include "preconditioner.hpp"
 
 template<typename T>
 using matrixType = std::vector<std::vector<T>>;
@@ -15,7 +15,7 @@ std::pair<matrixType<double>, matrixType<double>> gramSchmidt(const Matrix& A, c
 
 std::vector<double> getKrylov(const Matrix& A, matrixType<double>& V, matrixType<double>& H, const size_t j, const PreConditioner PreCon);
 
-void printKrylov(const matrixType<double>& v, const size_t m);
+void printKrylov(const matrixType<double>& v);
 
 void printGM(std::pair<matrixType<double>, matrixType<double>> res, const size_t m);
 

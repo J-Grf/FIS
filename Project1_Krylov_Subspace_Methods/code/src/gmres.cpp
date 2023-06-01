@@ -98,7 +98,9 @@ const PreConditioner PreCon = NONE) {
     const size_t num = m + 1;
 
     std::vector<double> r0 = b - vectorProduct(A, x0);
+    const double normR0 = norm2(r0);
     matrixType<double> V(1);
+    
     if(PreCon != NONE) {
         // left-preconditioning: in this case, r0 will be rbar -> v1
         applyPreConditioner(A, r0, PreCon);
@@ -112,24 +114,23 @@ const PreConditioner PreCon = NONE) {
     }
     
     // H_u: upper Hessenberg 
-    //MatrixCoo H_u;
     matrixType<double> H;
     for(size_t i = 0; i < num; i++) {
         H.push_back(std::vector<double>(m, 0));
     }
 
     vector<double> g(num, 0.0);
-    g[0] = norm2(r0);
+    g[0] = normR0;
 
-    vector<double> c, s, hj;
+    std::cout << "norm2(r0): " << g[0] << std::endl; 
+
+    vector<double> c, s, hj, relRes;
     size_t j;
     for(j = 0; j < m ; j++) {
 
         std::cout << "-------GMRES sub-iteration " << j << " --------" <<  std::endl;
         hj = getKrylov(A, V, H, j, PreCon);
     
-        //H_u.detDimensions();
-        //H_u.print();
         /* for(size_t i = 0; i < hj.size(); i++) {
             std::cout << "hj[" << i << "]: " << hj[i] << std::endl;
         }
@@ -144,20 +145,14 @@ const PreConditioner PreCon = NONE) {
 
         // check mark --- works until here
 
-        // happy break down occured, Krylov space will become linearly dependent
-        if(V.size() == j + 1)
-            break;
-
         //Apply previous rotations
         double tmp;
         for(size_t k = 1; k <= j; k++) {
             tmp = hj[k - 1]; // store before overwriting
             hj[k - 1] = c[k-1] * tmp + s[k-1] * hj[k];
-            //H_u.at(k-1, j) = hj[k - 1];
             H[k-1][j] = hj[k - 1];
             
             hj[k] = -s[k-1] * tmp + c[k-1] * hj[k];
-            //H_u.at(k, j) = hj[k];
             H[k][j] = hj[k];
         }
 
@@ -166,14 +161,23 @@ const PreConditioner PreCon = NONE) {
         c.push_back(hj[j] / alpha);
         s.push_back(hj[j+1] / alpha);
         hj[j] = alpha;
-        //H_u.setDiagonal(j) = alpha;
         H[j][j] = alpha;
 
         g[j+1] = -s[j] * g[j];
-        g[j] = c[j] * g[j];
-        //H_u.print();
+        //premature exit
+        relRes.push_back(abs(g[j+1] / normR0));
+        if(relRes[j] < Eps) {
+            std::cout << "exiting with rel residual "  << relRes[j] << std::endl;
+            break;
+        }
+        g[j] *= c[j];
     }
     
+    //write rel residuals to file
+    saveRelResiduals(relRes, PreCon);
+    if(PreCon == NONE)
+        saveDotPofKrylovVectors(V);
+
     //print upper Hessenberg
    /*  for(size_t i = 0; i < H.size(); i++) {
         for(size_t j = 0; j < H[0].size(); j++){
@@ -182,15 +186,11 @@ const PreConditioner PreCon = NONE) {
     } */
 
     size_t m_tilde = min(j + 1 , m);
-    //std::cout << "m_tilde: " << m_tilde << std::endl;
+    std::cout << "m_tilde: " << m_tilde << std::endl;
     std::vector<double> xm, y;
 
     // back ward substitution
-    //y = backwardSub(H_u, g, m_tilde);
     y = backwardSub(H, g, m_tilde);
-    /* for(size_t i = 0; i < y.size(); i++) {
-        std::cout << "result of backwardSub: " << y[i] << std::endl;
-    } */
     for(size_t i = m_tilde; i < x0.size(); i++) {
         y.push_back(0);
     }
@@ -201,11 +201,11 @@ const PreConditioner PreCon = NONE) {
         xm[i] += tmp[i];
     }
 
-    double rho = abs(g[m_tilde]);
-    return make_pair(xm, rho);
+    double rnorm = abs(g[m_tilde]);
+    return make_pair(xm, rnorm);
 }
 
-std::vector<double> GMRES_Res(const Matrix& A, const std::vector<double>& x0, const std::vector<double>& b, const size_t m){
+std::vector<double> GMRES_Res(const Matrix& A, const std::vector<double>& x0, const std::vector<double>& b, const size_t m, const PreConditioner PreCon = NONE){
     assert(A.getDim() == b.size());
     using namespace std;
     vector<double> r0 = b - vectorProduct(A, x0);
@@ -215,11 +215,15 @@ std::vector<double> GMRES_Res(const Matrix& A, const std::vector<double>& x0, co
     double rho = 1.0;
     vector<double> x = x0;
     vector<double> r;
+    const size_t restartPar = m;
+
+    std::cout << "Restarted GMRES with Preconditioner " << PreCon << " and " << m << " Krylov Vectors" << std::endl;
     while(rho > Eps) {
         it++;
 
         std::cout << "-----------------Iteration number " << it << " -------------------" << std::endl;
-        const pair<vector<double>, double> res = GMRES(A, x, b, m);
+        // TODO fix restarted GMRES
+        const pair<vector<double>, double> res = GMRES(A, x, b, restartPar, PreCon);
         x = res.first;
         rho = res.second / r0Norm;
 
@@ -234,10 +238,35 @@ std::vector<double> GMRES_Res(const Matrix& A, const std::vector<double>& x0, co
         }
 
         // for comparison with MR and GMRES(1)
-        if(m == 1)
-            break;
+        //if(m == 1)
+        //    break;
         
     }
 
     return x;
+}
+
+void saveRelResiduals(const std::vector<double>& relRes, const PreConditioner PreCon) {
+    std::string PreConStr;
+    for(const auto& p : StringToPre) {
+        if(p.second == PreCon) {
+            PreConStr = p.first;
+        }
+    }
+
+    std::ofstream out;
+    out.open("relResiduals_" + PreConStr + ".txt");
+    for(size_t i = 0; i < relRes.size(); i++) {
+        out << i << "  " << relRes[i] << std::endl;
+    }
+    out.close();
+}
+
+void saveDotPofKrylovVectors(const matrixType<double>& V) {
+    std::ofstream out;
+    out.open("DotPKrylov.txt");
+    for(size_t i = 0; i < V.size(); i++) {
+        out << i << "  " << dotP(V[0], V[i]) << std::endl;
+    }
+    out.close();
 }

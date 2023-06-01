@@ -1,5 +1,6 @@
 import numpy as np
 from scipy.sparse import linalg 
+import scipy as sp
 
 m = 3
 it = m + 1
@@ -155,3 +156,9 @@ print(b)
 
 print(np.linalg.solve(D, k))
 print(np.linalg.solve(F, b))
+
+#A = np.array([[0,0,3,0], [0,0,0,8], [1,0,3,0], [0,0,7,0]])
+print("-------------LU-factorization-----------------")
+P, L, U = sp.linalg.lu(A)
+print(L)
+print(U)

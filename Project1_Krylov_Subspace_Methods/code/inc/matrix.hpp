@@ -5,12 +5,11 @@
 #include <fstream>
 #include <vector>
 #include <string>
-//#include <limits>
 
 template<typename T>
 const T eps = std::numeric_limits<T>::epsilon();
 
-const double Eps = 10E-8;
+constexpr double Eps = 10E-8;
 //TODO: add copy-constructor and mabye assignment operator;
 class Matrix {
     char sym_flag = -1;
@@ -26,17 +25,19 @@ public:
     Matrix() = default;
     Matrix(const std::string& _inputDir);
     size_t getDim() const { return dim; };
-    double getVM(const size_t i) const { return VM[i]; };
+    size_t getArrSize() const { return array_size; };
+    double a_VM(const size_t i) const { return VM[i]; };
+    int a_JM(const size_t i) const {return JM[i]; };
+    std::vector<int> getJMVec() const { return JM; };
+    std::vector<double> getVMVec() const { return VM; };
 
     void print() const;
     Matrix& operator=(const Matrix&) = default;
 
-friend void readFromFile (Matrix&);
-friend std::vector<double> vectorProduct (const Matrix&, const std::vector<double>&);
-friend std::vector<double> backwardSubMSR(const Matrix&, const std::vector<double>&, const size_t);
-friend std::vector<double> forwardSubMSR(const Matrix&, const std::vector<double>&, const size_t);
-
-friend Matrix Ilu(const Matrix&);
+    friend void readFromFile (Matrix&);
+    friend std::vector<double> vectorProduct (const Matrix&, const std::vector<double>&);
+    friend std::vector<double> backwardSubMSR(const Matrix&, const std::vector<double>&, const size_t);
+    friend std::vector<double> forwardSubMSR(const Matrix&, const std::vector<double>&, const size_t);
 };
 
 void readFromFile(Matrix& A);

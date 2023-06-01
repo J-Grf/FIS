@@ -1,5 +1,6 @@
 #include <cassert>
 #include <cmath>
+#include "preconditioner.hpp"
 #include "matrix.hpp"
 
 Matrix::Matrix (const std::string& _inputDir ) : inputDir(_inputDir) {}
@@ -74,6 +75,7 @@ double& MatrixCoo::at(const size_t i, const size_t j) {
             return values[k];
         } else {
             std::cerr << "index not in Matrix!" << std::endl;
+
         }
     }
 }
@@ -119,6 +121,7 @@ void MatrixCoo::print() const {
 }
 
 void readFromFile (Matrix& A) {
+    std::cout << "Reading from file: " << A.inputDir << std::endl;
     std::ifstream in(A.inputDir);
     
     if(in.is_open()) {

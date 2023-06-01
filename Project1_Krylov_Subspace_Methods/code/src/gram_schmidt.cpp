@@ -56,11 +56,6 @@ std::vector<double> getKrylov(const Matrix& A, matrixType<double>& V, matrixType
     for(size_t i = 0; i < j + 1; i++) {
         double value = dotP(V[i], w);
 
-        //store all non-zero values in sparse format
-        /* if(abs(value) > eps<double>) {
-            H.append(i, j, value);
-        } */
-
         hj.push_back(value);
         H[i][j] = value;
 
@@ -68,20 +63,16 @@ std::vector<double> getKrylov(const Matrix& A, matrixType<double>& V, matrixType
     }
 
     double value2 = norm2(w);
-    if(value2 > eps<double>) {
-        hj.push_back(value2);
-        H[j + 1][j] = value2;
-        //H.append(j + 1, j, value2);
-    }
+    hj.push_back(value2);
+    H[j + 1][j] = value2;
     
     double invNormW = 1.0 / value2;
-    if (value2 > eps<double>) {
-        V.push_back(invNormW * w);
-    } 
+    V.push_back(invNormW * w);
+    
     return hj;
 }
 
-void printKrylov(const matrixType<double>& v, const size_t m) {
+void printKrylov(const matrixType<double>& v) {
     for(size_t i = 0; i < v.size(); i++) {
         for(size_t j = 0; j < v[0].size(); j++) {
             std::cout << "V[" << i << "][" << j << "]: " << v[i][j] << std::endl;

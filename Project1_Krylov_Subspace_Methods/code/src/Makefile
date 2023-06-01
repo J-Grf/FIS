@@ -21,3 +21,4 @@ clean :
 #gram_schmidt.o: ../inc/gram_schmidt.hpp
 #gmres.o: ../inc/gmres.hpp ../inc/matrix.hpp ../inc/gram_schmidt.hpp
 #cg.o: ../inc/cg.hpp ../inc/matrix.hpp
+#preconditioner.o: ../inc/matrix.hpp ../inc/preconditioner.hpp

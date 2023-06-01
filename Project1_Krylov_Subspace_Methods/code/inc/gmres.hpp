@@ -3,7 +3,7 @@
 
 #include "matrix.hpp"
 #include "gram_schmidt.hpp"
-#include "preconditoner.hpp"
+#include "preconditioner.hpp"
 
 std::vector<double> backwardSub(const MatrixCoo& A, const std::vector<double>& b, const size_t m);
 
@@ -14,6 +14,9 @@ std::vector<double> MR_method(const Matrix& A, const std::vector<double>& b, con
 std::pair<std::vector<double>, double> GMRES(const Matrix& A, const std::vector<double>& x0, const std::vector<double>& b, const size_t m, 
 const PreConditioner PreCon);
 
-std::vector<double> GMRES_Res(const Matrix& A, const std::vector<double>& x0, const std::vector<double>& b, const size_t m);
+std::vector<double> GMRES_Res(const Matrix& A, const std::vector<double>& x0, const std::vector<double>& b, const size_t m, const PreConditioner PreCon);
+
+void saveRelResiduals(const std::vector<double>& relRes, const PreConditioner PreCon);
+void saveDotPofKrylovVectors(const matrixType<double>& V);
 
 #endif

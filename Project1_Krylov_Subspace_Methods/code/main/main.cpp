@@ -1,12 +1,95 @@
 #include <iostream>
 #include <cassert>
+#include <chrono>
 
 #include "matrix.hpp"
-#include "gram_schmidt.hpp"
 #include "gmres.hpp"
 #include "cg.hpp"
 
-int main (/*int argc, char *argv[]*/) {
+int main (int argc, char *argv[]) {
+
+    /* Matrix test("../../material/test3.txt");
+    readFromFile(test);
+
+    ILUout A = Ilu(test);
+    for(size_t i = 0; i < A.PV.size(); i++) {
+        std::cout << "PV[" << i << "]: " << A.PV[i] << std::endl;
+    }
+
+    for(size_t i = 0; i < A.PJM.size(); i++) {
+        std::cout << "PJM[" << i << "]: " << A.PJM[i] << std::endl;
+    }
+
+    for(size_t i = 0; i < A.JD.size(); i++) {
+        std::cout << "PJD[" << i << "]: " << A.JD[i] << std::endl;
+    }
+
+    exit(0); */
+
+    //Read gmres-test matrix
+    if(argc == 1) {
+        std::cerr << "provide arguments! " << std::endl;
+        return -1;
+    }
+        
+    if( std::string(argv[1]) == "GMRES" ) {
+        if(argc != 5) {
+            std::cerr << "Provide 2 more arguments when using GMRES: <path> <restartParameter> <preconditioner> " << std::endl;
+            return -1;
+        }
+
+        Matrix gmresTest(argv[2]);
+        readFromFile(gmresTest);
+        //gmresTest.print();
+
+        //Prescribe solution vector and determine right-hand-side
+        const std::vector<double> x(gmresTest.getDim(), 1.0);
+        const std::vector<double> b = vectorProduct(gmresTest, x);
+        const std::vector<double> x0(gmresTest.getDim());
+        const size_t m = static_cast<size_t>(std::stoi(argv[3]));
+
+        auto begin = std::chrono::high_resolution_clock::now();
+
+        const std::vector<double> res = GMRES_Res(gmresTest, x0, b, m, StringToPre[argv[4]]);
+        auto end = std::chrono::high_resolution_clock::now();
+        
+        auto elapsed = std::chrono::duration_cast<std::chrono::nanoseconds>(end - begin);
+        printf("Time measured: %.3f seconds.\n", elapsed.count() * 1e-9);
+        
+        for(size_t i = 0; i < res.size(); i++){
+            std::cout << "x[" << i << "]: " << res[i] << std::endl;
+        }
+    } else if ( std::string(argv[1]) == "CG" ) {
+        if(argc != 3) {
+            std::cerr << "Provide 2 more argument when using CG: <path> <iterations>" << std::endl;
+            return -1;
+        }
+        Matrix cgTest(argv[2]);
+        readFromFile(cgTest);
+        //cgTest.print();
+
+        //Prescribe solution vector and determine right-hand-side
+        const std::vector<double> x(cgTest.getDim(), 1.0);
+        const std::vector<double> b = vectorProduct(cgTest, x);
+        const std::vector<double> x0(cgTest.getDim());
+        const size_t m = static_cast<size_t>(std::stoi(argv[3]));
+
+        auto begin = std::chrono::high_resolution_clock::now();
+        auto res = CGMethod(cgTest, b, x0, m);
+        auto end = std::chrono::high_resolution_clock::now();
+        
+        auto elapsed = std::chrono::duration_cast<std::chrono::nanoseconds>(end - begin);
+        printf("Time measured: %.3f seconds.\n", elapsed.count() * 1e-9);
+        
+        for(size_t i = 0; i < res.first.size(); i++) {
+            std::cout << "x[" << i << "]: " << res.first[i] << std::endl;
+        }
+    } else {
+        std::cerr << "Input argument is unkown, choose between 'GMRES' or 'CG' " << std::endl;
+        return -1;
+    }
+
+    return 0;
 
     //For debugging with test matrix
     /* Matrix test("../../material/test.txt");
@@ -62,9 +145,9 @@ int main (/*int argc, char *argv[]*/) {
 
     //debug
     //construct orthonormal basis
-    Matrix test("../../material/test4.txt");
-    readFromFile(test);
-    test.print();
+    //Matrix test("../../material/test4.txt");
+    //readFromFile(test);
+    //test.print();
 
     //Matrix testlow("../../material/test_lower.txt");
     //readFromFile(testlow);
@@ -92,7 +175,7 @@ int main (/*int argc, char *argv[]*/) {
     
     //compute rhs b from prescribed solution vector
     //std::vector<double> xp {1.567, 4.562, 8.312};
-    std::vector<double> b = {43.9, 86.6, 121.4, 147.2};//vectorProduct(testlow, xp);
+    //std::vector<double> b = {43.9, 86.6, 121.4, 147.2};//vectorProduct(testlow, xp);
 
     /* std::vector<double> r0 = b;
     auto res = gramSchmidt(test, r0, 2);
@@ -119,7 +202,7 @@ int main (/*int argc, char *argv[]*/) {
     }
 
     */
-    for(size_t i = 0; i < b.size(); i++){
+    /* for(size_t i = 0; i < b.size(); i++){
         std::cout << "b[" << i << "]: " << b[i] << std::endl;
     } 
 
@@ -135,5 +218,5 @@ int main (/*int argc, char *argv[]*/) {
     std::vector<double> x = backwardSubMSR(test, b2, test.getDim());
     for(size_t i = 0; i < x.size(); i++){
         std::cout << "x[" << i << "]: " << x[i] << std::endl;
-    }
+    } */
 }
