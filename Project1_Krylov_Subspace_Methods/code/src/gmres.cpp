@@ -98,15 +98,14 @@ const PreConditioner PreCon = NONE) {
     const size_t num = m + 1;
 
     std::vector<double> r0 = b - vectorProduct(A, x0);
-    const double normR0 = norm2(r0);
     matrixType<double> V(1);
     
     if(PreCon != NONE) {
         // left-preconditioning: in this case, r0 will be rbar -> v1
         applyPreConditioner(A, r0, PreCon);
     }
-
-    const double invBeta = 1.0 / norm2(r0); 
+    const double normR0 = norm2(r0);
+    const double invBeta = 1.0 / normR0; 
     
     // v1
     for(size_t i = 0; i < r0.size(); i++) {
@@ -125,6 +124,7 @@ const PreConditioner PreCon = NONE) {
     std::cout << "norm2(r0): " << g[0] << std::endl; 
 
     vector<double> c, s, hj, relRes;
+    relRes.push_back(1.0);
     size_t j;
     for(j = 0; j < m ; j++) {
 
@@ -166,8 +166,8 @@ const PreConditioner PreCon = NONE) {
         g[j+1] = -s[j] * g[j];
         //premature exit
         relRes.push_back(abs(g[j+1] / normR0));
-        if(relRes[j] < Eps) {
-            std::cout << "exiting with rel residual "  << relRes[j] << std::endl;
+        if(relRes.back() < Eps) {
+            std::cout << "exiting with rel residual "  << relRes.back() << std::endl;
             break;
         }
         g[j] *= c[j];

@@ -8,4 +8,6 @@ const std::vector<double>& x0, const size_t m);
 
 void printCG(const std::vector<double>& x, const std::vector<double>& r, const std::vector<double>& p, double relRes, const size_t it);
 
+void saveData(const std::vector<double>& eANorm, const std::vector<double>& rNorm);
+
 #endif

@@ -60,7 +60,7 @@ int main (int argc, char *argv[]) {
             std::cout << "x[" << i << "]: " << res[i] << std::endl;
         }
     } else if ( std::string(argv[1]) == "CG" ) {
-        if(argc != 3) {
+        if(argc != 4) {
             std::cerr << "Provide 2 more argument when using CG: <path> <iterations>" << std::endl;
             return -1;
         }
