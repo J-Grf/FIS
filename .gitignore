@@ -6,3 +6,4 @@ build/*
 *.tgz
 *.exe*
 a.txt
+__pycache__
