@@ -11,37 +11,36 @@ ILUout Ilu(const Matrix& A) {
     ILUout P(nz, n);
     P.PJM = A.getJMVec();
     P.PV = A.getVMVec();
-    std::vector<int> JR(n), JD(n);
+    std::vector<int> JR(n);
 
-    //check nochmal mit index shift;
-    for(size_t i = 0; i < n; i++){
-        JR[i] = i;
-        size_t j = 0;
-        for(j = A.a_JM(i); j < A.a_JM(i+1) - 1; j++){
-            int jc = A.a_JM(j);
-            JR[jc] = j;
-            if (jc > i && JD[i] == 0) {
-                JD[i] = j;
+    for(size_t i = 1; i <= n; i++){
+        JR[i - 1] = i;
+        size_t j = 1;
+        for(j = A.a_JM(i - 1); j <= A.a_JM(i) - 1; j++){
+            int jc = A.a_JM(j - 1);
+            JR[jc - 1] = j;
+            if (jc > i && P.JD[i - 1] == 0) {
+                P.JD[i - 1] = j;
             }
         }
 
-        if(JD[i] == 0){
-            JD[i] = j;
+        if(P.JD[i - 1] == 0){
+            P.JD[i - 1] = j;
         }
-        for(j = A.a_JM(i); j < JD[i] - 1; j++) {
-            size_t jc = A.a_JM(j); 
-            P.PV[j] /= P.PV[jc];
-            for(size_t jj = JD[jc]; jj < A.a_JM(jc + 1) - 1; jj++) {
-                size_t jk = JR[A.a_JM(jj)];
+        for(j = A.a_JM(i - 1); j <= P.JD[i - 1] - 1; j++) {
+            int jc = A.a_JM(j - 1); 
+            P.PV[j - 1] /= P.PV[jc - 1];
+            for(size_t jj = P.JD[jc - 1]; jj <= A.a_JM(jc) - 1; jj++) {
+                size_t jk = JR[A.a_JM(jj - 1) - 1];
                 if(jk != 0) {
-                    P.PV[jk] -= P.PV[j] * P.PV[jj];
+                    P.PV[jk - 1] -= P.PV[j - 1] * P.PV[jj - 1];
                 }
             }
         }
 
-        JR[i] = 0;
-        for(j = A.a_JM(i); j < A.a_JM(i+1) - 1; j++) {
-            JR[A.a_JM(j)] = 0;
+        JR[i - 1] = 0;
+        for(j = A.a_JM(i - 1); j < A.a_JM(i) - 1; j++) {
+            JR[A.a_JM(j - 1) - 1] = 0;
         }
     }
 
@@ -72,6 +71,19 @@ void applyPreConditioner(const Matrix& A, std::vector<double>& x, const PreCondi
             Matrix M_dummy = A;
             M_dummy.getJMVec() = M.PJM;
             M_dummy.getVMVec() = M.PV;
+            
+            std::ofstream out;
+            out.open("P.txt");
+            out << M_dummy.getDim() << " " << M.PJM.size() << std::endl;
+            for(size_t i = 0; i < M.PJM.size(); i++) {
+                out << M.PJM[i] << " " << M.PV[i] << std::endl;
+            }
+            out << std::endl;
+            for(size_t i = 0; i < M.JD.size(); i++) {
+                out << M.JD[i] << std::endl;
+            }
+            out.close();
+            //exit(1);
 
             std::vector<double> btmp = x;
             std::vector<double> y = forwardSubMSR(M_dummy, btmp, M_dummy.getDim());

@@ -189,10 +189,9 @@ const PreConditioner PreCon = NONE) {
     std::vector<double> xm, y;
 
     // back ward substitution
-    /* for(size_t i = 0; i < g.size(); i++) {
-        std::cout << "g[ "  << "]:" << g[i] << std::endl;
-    } */
-
+    for(size_t i = 0; i < g.size(); i++) {
+        std::cout << "g[ "  << i << "]:" << g[i] << std::endl;
+    }
     y = backwardSub(H, g, m_tilde);
     /* for(size_t i = 0; i < y.size(); i++) {
         std::cout << "result of backwardSub: " << y[i] << std::endl;
@@ -204,7 +203,7 @@ const PreConditioner PreCon = NONE) {
 
     xm = x0;
     std::vector<double> tmp = VP(V,y, m_tilde);
-    for(size_t i = 0; i < m_tilde; i++) {
+    for(size_t i = 0; i < xm.size(); i++) {
         xm[i] += tmp[i];
     }
 
