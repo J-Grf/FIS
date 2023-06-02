@@ -50,7 +50,7 @@ int main (int argc, char *argv[]) {
 
         auto begin = std::chrono::high_resolution_clock::now();
 
-        const std::vector<double> res = GMRES_Res(gmresTest, x0, b, m, StringToPre[argv[4]]);
+        const std::vector<double> res = GMRES_Res(gmresTest, x0, b, m, StringToPre.at(argv[4]));
         auto end = std::chrono::high_resolution_clock::now();
         
         auto elapsed = std::chrono::duration_cast<std::chrono::nanoseconds>(end - begin);
@@ -145,9 +145,35 @@ int main (int argc, char *argv[]) {
 
     //debug
     //construct orthonormal basis
-    //Matrix test("../../material/test4.txt");
-    //readFromFile(test);
-    //test.print();
+    /* Matrix test("../../material/test3.txt");
+    readFromFile(test);
+    test.print();
+
+    std::vector<double> xp {1, 1, 1};
+    std::vector<double> b = vectorProduct(test, xp);
+    std::vector<double> r0 = b;
+    auto res = gramSchmidt(test, r0, 2);
+    printGM(res, 2);
+    std::cout << "orthogonality check: " << std::endl << std::boolalpha
+              << checkOrthogonality(res.first.at(0), res.first.at(1)) << " "
+              << checkOrthogonality(res.first[1], res.first[2]) << " "
+              << checkOrthogonality(res.first[0], res.first[2]) << " " << std::endl; 
+
+    //initial guess
+    std::vector<double> x0 {0, 0 ,0};
+
+    //std::vector<double> t {1.123123, 2.123213, 0.1323};
+    std::vector<double> x = MR_method(test, b, x0);
+    for(size_t i = 0; i < x.size(); i++){
+        std::cout << "x[" << i << "]: " << x[i] << std::endl;
+    }
+
+    std::vector<double> xG = GMRES_Res(test, x0, b, 3, NONE);
+    std::cout << "--------- FINAL -------" << std::endl;
+    for(size_t i = 0; i < xG.size(); i++){
+        std::cout << "xG[" << i << "]: " << xG[i] << std::endl;
+    } */
+
 
     //Matrix testlow("../../material/test_lower.txt");
     //readFromFile(testlow);
@@ -177,31 +203,7 @@ int main (int argc, char *argv[]) {
     //std::vector<double> xp {1.567, 4.562, 8.312};
     //std::vector<double> b = {43.9, 86.6, 121.4, 147.2};//vectorProduct(testlow, xp);
 
-    /* std::vector<double> r0 = b;
-    auto res = gramSchmidt(test, r0, 2);
-    printGM(res, 2);
-    std::cout << "orthogonality check: " << std::endl << std::boolalpha
-              << checkOrthogonality(res.first[0], res.first[1]) << " "
-              << checkOrthogonality(res.first[1], res.first[2]) << " "
-              << checkOrthogonality(res.first[0], res.first[2]) << " " << std::endl; 
-
-    //initial guess
-    std::vector<double> x0 {0, 0 ,0};
-
-    //std::vector<double> t {1.123123, 2.123213, 0.1323};
-    std::vector<double> x = MR_method(test, b, x0);
-    for(size_t i = 0; i < x.size(); i++){
-        std::cout << "x[" << i << "]: " << x[i] << std::endl;
-    }   
-
-    size_t m = 3;
-    std::vector<double> xG = GMRES_Res(test, x0, b, m);
-    std::cout << "--------- FINAL -------" << std::endl;
-    for(size_t i = 0; i < xG.size(); i++){
-        std::cout << "xG[" << i << "]: " << xG[i] << std::endl;
-    }
-
-    */
+    
     /* for(size_t i = 0; i < b.size(); i++){
         std::cout << "b[" << i << "]: " << b[i] << std::endl;
     } 

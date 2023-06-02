@@ -22,7 +22,6 @@ const std::vector<double>& x0, const size_t m) {
         beta = dotP(r, r) / dotP(r_old, r_old);
         p = r + beta * p;
 
-        //TODO: Maybe comnpute spectral radius?
         rNorm.push_back(norm2(r));
         relRes = norm2(r) / norm2(r0);
         if(relRes < Eps)
@@ -69,13 +68,13 @@ void saveData(const std::vector<double>& eANorm, const std::vector<double>& rNor
     std::ofstream out;
     out.open("eANorm.txt");
     for(size_t i = 0; i < eANorm.size(); i++) {
-        out << i << "  " << eANorm[i] << std::endl;
+        out << eANorm[i] << std::endl;
     }
     out.close();
 
     out.open("rNorm.txt");
     for(size_t i = 0; i < rNorm.size(); i++) {
-        out << i << "  " << rNorm[i] << std::endl;
+        out << rNorm[i] << std::endl;
     }
     out.close();
 }

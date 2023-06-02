@@ -94,7 +94,6 @@ std::vector<double> MR_method(const Matrix& A, const std::vector<double>& b, con
 
 std::pair<std::vector<double>, double> GMRES(const Matrix& A, const std::vector<double>& x0, const std::vector<double>& b, const size_t m, 
 const PreConditioner PreCon = NONE) {
-    using namespace std;
     const size_t num = m + 1;
 
     std::vector<double> r0 = b - vectorProduct(A, x0);
@@ -118,12 +117,12 @@ const PreConditioner PreCon = NONE) {
         H.push_back(std::vector<double>(m, 0));
     }
 
-    vector<double> g(num, 0.0);
+    std::vector<double> g(num, 0.0);
     g[0] = normR0;
 
     std::cout << "norm2(r0): " << g[0] << std::endl; 
 
-    vector<double> c, s, hj, relRes;
+    std::vector<double> c, s, hj, relRes;
     relRes.push_back(1.0);
     size_t j;
     for(j = 0; j < m ; j++) {
@@ -141,7 +140,7 @@ const PreConditioner PreCon = NONE) {
                 std::cout << "H[" << i << "][" << j << "]: " << H[i][j] << std::endl;
             }
         }
-        printKrylov(V,m); */
+        printKrylov(V); */
 
         // check mark --- works until here
 
@@ -164,13 +163,13 @@ const PreConditioner PreCon = NONE) {
         H[j][j] = alpha;
 
         g[j+1] = -s[j] * g[j];
+        g[j] *= c[j];
         //premature exit
-        relRes.push_back(abs(g[j+1] / normR0));
+        relRes.push_back(std::abs(g[j+1] / normR0));
         if(relRes.back() < Eps) {
             std::cout << "exiting with rel residual "  << relRes.back() << std::endl;
             break;
         }
-        g[j] *= c[j];
     }
     
     //write rel residuals to file
@@ -179,18 +178,26 @@ const PreConditioner PreCon = NONE) {
         saveDotPofKrylovVectors(V);
 
     //print upper Hessenberg
-   /*  for(size_t i = 0; i < H.size(); i++) {
+    /* for(size_t i = 0; i < H.size(); i++) {
         for(size_t j = 0; j < H[0].size(); j++){
             std::cout << "H[" << i << "][" << j << "]: " << H[i][j] << std::endl;
         }
     } */
 
-    size_t m_tilde = min(j + 1 , m);
+    size_t m_tilde = std::min(j + 1 , m);
     std::cout << "m_tilde: " << m_tilde << std::endl;
     std::vector<double> xm, y;
 
     // back ward substitution
+    /* for(size_t i = 0; i < g.size(); i++) {
+        std::cout << "g[ "  << "]:" << g[i] << std::endl;
+    } */
+
     y = backwardSub(H, g, m_tilde);
+    /* for(size_t i = 0; i < y.size(); i++) {
+        std::cout << "result of backwardSub: " << y[i] << std::endl;
+    } */
+
     for(size_t i = m_tilde; i < x0.size(); i++) {
         y.push_back(0);
     }
@@ -201,7 +208,7 @@ const PreConditioner PreCon = NONE) {
         xm[i] += tmp[i];
     }
 
-    double rnorm = abs(g[m_tilde]);
+    double rnorm = std::abs(g[m_tilde]);
     return make_pair(xm, rnorm);
 }
 
@@ -257,7 +264,7 @@ void saveRelResiduals(const std::vector<double>& relRes, const PreConditioner Pr
     std::ofstream out;
     out.open("relResiduals_" + PreConStr + ".txt");
     for(size_t i = 0; i < relRes.size(); i++) {
-        out << i << "  " << relRes[i] << std::endl;
+        out << relRes[i] << std::endl;
     }
     out.close();
 }
@@ -266,7 +273,7 @@ void saveDotPofKrylovVectors(const matrixType<double>& V) {
     std::ofstream out;
     out.open("DotPKrylov.txt");
     for(size_t i = 0; i < V.size(); i++) {
-        out << i << "  " << dotP(V[0], V[i]) << std::endl;
+        out << dotP(V[0], V[i]) << std::endl;
     }
     out.close();
 }
