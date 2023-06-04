@@ -10,7 +10,6 @@ template<typename T>
 const T eps = std::numeric_limits<T>::epsilon();
 
 constexpr double Eps = 10E-8;
-//TODO: add copy-constructor and mabye assignment operator;
 class Matrix {
     char sym_flag = -1;
     size_t dim = 0;
@@ -53,23 +52,6 @@ std::vector<double> vectorProduct(const Matrix& A, const std::vector<double>& x)
 
 std::vector<double> backwardSubMSR(const Matrix& A, const std::vector<double>& b, const size_t m);
 std::vector<double> forwardSubMSR(const Matrix& A, const std::vector<double>& b, const size_t m);
-
-struct MatrixCoo {
-    std::vector<size_t> rows;
-    std::vector<size_t> columns;
-    std::vector<double> values;
-
-    size_t m = 0;
-    size_t n = 0;
-
-    MatrixCoo() = default;
-    void detDimensions();
-    double& setDiagonal(const size_t index);
-    double& at(const size_t i, const size_t j);
-    void append(const size_t i, const size_t j, const double value);
-    std::vector<double> getDiagonals() const;
-    void print() const;
-};
 
 //helper functions
 inline double dotP(const std::vector<double> a, const std::vector<double> b){

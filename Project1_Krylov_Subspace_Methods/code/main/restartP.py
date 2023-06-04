@@ -8,7 +8,7 @@ m_max = 501
 time = []
 iterations = []
 count = 0
-timingsDir = "./timings/"
+timingsDir = "../../timings/"
 
 for m in range(m_min, m_max):
     print("Running m = " + str(m))

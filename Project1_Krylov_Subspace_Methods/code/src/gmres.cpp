@@ -1,58 +1,7 @@
 #include "gmres.hpp"
 #include "boost/timer/timer.hpp"
 
-std::vector<double> backwardSub(const MatrixCoo& A, const std::vector<double>& b, const size_t m) {
-
-    //use strict upper matrix of Hessenberg matrix
-    assert(A.n == b.size() && "Dimensions of A and b do not coincide, backwardSub not possible!");
-    //assert(A.n == A.m - 1 && "A is not a square matrix, backwardSub not possible!");
-    
-    std::vector<double> x(m, 0);
-    size_t idx = m - 1;
-    std::vector<double> diag = A.getDiagonals();
-    
-    for(size_t i = 0; i < diag.size(); i++){
-        std::cout << "diag[" << i << "]: " << diag[i] << std::endl;
-        std::cout << "b[ " << i << "]: " << b[i] << std::endl;
-    }
-
-    //first element for backward Sub
-    if(diag.size() < A.n) {
-        std::cerr << "zeros on diagonal!" << std::endl;
-    }
-    
-    x[idx] = b[idx] / diag[idx];
-    for (size_t i = A.values.size() - 1; i --> 0;) {
-        const size_t j = A.rows[i];
-        const size_t k = A.columns[i];
-        
-        //ignore elements below diagonal
-        if(j > k)
-            continue;
-        
-        x[j] = b[j];
-        // substract off-diagonals
-        for (size_t n = i; n < A.values.size(); n++) {
-            const size_t j_inner = A.rows[n];
-            const size_t k_inner = A.columns[n];
-            if(k_inner > j_inner) {
-                std::cout << "j_inner " << j_inner << std::endl;
-                std::cout << "k_inner " << k_inner << std::endl;
-                std::cout << "x[" << j_inner << "]: " << x[j_inner] << std::endl;
-                std::cout << "x[" << k_inner << "]: " << x[k_inner] << std::endl;
-                x[j_inner] -= A.values[n] * x[k_inner];
-                std::cout << "x[" << j_inner << "]: " << x[j_inner] << std::endl;
-                std::cout << "substracting: " << A.values[n] << std::endl;
-            }
-        }
-        std::cout << "x[" << j << "]: " << x[j] << std::endl;           
-        x[j] /= diag[j];
-    } 
-
-    return x; 
-}
-
-// works !!!
+// regular backwardSubstitution 
 std::vector<double> backwardSub(const matrixType<double>& A, const std::vector<double>& b, const int m) {
     //use strict upper matrix of Hessenberg matrix
     assert(A[0].size() == b.size() - 1 && "Dimensions of A and b do not coincide, backwardSub not possible!");
@@ -72,6 +21,7 @@ std::vector<double> backwardSub(const matrixType<double>& A, const std::vector<d
     return x;
 }
 
+//Minimal Residual method
 std::vector<double> MR_method(const Matrix& A, const std::vector<double>& b, const std::vector<double>& x0) {
     using namespace std;
 
@@ -93,6 +43,7 @@ std::vector<double> MR_method(const Matrix& A, const std::vector<double>& b, con
     return x;
 }
 
+// GMRES
 std::pair<std::vector<double>, double> GMRES(const Matrix& A, const std::vector<double>& x0, const std::vector<double>& b, const size_t m, 
 const PreConditioner PreCon = NONE) {
     const size_t num = m + 1;
@@ -150,8 +101,6 @@ const PreConditioner PreCon = NONE) {
         }
         printKrylov(V); */
 
-        // check mark --- works until here
-
         //Apply previous rotations
         double tmp;
         for(size_t k = 1; k <= j; k++) {
@@ -186,28 +135,14 @@ const PreConditioner PreCon = NONE) {
     if(PreCon == NONE)
         saveDotPofKrylovVectors(V);
 #endif
-    //print upper Hessenberg
-    /* for(size_t i = 0; i < H.size(); i++) {
-        for(size_t j = 0; j < H[0].size(); j++){
-            std::cout << "H[" << i << "][" << j << "]: " << H[i][j] << std::endl;
-        }
-    } */
-
+    
     size_t m_tilde = std::min(j + 1 , m);
 #ifndef DISABLEIO
     std::cout << "m_tilde: " << m_tilde << std::endl;
 #endif
     std::vector<double> xm, y;
 
-    // back ward substitution
-    /*for(size_t i = 0; i < g.size(); i++) {
-        std::cout << "g[ "  << i << "]:" << g[i] << std::endl;
-    }*/
     y = backwardSub(H, g, m_tilde);
-    /* for(size_t i = 0; i < y.size(); i++) {
-        std::cout << "result of backwardSub: " << y[i] << std::endl;
-    } */
-
     for(size_t i = m_tilde; i < x0.size(); i++) {
         y.push_back(0);
     }
@@ -222,6 +157,7 @@ const PreConditioner PreCon = NONE) {
     return make_pair(xm, rnorm);
 }
 
+// restarted GMRES
 std::vector<double> GMRES_Res(const Matrix& A, const std::vector<double>& x0, const std::vector<double>& b, const size_t m, const PreConditioner PreCon = NONE){
     assert(A.getDim() == b.size());
     using namespace std;
@@ -247,7 +183,6 @@ std::vector<double> GMRES_Res(const Matrix& A, const std::vector<double>& x0, co
 #ifndef DISABLEIO
         std::cout << "-----------------Iteration number " << it << " -------------------" << std::endl;
 #endif
-        // TODO fix restarted GMRES
         const pair<vector<double>, double> res = GMRES(A, x, b, restartPar, PreCon);
         x = res.first;
         rho = res.second / r0Norm;

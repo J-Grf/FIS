@@ -4,8 +4,8 @@ import matplotlib.pyplot as plt
 import pgf
 import re
 
-path = '../../rawData/rawData2/' 
-plotdir = '../../plots/plots2/'
+path = '../../rawData/' 
+plotdir = '../../plots/'
 pgfdir = '../../report/pgf/'
 files = ['DotPKrylov.txt', 'relResiduals_NONE.txt', 'relResiduals_JACOBI.txt', 'relResiduals_GAUSSSEIDEL.txt', 'relResiduals_ILU.txt', 'eANorm.txt', 'rNorm.txt']
 data = {}

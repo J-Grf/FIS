@@ -83,9 +83,6 @@ void printKrylov(const matrixType<double>& v) {
 }
 
 void printGM(std::pair<matrixType<double>, matrixType<double>> res, const size_t m) {
-    /* std::cout << "res.first[0].size(): " << res.first[0].size() << std::endl
-              << "res.second.size(): " << res.second.size() << std::endl; */
-    //assert(res.first[0].size() == res.second.size());
     for(size_t i = 0; i < m + 1; i++) {
         for(size_t j = 0; j < m; j++) {
             std::cout << "H[" << i << "][" << j << "]: " << res.second[i][j] << std::endl;

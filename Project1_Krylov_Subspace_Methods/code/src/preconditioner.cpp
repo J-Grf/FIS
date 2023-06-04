@@ -4,6 +4,7 @@
 ILUout::ILUout(const size_t _nz, const size_t _n) : nz(_nz), n(_n), PV(std::vector<double>(_nz)), 
 PJM(std::vector<int>(_nz)), JD(std::vector<int>(_n)) {}
 
+// Ilu(0) algorithm as given but with shifted index
 ILUout Ilu(const Matrix& A) {
     const size_t n = A.getDim();
     const size_t nz = A.getArrSize();
@@ -83,7 +84,6 @@ void applyPreConditioner(const Matrix& A, std::vector<double>& x, const PreCondi
                 out << M.JD[i] << std::endl;
             }
             out.close();
-            //exit(1);
 
             std::vector<double> btmp = x;
             std::vector<double> y = forwardSubMSR(M_dummy, btmp, M_dummy.getDim());

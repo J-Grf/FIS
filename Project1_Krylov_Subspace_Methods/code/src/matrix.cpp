@@ -5,19 +5,6 @@
 
 Matrix::Matrix (const std::string& _inputDir ) : inputDir(_inputDir) {}
 
-/* Matrix& Matrix::operator=(const Matrix& _A) {
-    if(this != & _A){
-        sym_flag = _A.sym_flag;
-        dim = _A.dim;
-        array_size = _A.array_size;
-        JM = _A.JM;
-        VM = _A.VM;
-        inputDir = _A.inputDir;
-
-    }
-    return *this;
-}  */
-
 void Matrix::print() const {
 
     std::string sym = "";
@@ -48,76 +35,6 @@ void Matrix::print() const {
               << "----------------VM-array:-------" << std::endl
               << VMS << std::endl;
 
-}
-
-void MatrixCoo::detDimensions() {
-    std::vector<size_t>::const_iterator maxRow = std::max_element(std::begin(rows), std::end(rows));
-    m = *maxRow + 1;
-
-    std::vector<size_t>::const_iterator maxCol = std::max_element(std::begin(columns), std::end(columns));
-    n = *maxCol + 1;
-}
-
-double& MatrixCoo::setDiagonal(const size_t index) {
-    //assert(m == n && "not a quadratic matrix!");
-    for(size_t i = 0; i < rows.size(); i++) {
-        if(columns[i] == rows[i] && rows[i] == index) {
-            return values[i];
-        } else {
-            std::cerr << "index not in Matrix!" << std::endl;
-        }
-    }
-}
-
-double& MatrixCoo::at(const size_t i, const size_t j) {
-    for(size_t k = 0; k < rows.size(); k++) {
-        if(rows[k] == i && columns[k] == j) {
-            return values[k];
-        } else {
-            std::cerr << "index not in Matrix!" << std::endl;
-
-        }
-    }
-}
-
-void MatrixCoo::append(const size_t i, const size_t j, const double value) {
-    rows.push_back(i);
-    columns.push_back(j);
-    values.push_back(value);
-}
-
-std::vector<double> MatrixCoo::getDiagonals() const {
-    //assert(m - 1 == n && "not a quadratic matrix!");
-
-    std::vector<double> res;
-    for(size_t i = 0; i < rows.size(); i++) {
-        if(columns[i] == rows[i]) {
-            res.push_back(values[i]);
-        }
-    }
-
-    return res;
-}
-
-void MatrixCoo::print() const {
-
-    std::string IS, JS, VS;
-    IS += "[";
-    JS = IS;
-    VS = IS;
-    for(size_t i = 0; i < rows.size(); i++) {
-        IS += std::to_string(rows[i]) + ", ";
-        JS += std::to_string(columns[i]) + ", ";
-        VS += std::to_string(values[i]) + ", ";
-    }
-    IS += "]";
-    JS += "]";
-    VS += "]";
-
-    std::cout << "Matrix in coordinate format has dimensions m=" << m << " n=" << n << std::endl
-              << "rows array " << IS << std::endl
-              << "columns array " << JS << std::endl
-              << "values array " << VS << std::endl;
 }
 
 void readFromFile (Matrix& A) {
@@ -257,7 +174,6 @@ std::vector<double> vectorProduct (const Matrix& A, const std::vector<double>& x
     return y;
 }
 
-//works!!!
 std::vector<double> backwardSubMSR(const Matrix& A, const std::vector<double>& b, const size_t m) {
     assert(A.getDim() == b.size() && "Dimensions of A and b do not coincide, backwardSub not possible!");
     assert(A.sym_flag == 'n' && "backwardSub only applicable for upper triangular Matrix (non-sym)");
@@ -296,7 +212,6 @@ std::vector<double> backwardSubMSR(const Matrix& A, const std::vector<double>& b
     return x;
 }
 
-//works!!!
 std::vector<double> forwardSubMSR(const Matrix& A, const std::vector<double>& b, const size_t m) {
     assert(A.getDim() == b.size() && "Dimensions of A and b do not coincide, forwardSub not possible!");
     assert(A.sym_flag == 'n' && "forwardSub only applicable for lower triangular Matrix (non-sym)");
