@@ -1,4 +1,4 @@
-\documentclass{article}
+\documentclass[11pt,a4paper]{article}
 \usepackage[a4paper, margin=0.8in]{geometry}
 %\usepackage{article}
 \usepackage{amsmath}
@@ -10,6 +10,7 @@
 \usepackage{graphicx}
 \usepackage{url}
 \usepackage{hyperref}
+\usepackage{pgf}
 \hypersetup{
 	colorlinks,
 	citecolor=black,
@@ -18,6 +19,87 @@
 	urlcolor=black
 }
 
+\makeatletter
+\def\@maketitle{%
+	\newpage
+	\null
+	\vskip 2em%
+	\begin{center}%
+		\let \footnote \thanks
+		{\LARGE \@title \par}%
+		\vskip 1em%
+		{\Large Fast Iterative Solvers, Project 1\par}%
+		\vskip 1.5em%
+		{\large
+			\lineskip .5em%
+			\begin{tabular}[t]{c}%
+				\@author
+			\end{tabular}\par}%
+		\vskip 1em%
+		{\large \@date}%
+	\end{center}%
+	\par
+	\vskip 1.5em}
+\makeatother
+
+\title{Krylov Subspace Methods}
+\author{Johannes Leonard Grafen}
+\makeindex
+
+\ifpdf  
+\hypersetup{pdfauthor={Johannes Leonard Grafen},%
+	pdftitle={Fast Iterative Solvers, Project 1},%
+}
+\fi
+
+
 \begin{document}
+\renewcommand\baselinestretch{1.0}
+\baselineskip=18pt plus1pt	
 	
+\maketitle
+\tableofcontents
+\listoffigures	% print list of figures
+\listoftables  % print list of tables
+
+\section{Generalized Minimal Residual Method - GMRES}
+\label{chapter:GMRES}
+
+\begin{figure}[!htbp]
+	\hspace*{0.8cm}
+	\leavevmode
+	\resizebox{1.0\width}{!}{\input{pgf/relResiduals.pgf}}
+	\caption{Comparison of the different preconditioning options for the GMRES procedure to the full GMRES Method without preconditioning using m = 600 Krylov vectors as an input.}
+	\label{fig::Residuals}
+\end{figure}
+
+\begin{figure}[!htbp]
+	\hspace*{0.8cm}
+	\leavevmode
+	\resizebox{1.0\width}{!}{\input{pgf/Timings.pgf}}
+	\caption{CPU-timings of restarted GMRES for different restart parameters $m = {20...479} $ with global minimum at $m = 63$ with $3.73 s$}
+	\label{fig::Timings}
+\end{figure}
+
+\begin{figure}[!htbp]
+	\hspace*{0.8cm}
+	\leavevmode
+	\resizebox{1.0\width}{!}{\input{pgf/DotPKrylovVectors.pgf}}
+	\caption{Orthogonality of the Krylov vectors. Plot of the dotproduct $(\mathbf{v}_1, \mathbf{v}_k)$ against the iteration index $k$ of the top loop in the GMRES method}
+	\label{fig::DotP}
+\end{figure}
+
+
+
+\section{Conjugate Gradient Method - CG}
+\label{chapter:CG}
+
+\begin{figure}[!htbp]
+	\hspace*{0.8cm}
+	\leavevmode
+	\resizebox{1.0\width}{!}{\input{pgf/CG_Norms.pgf}}
+	\caption{Error $\mathbf{e}_k = \mathbf{x}_k - \mathbf{x} $ in A-Norm $||\mathbf{e}||_A = \sqrt{(A\mathbf{e}, \mathbf{e})}$ and the residual in 2-Norm $||\mathbf{e}||_2 = \sqrt{(\mathbf{r}, \mathbf{r})}$ against the iteration index $k$ for CG-method}
+	\label{fig::CGNorms}
+\end{figure}
+
 \end{document}

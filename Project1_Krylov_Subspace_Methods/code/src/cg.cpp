@@ -11,7 +11,7 @@ const std::vector<double>& x0, const size_t m) {
 
     double alpha = 0.0, beta = 0.0, relRes = 0.0;
     for(size_t i = 0; i < m; i++) {
-        std::cout << "CG Iteration " << i << std::endl;
+        std::cout << "CG Iteration " << i + 1 << std::endl;
         alpha = dotP(r, r) / dotP(vectorProduct(A,p), p);
         x += alpha * p;
         error = x - x_ex;
