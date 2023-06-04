@@ -52,6 +52,10 @@
 }
 \fi
 
+%new commands
+\newcommand{\refFig}[1]{Fig. \ref{#1}}
+\newcommand{\refEq}[1]{Eq. (\ref{#1})}
+\newcommand{\refTab}[1]{Tab. \ref{#1}}
 
 \begin{document}
 \renewcommand\baselinestretch{1.0}
@@ -65,6 +69,10 @@
 \section{Generalized Minimal Residual Method - GMRES}
 \label{chapter:GMRES}
 
+\subsection{Relative residuals for GMRES with and without preconditioning}
+
+For the full GMRES method, the relative residuals are plotted against the iterations index of the top loop in the full GMRES algorithm in \refFig{fig::Residuals}. The iterations index in this case corresponds to the number of necessary Krylov vectors to reduce the 2-norm of the initial residual by 8 orders of magnitude ($||\mathbf{r}_k|| / ||\mathbf{r}_0|| = 10^{-8}$). 
+%
 \begin{figure}[!htbp]
 	\hspace*{0.8cm}
 	\leavevmode
@@ -72,7 +80,7 @@
 	\caption{Comparison of the different preconditioning options for the GMRES procedure to the full GMRES Method without preconditioning using m = 600 Krylov vectors as an input.}
 	\label{fig::Residuals}
 \end{figure}
-
+%
 \begin{figure}[!htbp]
 	\hspace*{0.8cm}
 	\leavevmode
@@ -80,7 +88,7 @@
 	\caption{CPU-timings of restarted GMRES for different restart parameters $m = {20...479} $ with global minimum at $m = 63$ with $3.73 s$}
 	\label{fig::Timings}
 \end{figure}
-
+%
 \begin{figure}[!htbp]
 	\hspace*{0.8cm}
 	\leavevmode

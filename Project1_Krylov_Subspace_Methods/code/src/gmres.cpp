@@ -192,9 +192,9 @@ std::vector<double> GMRES_Res(const Matrix& A, const std::vector<double>& x0, co
         r.push_back(res.second);
         std::cout << "residual " << r.back() << std::endl;
         std::cout << "rel residual " << rho << std::endl;
-        for(size_t i = 0; i < x.size(); i++){
+        /*for(size_t i = 0; i < x.size(); i++){
             std::cout << "x[" << i << "]: " << x[i] << std::endl;
-        }
+        }*/
 #endif
 
         // for comparison with MR and GMRES(1)
