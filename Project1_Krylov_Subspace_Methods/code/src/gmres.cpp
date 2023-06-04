@@ -1,4 +1,5 @@
 #include "gmres.hpp"
+#include "boost/timer/timer.hpp"
 
 std::vector<double> backwardSub(const MatrixCoo& A, const std::vector<double>& b, const size_t m) {
 
@@ -98,11 +99,14 @@ const PreConditioner PreCon = NONE) {
 
     std::vector<double> r0 = b - vectorProduct(A, x0);
     matrixType<double> V(1);
-    
+
+#ifndef DISABLEIO   
     if(PreCon != NONE) {
         // left-preconditioning: in this case, r0 will be rbar -> v1
         applyPreConditioner(A, r0, PreCon);
     }
+#endif
+
     const double normR0 = norm2(r0);
     const double invBeta = 1.0 / normR0; 
     
@@ -120,14 +124,18 @@ const PreConditioner PreCon = NONE) {
     std::vector<double> g(num, 0.0);
     g[0] = normR0;
 
+#ifndef DISABLEIO
     std::cout << "norm2(r0): " << g[0] << std::endl; 
+#endif
 
     std::vector<double> c, s, hj, relRes;
     relRes.push_back(1.0);
     size_t j;
     for(j = 0; j < m ; j++) {
-
+    
+#ifndef DISABLEIO
         std::cout << "-------GMRES sub-iteration " << j << " --------" <<  std::endl;
+#endif
         hj = getKrylov(A, V, H, j, PreCon);
     
         /* for(size_t i = 0; i < hj.size(); i++) {
@@ -173,10 +181,11 @@ const PreConditioner PreCon = NONE) {
     }
     
     //write rel residuals to file
+#ifndef DISABLEIO
     saveRelResiduals(relRes, PreCon);
     if(PreCon == NONE)
         saveDotPofKrylovVectors(V);
-
+#endif
     //print upper Hessenberg
     /* for(size_t i = 0; i < H.size(); i++) {
         for(size_t j = 0; j < H[0].size(); j++){
@@ -185,13 +194,15 @@ const PreConditioner PreCon = NONE) {
     } */
 
     size_t m_tilde = std::min(j + 1 , m);
+#ifndef DISABLEIO
     std::cout << "m_tilde: " << m_tilde << std::endl;
+#endif
     std::vector<double> xm, y;
 
     // back ward substitution
-    for(size_t i = 0; i < g.size(); i++) {
+    /*for(size_t i = 0; i < g.size(); i++) {
         std::cout << "g[ "  << i << "]:" << g[i] << std::endl;
-    }
+    }*/
     y = backwardSub(H, g, m_tilde);
     /* for(size_t i = 0; i < y.size(); i++) {
         std::cout << "result of backwardSub: " << y[i] << std::endl;
@@ -223,31 +234,42 @@ std::vector<double> GMRES_Res(const Matrix& A, const std::vector<double>& x0, co
     vector<double> r;
     const size_t restartPar = m;
 
+    boost::timer::cpu_timer timer;
+
     std::cout << "Restarted GMRES with Preconditioner " << PreCon << " and " << m << " Krylov Vectors" << std::endl;
+    
+    timer.start();
     while(rho > Eps) {
         it++;
+        if(it == 2)
+            std::cout << "restart" << std::endl;
 
+#ifndef DISABLEIO
         std::cout << "-----------------Iteration number " << it << " -------------------" << std::endl;
+#endif
         // TODO fix restarted GMRES
         const pair<vector<double>, double> res = GMRES(A, x, b, restartPar, PreCon);
         x = res.first;
         rho = res.second / r0Norm;
 
         // save residual
+#ifndef DISABLEIO
         r.push_back(res.second);
-
         std::cout << "residual " << r.back() << std::endl;
         std::cout << "rel residual " << rho << std::endl;
-        
         for(size_t i = 0; i < x.size(); i++){
             std::cout << "x[" << i << "]: " << x[i] << std::endl;
         }
+#endif
 
         // for comparison with MR and GMRES(1)
         //if(m == 1)
         //    break;
         
     }
+    timer.stop();
+    std::cout  << "Restarted GMRES thread timer: " << timer.format() << std::endl
+               << "m = " << m << " iterations = " << it << std::endl;
 
     return x;
 }

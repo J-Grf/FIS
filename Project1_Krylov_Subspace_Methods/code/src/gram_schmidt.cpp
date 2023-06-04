@@ -48,10 +48,12 @@ std::vector<double> getKrylov(const Matrix& A, matrixType<double>& V, matrixType
     std::vector<double> hj;
 
     w = vectorProduct(A, V[j]);
+#ifndef DISABLEIO
     if(PreCon != NONE) {
         // w will be modified wbar
         applyPreConditioner(A, w, PreCon);
     }
+#endif
 
     for(size_t i = 0; i < j + 1; i++) {
         double value = dotP(V[i], w);

@@ -56,9 +56,9 @@ int main (int argc, char *argv[]) {
         auto elapsed = std::chrono::duration_cast<std::chrono::nanoseconds>(end - begin);
         printf("Time measured: %.3f seconds.\n", elapsed.count() * 1e-9);
         
-        for(size_t i = 0; i < res.size(); i++){
+        /* for(size_t i = 0; i < res.size(); i++){
             std::cout << "x[" << i << "]: " << res[i] << std::endl;
-        }
+        } */
     } else if ( std::string(argv[1]) == "CG" ) {
         if(argc != 4) {
             std::cerr << "Provide 2 more argument when using CG: <path> <iterations>" << std::endl;
