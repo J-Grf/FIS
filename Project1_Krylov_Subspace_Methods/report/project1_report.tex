@@ -35,7 +35,7 @@
 \makeatother
 
 \title{Krylov Subspace Methods}
-\author{Johannes Leonard Grafen}
+\author{Johannes Leonard Grafen, 380149}
 \makeindex
 
 %new commands
@@ -107,14 +107,16 @@
 \newpage
 
 \section{Remarks on used architecture and compiler options}
-The code was compiled using Clang-compiler and ran on an Apple Silicon M1 Pro Chip with ARM64 architecture. All timings were conducted with the a CPU-timer object of the Boost timer library, which was specifically compiled for the previously mentioned CPU architecture. If not stated otherwise, no optimization using -O0 flag was used. For timings, the output was disabled at specific regions of the code, using a specific preprocessor directive "DISABLEIO" which can be passed to the compiler using -D option. 
+The code was written in C++, compiled using the Clang compiler and executed on an Apple Silicon M1 Pro Chip featuring the ARM64 architecture. To measure timings, a CPU timer object from the Boost timer library was employed. This library was specifically compiled for the aforementioned CPU architecture. Unless specified otherwise, no optimization was performed using the -O0 flag. During timing evaluations, the output was disabled in certain code sections using a preprocessor directive that was introduced as "DISABLEIO," which can be passed to the compiler using the -D option.
 
 \section{Generalized Minimal Residual Method - GMRES}
 \label{chapter:GMRES}
 
 \subsection{Relative residuals for GMRES with and without preconditioning}
 
-For the full GMRES method, the relative residuals are plotted against the iterations index of the top loop in the full GMRES algorithm in \refFig{fig::Residuals}. The iterations index in this case corresponds to the Krylov vectors. The number of necessary Krylov vectors to reduce the 2-norm of the initial residual by 8 orders of magnitude ($||\mathbf{r}_k|| / ||\mathbf{r}_0|| = 10^{-8}$) is given by $\tilde{m}$ in the plot's legend. All iterations were started with parameter $m = 600$ in case the convergence criterion was fulfilled before reaching the prescribed max number of Krylov vectors, the loop was exited prematurely with $\tilde{m}$. Compared to the full GMRES method without preconditioning ($\tilde{m} = 479$ ) the Gauss-Seidel preconditioning performed best with just $\tilde{m} = 143$ Krylov vectors that are required to established convergence (according to the aforementioned convergence criterion). I obtained $\tilde{m} = 256$ required Krylov vectors for Jacobi preconditioning and $\tilde{m} = 465$ Krylov vectors for Incomplete LU Factorization (ILU(0)) to reach convergence.
+In \refFig{fig::Residuals}, the relative residuals are plotted against the iteration index of the top loop in the full GMRES algorithm. In this context, the iteration index corresponds to the Krylov vectors. The number of Krylov vectors needed to reduce the 2-norm of the initial residual by eight orders of magnitude ($||\mathbf{r}_k|| / ||\mathbf{r}_0|| = 10^{-8}$) is denoted as $\tilde{m}$ in the legend of the plot. All iterations were initiated with a parameter $m = 600$. If the convergence criterion was met before reaching the maximum prescribed number of Krylov vectors, the loop was prematurely terminated with $\tilde{m}$.\\ 
+%
+Comparing it to the full GMRES method without preconditioning ($\tilde{m} = 479$), the Gauss-Seidel preconditioning exhibited the best performance, requiring only $\tilde{m} = 143$ Krylov vectors to achieve convergence based on the aforementioned criterion. For Jacobi preconditioning, $\tilde{m} = 256$ Krylov vectors were necessary, while Incomplete LU Factorization (ILU(0)) required $\tilde{m} = 465$ Krylov vectors to attain convergence.
 %
 \begin{figure}[!htbp]
 	\centering
@@ -127,7 +129,11 @@ For the full GMRES method, the relative residuals are plotted against the iterat
 %
 
 \subsection{Optimization of restart parameter for restarted GMRES}
-In an effort to find a "good" restart parameter the parameters $m=30, m=50$ and $m=100$ are compared to the runtime of full GMRES in table \refTab{tab:TimingsO0} for no optimization and in table \refTab{tab:TimingsO2} for moderate optimization level.
+To identify an optimal restart parameter, I compared the values of $m=30$, $m=50$, and $m=100$ in terms of runtime. \refTab{tab:TimingsO0} displays the results for no optimization, while \refTab{tab:TimingsO2} presents the findings for a moderate optimization level.\\
+%
+Upon analyzing the restarted GMRES method, I observed that restart parameters of $m=50$ and $m=100$ exhibited a decrease in CPU time by 12.8\% and 16.1\%, respectively, when compared to the full GMRES \footnote{in the following context "full" GMRES refers to a restarted GMRES method where only one loop iteration of the restarted GMRES method is necessary to establish convergence according to the given convergence criterion.} approach. In contrast, a restart parameter of $m=30$ resulted in a 43\% increase in CPU time when compiler optimization was disabled.\\
+%
+When a moderate optimization level (-O2) was activated, the restart parameters of $m=50$ and $m=100$ exhibited a reduced CPU time as well, albeit to a lesser extent. The decrease was 7.7\% and 12.82\%, respectively, when compared to the full GMRES method.\\
 % 
 \renewcommand{\arraystretch}{2}
 \begin{table}[h!]
@@ -179,19 +185,23 @@ In an effort to find a "good" restart parameter the parameters $m=30, m=50$ and 
 \end{table}
 \renewcommand{\arraystretch}{1}
 %
-Restart parameters of $m=50$ and $m=100$ showed a decrease in CPU-Time of 12.8\% and 16.1\% for restarted GMRES compared to full GMRES \footnote{in the following context "full" GMRES refers to a restarted GMRES method were only one loop iteration of the restarted GMRES method is necessary to establish convergence according to the given convergence criterion.} respectively, where as a restart parameter of $m=30$ showed an increase of 43\%, if compiler optimization is disabled. Activating a moderate optimization level (-O2) restart parameters of $m=50$ and $m=100$ decreased the CPU-Time only by 7.7\% and 12.82\%, compared to full GMRES.\\
-Furthermore, I conducted an investigation to find the globally "best" restart parameter, which is presented in \refFig{fig::Timings}. 
+\\
+Furthermore, I conducted an investigation to find the "best" restart parameter, which is presented in \refFig{fig::Timings}. The restarted GMRES method was executed for restart parameters $m = 20...478$, where at least two iterations in the restarted GMRES method were required to reach convergence. The CPU time of the loop inside the restarted GMRES method was measured.
+The globally best restart parameter was identified to be $m=63$. With this restart parameter, convergence was achieved in 25 iterations within a runtime of 3.73 seconds, marking a significant decrease of 27.6\% compared to the full GMRES method. The red line in \refFig{fig::Timings} denotes the CPU time of the full GMRES method ($m=479$).\\
+%
+For all restart parameters $m$ where the blue line falls below the CPU time of the full GMRES method (indicated by the red line), the restarted GMRES formulation proves to be faster than the full GMRES method. The steps in the course of CPU time can be attributed to the reduction of the required loop iterations. For example $m=325$ necessitates 3 iterations to converge opposed to $m=326$, which only needs 2 iterations to converge. Due to an increased number of Krylov vectors $m$, the runtime of the top loop in the GMRES method increases as well. Besides a decreased runtime, the restarted formulation also allows for a decrease in required memory, as the stored Hessenberg matrix $\mathbf{H}$ and also the matrix $\mathbf{V}$ that contains the Krylov vectors are smaller in the restarted formulation compared to the full GMRES method. This becomes especially beneficial when dealing with large input matrices $\mathbf{A}$, as it prevents the need for an unfeasible amount of memory.\\
 %
 \begin{figure}[!htbp]
 	\centering
 	\hspace*{0.8cm}
 	\leavevmode
-	\resizebox{0.9\width}{!}{\input{pgf/Timings.pgf}}
-	\caption{CPU-timings of restarted GMRES for different restart parameters $m = {20...478} $ with global minimum at $m = 63$ with $3.73 s$, using clang compiler with no optimization (-O0 flag) + disabled Output (-DDISABLEIO) and without preconditioning}
+	\resizebox{1.0\width}{!}{\input{pgf/Timings.pgf}}
+	\caption{CPU-timings of restarted GMRES for different restart parameters $m = {20...478} $ with global minimum at $m = 63$ with $3.73 s$, using Clang compiler with no optimization (-O0 flag) + disabled Output (-DDISABLEIO) and without preconditioning}
 	\label{fig::Timings}
 \end{figure}
 %
-The globally best restart parameter was found to be $m=63$, requiring 25 iterations to converge in 3.73 seconds, which is a decrease by 27.6\% opposed to the full GMRES method. The red line in \refFig{fig::Timings} denotes the CPU-time of the full GMRES method ($m=479$). For all restart parameter m for which the blue line is below the CPU time for full GMRES (indicated by the red line), the restarted formulation of the GMRES method is faster than full GMRES. The steps in the course of CPU time can be attributed to the reduction of the required loop iterations. For example $m=325$ require 3 iterations to converges opposed to $m=326$ which only needs 2 iterations to converge. Due to an increased number of Krylov vectors $m$, the runtime of the top loop in the GMRES method increases as well. Besides a decreased runtime, the restarted formulation also allows for a decrease in required memory, as the stored Hessenberg matrix and also the matrix V that contains the Krylov vectors are smaller in the restarted formulation compared to the full GMRES method. If the input matrix $\mathbf{A}$ is very large, might require an unfeasible amount of memory.\\
+\subsection{Orthogonality of Krylov vectors}
+The orthogonality property of the Krylov vectors is represented by \refFig{fig::DotP} for the full GMRES method. As the number of Krylov vectors increases, the dot product values deviate further from zero. This implies that the angle between the k-th Krylov vector $\mathbf{v}_k$ and the first Krylov vector $\mathbf{v}_1 = \mathbf{r}_0 / ||\mathbf{r}_0||_2$ deviates more from orthogonality. This deviation is primarily caused by numerical errors that accumulate with each iteration (Krylov vector) in the \textit{getKrylov} function, responsible for determining a new Krylov vector at each step of the top loop in the full GMRES method.
 %
 \begin{figure}[!htbp]
 	\centering
@@ -202,22 +212,22 @@ The globally best restart parameter was found to be $m=63$, requiring 25 iterati
 	\label{fig::DotP}
 \end{figure}
 %
-\subsection{Orthogonality of Krylov vectors}
-The orthogonality property of the Krylov vectors is represented by \refFig{fig::DotP} for the full GMRES method. With an increasing number of Krylov vectors, the value of the dot products deviates more from zero, which means that the angle between the k-th Krylov vector $\mathbf{v}_k$ and the first Krylov vector $\mathbf{v}_1 = \mathbf{r}_0 / ||\mathbf{r}_0||_2$, deviates more from orthogonality. This is due to numerical error, that accumulates for increasing number of loop iterations (Krylov vectors) in the getKrylov function, that determines a new Krylov vector in each iteration step of the top loop in the full GMRES method.
-
 \newpage
 \section{Conjugate Gradient Method - CG}
 \label{chapter:CG}
 
-For the given matrix the implemented CG method converges after $k = 21580$ iterations according to the same convergence criterion that was used for the GMRES method.
-The error $\mathbf{e}_k = \mathbf{x}_k - \mathbf{x}$ in A-norm $||\mathbf{e}_A|| = \sqrt{(\mathbf{Ae}, \mathbf{e})}$ as well as the residual $\mathbf{r} = \mathbf{Ax} - \mathbf{b}$ in 2-norm $||\mathbf{r}||_2 = \sqrt{(\mathbf{r}, \mathbf{r})}$ are plotted against the iteration index on a semi-og scale in \refFig{fig::CGNorms}. The known exact solution is denoted by $\mathbf{x}$. The graph of the error in A-norm of conjugate gradient method  shows a smooth course were as the course of the residual is subject to strong fluctuations. To explain this behavior one should remind himself, that the CG method minimizes the error $\mathbf{e}$ along all search direction $\mathbf{p}_k$. In the lecture the "Optimality" was characterized as $(\mathbf{Ae}_k, \mathbf{p}_k)_A = 0, j = 0,...,m-1$. The conjugate gradient method is formulated such that the error is always A-orthogonal to all previous search direction $\mathcal{P}_{m+1}$, meaning that the error in A norm is minimized in $\mathcal{P}_{m+1}$ according to best approximation theorem. For continuous iterations the error should thus be constantly minimized, approaching a global minimum. Where as the 2-Norm of the residual is not projected in search direction, which results in fluctuations. But the general trend of the residual is aimed to follow the one of the error in A-norm.
-
+For the given matrix the implemented CG method converges after $k = 21580$ iterations, according to the same convergence criterion that was used for the GMRES method.\\
+%
+The error $\mathbf{e}_k = \mathbf{x}_k - \mathbf{x}$ in A-norm $||\mathbf{e}_A|| = \sqrt{(\mathbf{Ae}, \mathbf{e})}$ as well as the residual $\mathbf{r} = \mathbf{Ax} - \mathbf{b}$ in 2-norm $||\mathbf{r}||_2 = \sqrt{(\mathbf{r}, \mathbf{r})}$ are plotted against the iteration index on a semi-log scale in \refFig{fig::CGNorms}. The known exact solution is denoted by $\mathbf{x}$.\\
+%
+In the graph, the error in A-norm of the conjugate gradient method exhibits a smooth progression, while the residual experiences significant fluctuations. This behavior can be explained by considering that the CG method minimizes the error $\mathbf{e}$ along all search directions $\mathbf{p}_k$. In the lecture the "Optimality" was characterized as $(\mathbf{Ae}_k, \mathbf{p}_k)_A = 0, j = 0,...,m-1$. The conjugate gradient method is formulated such that the error is always A-orthogonal to all previous search directions $\mathcal{P}_{m+1}$. Consequently, the error in A-norm is minimized in $\mathcal{P}_{m+1}$ according to the best approximation theorem. For continuous iterations the error should thus be constantly minimized, approaching a global minimum. Where as the 2-Norm of the residual is not taking the search directions into consideration, which results in fluctuations. Nonetheless, the overall trend of the residual aims to follow that of the error in A-norm.
+%
 \begin{figure}[!htbp]
 	\centering
 	\hspace*{0.8cm}
 	\leavevmode
 	\resizebox{0.9\width}{!}{\input{pgf/CG_Norms.pgf}}
-	\caption{Error $\mathbf{e}_k = \mathbf{x}_k - \mathbf{x} $ in A-Norm $||\mathbf{e}||_A = \sqrt{(\mathbf{Ae}, \mathbf{e})}$ and the residual in 2-Norm $||\mathbf{r}||_2 = \sqrt{(\mathbf{r}, \mathbf{r})}$ against the iteration index $k$ for CG-method}
+	\caption{Error $\mathbf{e}_k = \mathbf{x}_k - \mathbf{x} $ in A-norm $||\mathbf{e}||_A = \sqrt{(\mathbf{Ae}, \mathbf{e})}$ and the residual in 2-norm $||\mathbf{r}||_2 = \sqrt{(\mathbf{r}, \mathbf{r})}$ against the iteration index $k$ for CG-method}
 	\label{fig::CGNorms}
 \end{figure}
 
