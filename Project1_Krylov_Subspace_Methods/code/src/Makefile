@@ -2,7 +2,7 @@ INCLUDE_DIR = ../inc
 BOOST_PATH = /opt/homebrew/Cellar/boost/1.81.0_1/include/
 FLIST = $(basename $(wildcard *.cpp))
 OBJS = $(addsuffix .o, $(FLIST))
-COMPILER_FLAGS = -g -O0 -Wall -Wextra -pedantic -std=c++17 -DDISABLEIO
+COMPILER_FLAGS = -O0 -Wall -Wextra -pedantic -std=c++17 #-DDISABLEIO
 COMPILER = g++
 
 # for every objectfile execute recipe
@@ -17,10 +17,3 @@ clean :
 	rm -f *.o
 
 .PHONY: all clean
-# DO NOT DELETE
-
-#matrix.o: ../inc/matrix.hpp
-#gram_schmidt.o: ../inc/gram_schmidt.hpp
-#gmres.o: ../inc/gmres.hpp ../inc/matrix.hpp ../inc/gram_schmidt.hpp
-#cg.o: ../inc/cg.hpp ../inc/matrix.hpp
-#preconditioner.o: ../inc/matrix.hpp ../inc/preconditioner.hpp

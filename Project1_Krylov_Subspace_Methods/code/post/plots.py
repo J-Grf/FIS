@@ -10,6 +10,7 @@ pgfdir = '../../report/pgf/'
 files = ['DotPKrylov.txt', 'relResiduals_NONE.txt', 'relResiduals_JACOBI.txt', 'relResiduals_GAUSSSEIDEL.txt', 'relResiduals_ILU.txt', 'eANorm.txt', 'rNorm.txt']
 data = {}
 print('hello')
+fs = 15
 
 for f in files:
     data[f] = []
@@ -30,13 +31,12 @@ for R in ['relResiduals_NONE.txt', 'relResiduals_JACOBI.txt', 'relResiduals_GAUS
     print("len " + str(len(data[R])))
     idx = [i for i in range(len(data[R]))]
     l = R.split('_')[1].split('.txt')[0]
-    l += ", " + r"$\tilde{m} = $ " + str(len(data[R]))
+    l += ", " + r"$\tilde{m} = $ " + str(len(data[R]) - 1)
     print(l)
     ax.semilogy(idx, data[R], label = l)
-    ax.set_xlabel(r'$k$')
-    ax.set_ylabel(r'$\frac{||\mathbf{r}_k||_2}{||\mathbf{r}_0||_2}$', rotation = 0, labelpad = 18)
-    fs = 12
-    leg = ax.legend(loc='upper right', framealpha=1.0, fontsize=fs)
+    ax.set_xlabel(r'$k$', fontsize=fs)
+    ax.set_ylabel(r'$\frac{||\mathbf{r}_k||_2}{||\mathbf{r}_0||_2}$', rotation = 0, labelpad = 28, fontsize=fs)
+    leg = ax.legend(loc='upper right', framealpha=1.0, fontsize=12)
     leg.get_frame().set_edgecolor('k')
 
 ax.set_xlim(xmin=0, xmax=500)
@@ -51,8 +51,8 @@ fig = plt.figure('DotP')
 fig.clear()
 ax = fig.gca()
 ax.semilogy([i for i in range(len(data[file][1:]))], data[file][1:])
-ax.set_xlabel(r'$k$')
-ax.set_ylabel(r'$(\mathbf{v}_1, \mathbf{v}_k)$', rotation = 0, labelpad = 18)
+ax.set_xlabel(r'$k$', fontsize=fs)
+ax.set_ylabel(r'$(\mathbf{v}_1, \mathbf{v}_k)$', rotation = 0, labelpad = 28, fontsize=fs)
 ax.grid()
 ax.set_xlim(xmin=0, xmax=500)
 plt.savefig(plotdir + "DotPKrylovVectors.pdf", dpi = 100)
@@ -71,9 +71,8 @@ for R in ['rNorm.txt', 'eANorm.txt']:
         l = r'$||\mathbf{r}||_2$'
 
     ax.semilogy(idx, data[R], label = l)
-    ax.set_xlabel(r'$k$')
-    ax.set_ylabel(r'$||\mathbf{e}||_A, ||\mathbf{r}||_2$', rotation = 0, labelpad = 18)
-    fs = 12
+    ax.set_xlabel(r'$k$',fontsize=fs)
+    ax.set_ylabel(r'$||\mathbf{e}||_A, ||\mathbf{r}||_2$', rotation = 0, labelpad = 28, fontsize=fs)
     leg = ax.legend(loc='upper right', framealpha=1.0, fontsize=fs)
     leg.get_frame().set_edgecolor('k')
 
@@ -87,7 +86,7 @@ file = 'timings.txt'
 fig = plt.figure('Timings')
 fig.clear()
 ax = fig.gca()
-with open("/Users/johannes/Desktop/FIS/projects/Project1_Krylov_Subspace_Methods/code/main/" + file) as f:
+with open("/Users/johannes/Desktop/FIS/projects/Project1_Krylov_Subspace_Methods/timings/" + file) as f:
     data = f.readline()
     timingsStr = re.findall(r"(\d+\.\d+)",data)
 
@@ -96,11 +95,13 @@ for i in range(len(timingsStr)):
     timings.append(float(timingsStr[i]))
 
 ax.plot([i for i in range(20, len(timingsStr) + 20)], timings)
-ax.set_xlabel(r'$m$')
-ax.set_ylabel(r'CPU-time [s]', rotation = 0, labelpad = 35)
+ax.set_xlabel(r'$m$', fontsize=fs)
+ax.set_ylabel(r'CPU-time [s]', rotation = 0, labelpad = 45, fontsize=fs)
 ax.grid()
 ax.set_xlim(xmin=0, xmax=480)
 ax.set_xticks([0,20,100,200,300,400])
+ax.set_yticks([4, 5.15, 6, 8, 10, 12, 14])
 plt.axvline(20, color="k", linestyle="--", linewidth=0.5)
+plt.axhline(5.15, color="r", linestyle="-", linewidth=0.5)
 plt.savefig(plotdir + "Timings.pdf", dpi = 100)
 pgf.savePgf(pgfdir + "Timings.pgf", factor = 0.8)
