@@ -1,5 +1,4 @@
-#include <cassert>
-#include <cmath>
+
 #include "preconditioner.hpp"
 #include "matrix.hpp"
 

@@ -2,8 +2,6 @@
 #define _GM_INCLUDE_
 
 #include <utility>
-#include <cmath>
-#include <cassert>
 
 #include "matrix.hpp"
 #include "preconditioner.hpp"

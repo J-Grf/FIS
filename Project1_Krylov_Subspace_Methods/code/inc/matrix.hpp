@@ -5,6 +5,8 @@
 #include <fstream>
 #include <vector>
 #include <string>
+#include <cassert>
+#include <cmath>
 
 template<typename T>
 const T eps = std::numeric_limits<T>::epsilon();
