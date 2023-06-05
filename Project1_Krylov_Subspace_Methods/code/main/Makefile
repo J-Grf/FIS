@@ -14,6 +14,7 @@ all : $(EXE)
 #for clean up
 clean :
 	rm -f *.exe
+	rm -f *.txt
 
 .PHONY: all clean
 
