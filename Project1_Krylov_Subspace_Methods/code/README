@@ -1,0 +1,1 @@
+- path for boost includes and libs should be adjusted in Makefiles if necessary
