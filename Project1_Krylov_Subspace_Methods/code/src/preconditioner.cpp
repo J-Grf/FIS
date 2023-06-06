@@ -5,7 +5,7 @@ ILUout::ILUout(const size_t _nz, const size_t _n) : nz(_nz), n(_n), PV(std::vect
 PJM(std::vector<int>(_nz)), JD(std::vector<int>(_n)) {}
 
 // Ilu(0) algorithm as given but with shifted index
-ILUout Ilu(const Matrix& A) {
+std::unique_ptr<ILUout> Ilu(const Matrix& A) {
     const size_t n = A.getDim();
     const size_t nz = A.getArrSize();
 
@@ -40,21 +40,21 @@ ILUout Ilu(const Matrix& A) {
         }
 
         JR[i - 1] = 0;
-        for(j = A.a_JM(i - 1); j < A.a_JM(i) - 1; j++) {
+        for(j = A.a_JM(i - 1); j <= A.a_JM(i) - 1; j++) {
             JR[A.a_JM(j - 1) - 1] = 0;
         }
     }
 
-    return P;
+    return std::make_unique<ILUout>(P);
 }
 
 /*
-    Apply preconditioning:
+    Apply left-preconditioning:
         - Jacobi: M = D
         - Gauss Seidel: M = L_A (lower triangle of  A)
         - ILU incomplete LU factorization
 */
-void applyPreConditioner(const Matrix& A, std::vector<double>& x, const PreConditioner PreCon) {
+void applyPreConditioner(const Matrix& A, std::vector<double>& x, const PreConditioner PreCon, std::unique_ptr<ILUout>& ILUobj) {
     switch(PreCon) {
         case JACOBI: {
             for(size_t i = 0; i < A.getDim(); i++) {
@@ -68,26 +68,29 @@ void applyPreConditioner(const Matrix& A, std::vector<double>& x, const PreCondi
             break;
         }
         case ILU: {
-            ILUout M = Ilu(A);
+            if(!ILUobj) {
+                ILUobj = Ilu(A);
+                std::ofstream out;
+                out.open("P.txt");
+                out << A.getDim() << " " << ILUobj->PJM.size() << std::endl;
+                for(size_t i = 0; i < ILUobj->PJM.size(); i++) {
+                    out << ILUobj->PJM[i] << " " << ILUobj->PV[i] << std::endl;
+                }
+                out << std::endl;
+                for(size_t i = 0; i < ILUobj->JD.size(); i++) {
+                    out << ILUobj->JD[i] << std::endl;
+                }
+                out.close();
+            }
+            //get properties of matrix A
             Matrix M_dummy = A;
-            M_dummy.getJMVec() = M.PJM;
-            M_dummy.getVMVec() = M.PV;
+            M_dummy.getJMVec() = ILUobj->PJM;
+            M_dummy.getVMVec() = ILUobj->PV;
             
-            std::ofstream out;
-            out.open("P.txt");
-            out << M_dummy.getDim() << " " << M.PJM.size() << std::endl;
-            for(size_t i = 0; i < M.PJM.size(); i++) {
-                out << M.PJM[i] << " " << M.PV[i] << std::endl;
-            }
-            out << std::endl;
-            for(size_t i = 0; i < M.JD.size(); i++) {
-                out << M.JD[i] << std::endl;
-            }
-            out.close();
-
             std::vector<double> btmp = x;
             std::vector<double> y = forwardSubMSR(M_dummy, btmp, M_dummy.getDim());
             x = backwardSubMSR(M_dummy, y, M_dummy.getDim());
+            std::cout << "x[" << 644 << "]: " << x[644] << std::endl; 
             break;
         }
         default: {

@@ -50,11 +50,12 @@ const PreConditioner PreCon = NONE) {
 
     std::vector<double> r0 = b - vectorProduct(A, x0);
     matrixType<double> V(1);
+    std::unique_ptr<ILUout> ILUobj;
 
-#ifndef DISABLEIO   
+#ifndef DISABLEIO
     if(PreCon != NONE) {
         // left-preconditioning: in this case, r0 will be rbar -> v1
-        applyPreConditioner(A, r0, PreCon);
+        applyPreConditioner(A, r0, PreCon, ILUobj);
     }
 #endif
 
@@ -87,7 +88,7 @@ const PreConditioner PreCon = NONE) {
 #ifndef DISABLEIO
         std::cout << "-------GMRES sub-iteration " << j << " --------" <<  std::endl;
 #endif
-        hj = getKrylov(A, V, H, j, PreCon);
+        hj = getKrylov(A, V, H, j, PreCon, ILUobj);
     
         /* for(size_t i = 0; i < hj.size(); i++) {
             std::cout << "hj[" << i << "]: " << hj[i] << std::endl;

@@ -2,7 +2,7 @@ INCLUDE_DIR = ../inc
 BOOST_PATH = /opt/homebrew/Cellar/boost/1.81.0_1/include/
 FLIST = $(basename $(wildcard *.cpp))
 OBJS = $(addsuffix .o, $(FLIST))
-COMPILER_FLAGS = -O0 -Wall -Wextra -pedantic -std=c++17 #-DDISABLEIO
+COMPILER_FLAGS =-g -O0 -Wall -Wextra -pedantic -std=c++17 #-DDISABLEIO
 COMPILER = g++
 
 # for every objectfile execute recipe

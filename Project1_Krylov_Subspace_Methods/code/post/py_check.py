@@ -1,6 +1,10 @@
+#!/usr/local/bin/python3.9
 import numpy as np
-from scipy.sparse import linalg 
+import scipy.sparse.linalg as linalg
 import scipy as sp
+from scipy.sparse import csc_matrix
+import re
+import matplotlib.pyplot as plt
 
 m = 3
 it = m + 1
@@ -162,3 +166,55 @@ print("-------------LU-factorization-----------------")
 P, L, U = sp.linalg.lu(A)
 print(L)
 print(U)
+
+# read msr matrix
+path = "../../material/gmres_test_msr.txt"
+JM = 0
+VM = 0
+i = 0
+arraysize = 0
+dim = 0
+
+with open(path) as f:
+    data = f.readlines()
+    S = re.findall(r"([-+]?(?:[0-9]*[.])?[0-9]+(?:[eE][-+]?\d+)?)", data[1])
+    dim = int(S[0])
+    arraysize = int(S[1])
+    JM = np.zeros(arraysize)
+    VM = np.zeros(arraysize)
+    for line in data[2:]:
+        Snumbers = re.findall(r"([-+]?(?:[0-9]*[.])?[0-9]+(?:[eE][-+]?\d+)?)", line)
+        JM[i] = int(Snumbers[0])
+        VM[i] = float(Snumbers[1])
+        i+=1
+
+print(JM)
+print(VM)
+
+Matrix = np.empty(shape = (dim, dim))
+for i,v in enumerate(VM[:dim]):
+    Matrix[i][i] = v
+print(Matrix)
+
+tmplen = 0
+for i in range(dim):
+    i1 = int(JM[i])
+    i2 = int(JM[i+1])
+    tmplen = i2 - i1
+    for j in range(int(tmplen)):
+        Matrix[i][int(JM[i1-1]-1)] = VM[i1-1]
+        i1 += 1
+
+print(Matrix)
+print(np.linalg.inv(Matrix))
+MatrixCSC = csc_matrix(Matrix, dtype = float)
+plt.spy(MatrixCSC)
+plt.show()
+ILU = linalg.spilu(MatrixCSC)
+print(ILU.L.A)
+plt.spy(ILU.L.A)
+plt.show()
+print(ILU.U.A)
+plt.spy(ILU.U.A)
+plt.show()
+    

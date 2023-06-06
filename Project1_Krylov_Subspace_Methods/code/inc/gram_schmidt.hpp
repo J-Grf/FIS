@@ -11,7 +11,8 @@ using matrixType = std::vector<std::vector<T>>;
 
 std::pair<matrixType<double>, matrixType<double>> gramSchmidt(const Matrix& A, const std::vector<double>& r0, const size_t m);
 
-std::vector<double> getKrylov(const Matrix& A, matrixType<double>& V, matrixType<double>& H, const size_t j, const PreConditioner PreCon);
+std::vector<double> getKrylov(const Matrix& A, matrixType<double>& V, matrixType<double>& H, const size_t j, 
+const PreConditioner PreCon, std::unique_ptr<ILUout>& ILUobj);
 
 void printKrylov(const matrixType<double>& v);
 

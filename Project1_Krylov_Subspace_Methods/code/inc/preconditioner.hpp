@@ -4,6 +4,7 @@
 #include "matrix.hpp"
 #include <iostream>
 #include <map>
+#include <memory>
 
 enum PreConditioner {
     NONE,
@@ -37,7 +38,8 @@ struct ILUout {
     ILUout(const size_t _nz, const size_t _n);
 };
 
-ILUout Ilu(const Matrix& A);
-void applyPreConditioner(const Matrix& A, std::vector<double>& x, const PreConditioner PreCon);
+std::unique_ptr<ILUout> Ilu(const Matrix& A);
+void applyPreConditioner(const Matrix& A, std::vector<double>& x, 
+const PreConditioner PreCon, std::unique_ptr<ILUout>& ILUobj);
 
 #endif

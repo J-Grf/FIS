@@ -41,7 +41,8 @@ std::pair<matrixType<double>, matrixType<double>> gramSchmidt(const Matrix& A, c
     return make_pair(v,H);
 }
 
-std::vector<double> getKrylov(const Matrix& A, matrixType<double>& V, matrixType<double>& H, const size_t j, const PreConditioner PreCon) {
+std::vector<double> getKrylov(const Matrix& A, matrixType<double>& V, matrixType<double>& H, const size_t j, 
+const PreConditioner PreCon, std::unique_ptr<ILUout>& ILUobj) {
     assert(A.getDim() == V[j].size());
 
     std::vector<double> w;
@@ -51,7 +52,7 @@ std::vector<double> getKrylov(const Matrix& A, matrixType<double>& V, matrixType
 #ifndef DISABLEIO
     if(PreCon != NONE) {
         // w will be modified wbar
-        applyPreConditioner(A, w, PreCon);
+        applyPreConditioner(A, w, PreCon, ILUobj);
     }
 #endif
 
