@@ -155,7 +155,7 @@ When a moderate optimization level (-O2) was activated, the restart parameters o
 			\hline
 			\hline
 		\end{tabular}
-		\caption{\label{tab:TimingsO0}  Comparison of timings for different restart parameters using clang compiler with no optimization (-O0 flag) + disabled Output (-DDISABLEIO) and without preconditioning}
+		\caption{\label{tab:TimingsO0}  Comparison of timings for different restart parameters using clang compiler without optimization (-O0 flag) + disabled Output (-DDISABLEIO) and without preconditioning}
 	\end{center}
 \end{table}
 \renewcommand{\arraystretch}{1}
@@ -196,7 +196,7 @@ For all restart parameters $m$ where the blue line falls below the CPU time of t
 	\hspace*{0.8cm}
 	\leavevmode
 	\resizebox{1.0\width}{!}{\input{pgf/Timings.pgf}}
-	\caption{CPU-timings of restarted GMRES for different restart parameters $m = {20...478} $ with global minimum at $m = 63$ with $3.73 s$, using Clang compiler with no optimization (-O0 flag) + disabled Output (-DDISABLEIO) and without preconditioning}
+	\caption{CPU-timings of restarted GMRES for different restart parameters $m = {20...478} $ with global minimum at $m = 63$ with $3.73 s$, using Clang compiler without optimization (-O0 flag) + disabled Output (-DDISABLEIO) and without preconditioning}
 	\label{fig::Timings}
 \end{figure}
 %
