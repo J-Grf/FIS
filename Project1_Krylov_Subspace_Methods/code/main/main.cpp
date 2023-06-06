@@ -13,7 +13,7 @@ int main (int argc, char *argv[]) {
         
     if( std::string(argv[1]) == "GMRES" ) {
         if(argc != 5) {
-            std::cerr << "Provide 2 more arguments when using GMRES: <path> <restartParameter> <preconditioner> " << std::endl;
+            std::cerr << "Provide 3 more arguments when using GMRES: <path> <restartParameter> <preconditioner> " << std::endl;
             return -1;
         }
 

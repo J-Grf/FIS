@@ -1,1 +1,3 @@
-- path for boost includes and libs should be adjusted in Makefiles if necessary
+- path for boost includes and libs might be adjusted in Makefiles if necessary
+
+to execute: ./main.exe <GMRES/CG> <path to matrix> <MaxIterations> <for GMRES: preconditioner (JACOBI, GAUSSSEIDEL, ILU, NONE)>
