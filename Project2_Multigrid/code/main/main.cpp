@@ -24,7 +24,7 @@ int main (int argc, char *argv[]) {
 
             m_type u0(N, std::vector<double>(N, 0.0));
             m_type f(N, std::vector<double>(N, 0.0)), u_ex(N, std::vector<double>(N, 0.0));
-            const std::vector<std::pair<double, double>> grid = getGrid(N);
+            const std::vector<std::pair<double, double>> grid = getGrid(N, true);
             
             //Loop over inner points
             double tmp;
