@@ -4,6 +4,7 @@
 
 #include "grid.hpp"
 #include "gaussseidel.hpp"
+#include "multigrid.hpp"
 
 int main (int argc, char *argv[]) {
     
@@ -33,32 +34,32 @@ int main (int argc, char *argv[]) {
                 return -1; 
             }
 
-            size_t nu = static_cast<size_t>(std::stoi(argv[4]));
-            
+            size_t nu = static_cast<size_t>(std::stoi(argv[4]));  
             m_type u0(N, std::vector<double>(N, 0.0));
             m_type f(N, std::vector<double>(N, 0.0)), u_ex(N, std::vector<double>(N, 0.0));
             const std::vector<std::pair<double, double>> grid = getGrid(N, true);
-            
-            //Loop over inner points
-            double tmp;
-            double initError = -1;
-            for( size_t i = 1; i < N - 1; i++) {
-                for(size_t j = 1; j < N - 1; j++) {
-                    tmp = sin(2 * M_PI * grid[i * N + j].first) * sin(2 * M_PI * grid[i * N + j].second);
-                    f[i][j] = 8 * pow(M_PI, 2) * tmp;
-                    u_ex[i][j] = tmp;
-                    if(abs(u_ex[i][j]) > initError)
-                        initError = abs(u_ex[i][j]);
+
+            if(!strcmp(argv[1], "sg")) {
+                //Loop over inner points
+                double tmp;
+                double initError = -1;
+                for( size_t i = 1; i < N - 1; i++) {
+                    for(size_t j = 1; j < N - 1; j++) {
+                        tmp = sin(2 * M_PI * grid[i * N + j].first) * sin(2 * M_PI * grid[i * N + j].second);
+                        f[i][j] = 8 * pow(M_PI, 2) * tmp;
+                        u_ex[i][j] = tmp;
+                        if(abs(u_ex[i][j]) > initError)
+                            initError = abs(u_ex[i][j]);
+                    }
                 }
-            }
 
 
-            std::cout << "initial error: " << initError << std::endl;
-            m_type u = GaussSeidel(u0, u_ex, f, nu);
+                std::cout << "initial error: " << initError << std::endl;
+                m_type u = GaussSeidel(u0, u_ex, f, nu);
 
-            if(argv[1] == "sg") {
+            } else if (!strcmp(argv[2], "mg")) {
+                
 
-            } else if (argv[2] == "mg") {
 
             } 
             break;

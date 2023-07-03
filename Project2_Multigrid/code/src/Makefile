@@ -1,7 +1,7 @@
 INCLUDE_DIR = ../inc
 FLIST = $(basename $(wildcard *.cpp))
 OBJS = $(addsuffix .o, $(FLIST))
-COMPILER_FLAGS =-g -O0 -Wall -Wextra -pedantic -std=c++17 #-DDISABLEIO
+COMPILER_FLAGS =-g -O0 -Wall -Wextra -pedantic -std=c++20 #-DDISABLEIO
 COMPILER = g++
 
 # for every objectfile execute recipe
