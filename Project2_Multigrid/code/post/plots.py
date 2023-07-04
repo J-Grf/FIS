@@ -73,7 +73,9 @@ if(int(sys.argv[1]) == 2):
 
     #Check Restriction
     size = len(data['grid_coarse.txt'])
-    size_f = 2 * size
+    size_f = 2 * size - 1
+
+    print("Restriction: size: " + str(size) + " size_f: " + str(size_f))
     U_ex = np.zeros(shape = (size_f, size_f))
     U_res = np.zeros(shape = (size, size))
     Error = np.zeros(shape = (size, size))
@@ -107,7 +109,8 @@ if(int(sys.argv[1]) == 2):
 
     #Check Prolongation
     size = len(data['grid.txt'])
-    size_f = 2 * size
+    size_f = 2 * size - 1
+    print("Prolongation: size: " + str(size) + " size_f: " + str(size_f))
     U_ex = np.zeros(shape = (size_f, size_f))
     U_res = np.zeros(shape = (size_f, size_f))
     Error = np.zeros(shape = (size_f, size_f))

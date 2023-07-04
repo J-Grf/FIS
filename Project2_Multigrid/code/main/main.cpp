@@ -72,11 +72,11 @@ int main (int argc, char *argv[]) {
                 m_type u_coarse = mg.Restriction(u_ex, N_c);
                 
                 double maxError = -1;
-                for( size_t i = 1; i < N_c - 1; i++) {
-                    for(size_t j = 1; j < N_c - 1; j++) {
+                for( size_t i = 1; i < N_c; i++) {
+                    for(size_t j = 1; j < N_c; j++) {
                         double tmp = abs(u_coarse[i][j] - u_ex[2*i][2*j]);
                         if(tmp > maxError) {
-                            std::cout << "at: " << i << " " << j << "tmp: " << tmp << std::endl;
+                            //std::cout << "at: " << i << " " << j << "tmp: " << tmp << std::endl;
                             maxError = tmp;
                         }
                     }
@@ -90,8 +90,8 @@ int main (int argc, char *argv[]) {
                 printExactSolution(u_ex_f, "u_ex_fine.txt");
                 m_type u_fine = mg.Prolongation(u_ex, N);
                 maxError = -1;
-                for( size_t i = 1; i < N_f - 1; i++) {
-                    for(size_t j = 1; j < N_f - 1; j++) {
+                for( size_t i = 1; i < N_f; i++) {
+                    for(size_t j = 1; j < N_f; j++) {
                         double tmp = abs(u_fine[i][j] - u_ex_f[i][j]);
                         if(tmp > maxError)
                             maxError = tmp;

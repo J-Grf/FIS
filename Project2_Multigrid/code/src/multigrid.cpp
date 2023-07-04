@@ -4,11 +4,11 @@ size_t MG::gamma = 0;
 size_t MG::nu1 = 0;
 size_t MG::nu2 = 0;
 
-MG::MG(const size_t _N, const size_t _l) : N{_N}, l{_l}, f{m_type(N, std::vector<double>(N, 0.0))}, grid{getGrid(_N)} {
+MG::MG(const size_t _N, const size_t _l) : N{_N}, l{_l}, f{m_type(N + 1, std::vector<double>(N + 1, 0.0))}, grid{getGrid(_N)} {
     std::cout << "N: " << N << " l: " << l << std::endl;
-    for( size_t i = 1; i < N - 1; i++) {
-        for(size_t j = 1; j < N - 1; j++) {
-            f[i][j] = 8 * pow(M_PI, 2) * sin(2 * M_PI * grid[i * N + j].first) * sin(2 * M_PI * grid[i * N + j].second);
+    for( size_t i = 1; i < N; i++) {
+        for(size_t j = 1; j < N; j++) {
+            f[i][j] = 8 * pow(M_PI, 2) * sin(2 * M_PI * grid[i * (N+1) + j].first) * sin(2 * M_PI * grid[i * (N+1) + j].second);
         }
     }
 }
@@ -17,12 +17,13 @@ MG::MG(const size_t _N, const size_t _l) : N{_N}, l{_l}, f{m_type(N, std::vector
 m_type MG::Restriction(const m_type& u, const size_t N_c) {
     std::ofstream out;
     out.open("Restriction.txt");
+    const size_t vecSize = N_c + 1;
 
-    m_type f_coarse(N_c, std::vector<double>(N_c, 0.0));
+    m_type f_coarse(vecSize, std::vector<double>(vecSize, 0.0));
     size_t ii{0}, jj{0};
-    for(size_t i = 1; i < N_c - 1; i++) {
+    for(size_t i = 1; i < N_c; i++) {
         ii = 2*i;
-        for(size_t j = 1; j < N_c - 1; j++) {
+        for(size_t j = 1; j < N_c; j++) {
             jj = 2*j;
             f_coarse[i][j] = N1D16 * (u[ii-1][jj-1] + 2.0 * u[ii][jj-1] + u[ii+1][jj-1] +
                                   2.0 * u[ii-1][jj] + 4.0 * u[ii][jj] + 2.0 * u[ii+1][jj] +
@@ -30,8 +31,8 @@ m_type MG::Restriction(const m_type& u, const size_t N_c) {
         }
     }
     
-    for(size_t i = 0; i < N_c; i++) {
-        for(size_t j = 0; j < N_c; j++) {
+    for(size_t i = 0; i <= N_c; i++) {
+        for(size_t j = 0; j <= N_c; j++) {
             out << f_coarse[i][j] << std::endl;
         }
     }
@@ -44,11 +45,12 @@ m_type MG::Prolongation(const m_type& u, const size_t N_c) {
     out.open("Prolongation.txt");
 
     const size_t N = 2 * N_c;
-    m_type f_fine(N, std::vector<double>(N, 0.0));
+    const size_t vecSize = N + 1;
+    m_type f_fine(vecSize, std::vector<double>(vecSize, 0.0));
     size_t ii{0}, jj{0};
-    for(size_t i = 1; i < N_c - 1; i++) {
+    for(size_t i = 1; i < N_c; i++) {
         ii = 2*i;
-        for(size_t j = 1; j < N_c - 1; j++) {
+        for(size_t j = 1; j < N_c; j++) {
             jj = 2*j;
             f_fine[ii-1][jj-1] += N1D4 * u[i][j];
             f_fine[ii][jj-1] += N1D2 * u[i][j];
@@ -64,8 +66,8 @@ m_type MG::Prolongation(const m_type& u, const size_t N_c) {
         }
     }
     
-    for(size_t i = 0; i < N; i++) {
-        for(size_t j = 0; j < N; j++) {
+    for(size_t i = 0; i <= N; i++) {
+        for(size_t j = 0; j <= N; j++) {
             out << f_fine[i][j] << std::endl;
         }
     }
@@ -73,12 +75,13 @@ m_type MG::Prolongation(const m_type& u, const size_t N_c) {
 
     return f_fine;
 }
-m_type MG::ComputeResidual(const m_type& f, const m_type& u) {
-    m_type res(N, std::vector<double>(N, 0.0));
-    const double N1DHSQ = pow((N-1), 2);
+m_type MG::ComputeResidual(const m_type& f, const m_type& u, const size_t N) {
+    const size_t vecSize = N + 1;
+    m_type res(vecSize, std::vector<double>(vecSize, 0.0));
+    const double N1DHSQ = pow(N, 2);
 
-    for(size_t i = 1; i < N - 1; i++) {
-        for(size_t j = 1; j < N - 1; j++) {
+    for(size_t i = 1; i < N; i++) {
+        for(size_t j = 1; j < N; j++) {
             res[i][j] = f[i][j] + (u[i-1][j] - 2 * u[i][j] + u[i+1][j]) * N1DHSQ + (u[i][j-1] - 2 * u[i][j] + u[i][j+1]) * N1DHSQ;
         }
     }
@@ -87,8 +90,9 @@ m_type MG::ComputeResidual(const m_type& f, const m_type& u) {
 
 //recursive multigrid function
 void MG::MG_Algorithm(const size_t l, m_type& u, const m_type& f) {
+    const size_t N = pow(2, l);
     const m_type u_tmp = GaussSeidel(u, f, nu1, N);
-    const m_type res = ComputeResidual(f, u_tmp);
+    const m_type res = ComputeResidual(f, u_tmp, N);
 
     m_type res_c = Restriction(res, N/2);
 
