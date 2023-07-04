@@ -87,7 +87,7 @@ m_type MG::ComputeResidual(const m_type& f, const m_type& u) {
 
 //recursive multigrid function
 void MG::MG_Algorithm(const size_t l, m_type& u, const m_type& f) {
-    const m_type u_tmp = GaussSeidel(u, f, nu1);
+    const m_type u_tmp = GaussSeidel(u, f, nu1, N);
     const m_type res = ComputeResidual(f, u_tmp);
 
     m_type res_c = Restriction(res, N/2);
@@ -96,7 +96,7 @@ void MG::MG_Algorithm(const size_t l, m_type& u, const m_type& f) {
     if(l == 1) {
         const m_type res_neg{{-res_c[0][0]}}; 
         m_type zero{{0.0}};
-        m_type e_0 = GaussSeidel(zero, res_neg, 1);
+        m_type e_0 = GaussSeidel(zero, res_neg, 1, 2);
     } else {
         for(size_t j = 1; j <= gamma; j++) {
             //implement -operator
@@ -108,7 +108,7 @@ void MG::MG_Algorithm(const size_t l, m_type& u, const m_type& f) {
     //implement operator - for m_type
     m_type diff = u_tmp - e;
 
-    u = GaussSeidel(diff, f, nu2);
+    u = GaussSeidel(diff, f, nu2, N);
 }
 
 //unary minus

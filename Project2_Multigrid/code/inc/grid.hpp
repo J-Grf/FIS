@@ -6,7 +6,7 @@
 #include <fstream>
 
 inline std::vector<std::pair<double, double>> getGrid(const double N, const bool writeGrid = false, const std::string& File = "") {
-    const size_t NSize = static_cast<size_t>(N);
+    const size_t NSize = static_cast<size_t>(N) + 1;
     std::vector<std::pair<double, double>> grid(NSize * NSize);
     std::ofstream out;
     if(writeGrid)
@@ -14,7 +14,7 @@ inline std::vector<std::pair<double, double>> getGrid(const double N, const bool
     //coordinates of all grid points assuming (0,1) x (0,1)
     for(size_t i = 0; i < NSize; i++){
         for(size_t j = 0; j < NSize; j++) {
-            grid[i * NSize + j] = std::make_pair((double)i/(N - 1.0), (double)j/(N - 1.0));
+            grid[i * NSize + j] = std::make_pair( i/N, j/N);
         }
         if(writeGrid)
             out << grid[i * NSize].first << std::endl;

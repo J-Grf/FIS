@@ -26,26 +26,28 @@ int main (int argc, char *argv[]) {
             } else if(Arg2 == 'n') {
                 n = static_cast<size_t>(std::stoi(argv[3]));
                 N = pow(2, n);
-                std::cout << "N grid points: " << N << std::endl;
             } else {
                 std::cerr << "Option " << Arg2 << " unkown, specify either n or N for N = 2^n!" << std::endl;
                 return -1; 
             }
+            std::cout << "N grid points: " << N << std::endl;
+            
+            const size_t vecSize = static_cast<size_t>(N) + 1;
+            const size_t nu = static_cast<size_t>(std::stoi(argv[4]));  
+            m_type u0(vecSize, std::vector<double>(vecSize, 0.0));
+            m_type u_ex(vecSize, std::vector<double>(vecSize, 0.0));
 
-            size_t nu = static_cast<size_t>(std::stoi(argv[4]));  
-            m_type u0(N, std::vector<double>(N, 0.0));
-            m_type u_ex(N, std::vector<double>(N, 0.0));
             const std::vector<std::pair<double, double>> grid = getGrid(N, true, "grid.txt");
-            //Loop over inner points
-            m_type f(N, std::vector<double>(N, 0.0));
 
             if(!static_cast<bool>(strcmp(argv[1], "sg"))) {
-            
-                double tmp;
+                
+                //Loop over inner points
+                m_type f(vecSize, std::vector<double>(vecSize, 0.0));
+                double tmp; 
                 double initError = -1;
-                for( size_t i = 1; i < N - 1; i++) {
-                    for(size_t j = 1; j < N - 1; j++) {
-                        tmp = sin(2 * M_PI * grid[i * N + j].first) * sin(2 * M_PI * grid[i * N + j].second);
+                for( size_t i = 1; i < N; i++) {
+                    for(size_t j = 1; j < N; j++) {
+                        tmp = sin(2 * M_PI * grid[i * vecSize + j].first) * sin(2 * M_PI * grid[i * vecSize + j].second);
                         f[i][j] = 8 * pow(M_PI, 2) * tmp;
                         u_ex[i][j] = tmp;
                         if(abs(u_ex[i][j]) > initError)
@@ -53,7 +55,7 @@ int main (int argc, char *argv[]) {
                     }
                 }
 
-                m_type u = GaussSeidel(u0, u_ex, f, nu);
+                m_type u = GaussSeidel(u0, u_ex, f, nu, N);
 
                 std::cout << "initial error: " << initError << std::endl;
 

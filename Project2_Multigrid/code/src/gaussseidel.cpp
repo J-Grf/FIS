@@ -2,14 +2,12 @@
 #include <iostream>
 #include <fstream>
 
-m_type GaussSeidel(m_type& u, const m_type& u_ex, const m_type& f, const size_t nu) {
+m_type GaussSeidel(m_type& u, const m_type& u_ex, const m_type& f, const size_t nu, const size_t N) {
     std::ofstream out, out2;
     out.open("maxError.txt");
     out2.open("infNorm.txt");
 
-    const size_t N = u.size();
     const double hsq = pow(1 / static_cast<double>(N) ,2);
-
     /*
         - u[i-1][j] and u[i][j-1] at k
         - u[i+1][j] and u[i][j+1] at k - 1 from previous iteration!
@@ -20,12 +18,11 @@ m_type GaussSeidel(m_type& u, const m_type& u_ex, const m_type& f, const size_t 
     double max_error;
     do {
         k++;
-        
         double diffU, diffUex;
         max_error = -1;
         infNorm = -1;
-        for(size_t i = 1; i < N - 1; i++) {
-            for(size_t j = 1; j < N - 1; j++) {
+        for(size_t i = 1; i < N; i++) {
+            for(size_t j = 1; j < N; j++) {
                 u[i][j] = 0.25 * (hsq * f[i][j] + u[i-1][j] + u[i+1][j] + u[i][j-1] + u[i][j+1]);
                 
                 diffU = abs(u[i][j] - u_old[i][j]);
@@ -50,8 +47,9 @@ m_type GaussSeidel(m_type& u, const m_type& u_ex, const m_type& f, const size_t 
     out2.close();
 
     out.open("u_est.txt");
-    for(size_t i = 0; i < N; i++) {
-        for(size_t j = 0; j < N; j++) {
+    //including the boundary nodes
+    for(size_t i = 0; i <= N; i++) {
+        for(size_t j = 0; j <= N; j++) {
             out << u[i][j] << std::endl;
         }
     }
@@ -60,8 +58,7 @@ m_type GaussSeidel(m_type& u, const m_type& u_ex, const m_type& f, const size_t 
     return u;
 }
 
-m_type GaussSeidel(m_type& u, const m_type& f, const size_t nu) {
-    const size_t N = u.size();
+m_type GaussSeidel(m_type& u, const m_type& f, const size_t nu, const size_t N) {
     const double hsq = pow(1 / static_cast<double>(N) ,2);
 
     /*
@@ -72,8 +69,9 @@ m_type GaussSeidel(m_type& u, const m_type& f, const size_t nu) {
     size_t k = 0;
     do {
         k++;
-        for(size_t i = 1; i < N - 1; i++) {
-            for(size_t j = 1; j < N - 1; j++) {
+        //excluding boundary nodes
+        for(size_t i = 1; i < N; i++) {
+            for(size_t j = 1; j < N; j++) {
                 u[i][j] = 0.25 * (hsq * f[i][j] + u[i-1][j] + u[i+1][j] + u[i][j-1] + u[i][j+1]);
             }
         }
