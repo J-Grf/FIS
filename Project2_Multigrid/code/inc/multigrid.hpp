@@ -1,7 +1,9 @@
 #ifndef _MG_INCLUDE_
 #define _MG_INCLUDE_
 
+#include <iostream>
 #include "gaussseidel.hpp"
+#include "grid.hpp"
 
 static constexpr double N1D16 = 0.0625; 
 static constexpr double N1D4  = 0.25;
@@ -14,6 +16,9 @@ class MG {
     static size_t nu1;
     static size_t nu2;
 
+    m_type f;
+    std::vector<std::pair<double, double>> grid;
+
     public:
     static void setStaticVariables(const size_t _g, const size_t _nu1, const size_t _nu2){
         gamma = _g;
@@ -21,13 +26,19 @@ class MG {
         nu2 = _nu2;
     }
     
-    MG(const size_t _N, const size_t _l) : N{_N}, l{_l} {}
+    MG(const size_t _N, const size_t _l);
 
     m_type Restriction(const m_type& r_fine, const size_t N_c);
     m_type Prolongation(const m_type& u_coarse, const size_t N_c);
     m_type ComputeResidual(const m_type& f, const m_type& u);
     void MG_Algorithm(const size_t l, m_type& um, const m_type& f);
 };
+
+//unary minus
+m_type operator-(const m_type& v);
+
+//binary minus
+m_type operator-(const m_type& u, const m_type& v);
 
 
 #endif
