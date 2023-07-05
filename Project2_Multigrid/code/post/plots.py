@@ -9,7 +9,7 @@ import sys
 path = '../main/' 
 plotdir = '../../plots/'
 pgfdir = '../../report/pgf/'
-U_data = ['maxError.txt', 'infNorm.txt', 'u_est.txt', 'u_ex.txt', 'u_ex_fine.txt', 'Restriction.txt', 'Prolongation.txt', 'grid_coarse.txt', 'grid_fine.txt', 'grid.txt']
+U_data = ['maxError.txt', 'infNorm.txt', 'u.txt','u_est.txt', 'u_ex.txt', 'u_ex_fine.txt', 'Restriction.txt', 'Prolongation.txt', 'grid_coarse.txt', 'grid_fine.txt', 'grid.txt']
 data = {}
 fs = 15
 N = 4
@@ -60,7 +60,7 @@ if(int(sys.argv[1]) == 1):
     surf = ax.plot_surface(X, Y, Error, cmap=cm.coolwarm, linewidth=0, antialiased=False)
     fig.colorbar(surf, shrink=0.5, aspect=5, pad = 0.15)
 
-    plt.savefig(plotdir + "u.pdf", dpi=100)
+    plt.savefig(plotdir + "u_sg.pdf", dpi=100)
 
 if(int(sys.argv[1]) == 2):
     X, Y = np.meshgrid(data['grid.txt'], data['grid.txt'])
@@ -139,5 +139,31 @@ if(int(sys.argv[1]) == 2):
 
     plt.savefig(plotdir + "Prolongation.pdf", dpi=100)
 
+if(int(sys.argv[1]) == 3):
+    X, Y = np.meshgrid(data['grid.txt'], data['grid.txt'])
 
+    size = len(data['grid.txt'])
+    U_ex = np.zeros(shape = (size, size))
+    U_est = U_ex.copy()
+    Error = U_ex.copy()
+    for i in range(size):
+        for j in range(size):
+            U_est[i][j] = data['u.txt'][i * size + j]
+            U_ex[i][j]  = data['u_ex.txt'][i * size + j]
+            Error[i][j] = abs(U_ex[i][j] - U_est[i][j])
+    
+    fig = plt.figure(figsize=plt.figaspect(0.5))
+    ax = fig.add_subplot(1, 3, 1, projection='3d')
+    ax.set_title("U_ex")
+    surf = ax.plot_surface(X, Y, U_ex, cmap=cm.coolwarm, linewidth=0, antialiased=False)
+    fig.colorbar(surf, shrink=0.5, aspect=5, pad = 0.15)
+    ax = fig.add_subplot(1, 3, 2, projection='3d')
+    ax.set_title("U_est")
+    surf = ax.plot_surface(X, Y, U_est, cmap=cm.coolwarm, linewidth=0, antialiased=False)
+    fig.colorbar(surf, shrink=0.5, aspect=5, pad = 0.15)
+    ax = fig.add_subplot(1, 3, 3, projection='3d')
+    ax.set_title("Error")
+    surf = ax.plot_surface(X, Y, Error, cmap=cm.coolwarm, linewidth=0, antialiased=False)
+    fig.colorbar(surf, shrink=0.5, aspect=5, pad = 0.15)
 
+    plt.savefig(plotdir + "u_mg.pdf", dpi=100)

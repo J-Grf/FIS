@@ -59,13 +59,13 @@ m_type GaussSeidel(m_type& u, const m_type& u_ex, const m_type& f, const size_t 
 }
 
 m_type GaussSeidel(m_type& u, const m_type& f, const size_t nu, const size_t N) {
+    assert(f.size() == u.size());
     const double hsq = pow(1 / static_cast<double>(N) ,2);
 
     /*
         - u[i-1][j] and u[i][j-1] at k
         - u[i+1][j] and u[i][j+1] at k - 1 from previous iteration!
     */
-    m_type u_old = u;
     size_t k = 0;
     do {
         k++;
@@ -75,7 +75,6 @@ m_type GaussSeidel(m_type& u, const m_type& f, const size_t nu, const size_t N) 
                 u[i][j] = 0.25 * (hsq * f[i][j] + u[i-1][j] + u[i+1][j] + u[i][j-1] + u[i][j+1]);
             }
         }
-        u_old = u;
     } while(k < nu);
     
     return u;

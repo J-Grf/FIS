@@ -8,9 +8,9 @@ int main (int argc, char *argv[]) {
     
     switch (argc) {
         case 1:
-            std::cerr << "provide method, choose 'N' or 'n' and specifiy grid parameter N = 2^n and max It nu!" << std::endl;
+            std::cerr << "provide method, choose 'N' or 'n' and specifiy grid parameter N = 2^n and max It nu1 and nu2 + gamma -> cycle type!" << std::endl;
             return -1;
-        case 5: {
+        case 7: {
             std::cout << argv[1] << std::endl;
             const std::string strArg1 = std::string(argv[1]);
             const char Arg2 = argv[2][0];
@@ -30,10 +30,12 @@ int main (int argc, char *argv[]) {
                 std::cerr << "Option " << Arg2 << " unkown, specify either n or N for N = 2^n!" << std::endl;
                 return -1; 
             }
-            std::cout << "N grid points: " << N << std::endl;
+            std::cout << "grid points: " << N+1 << std::endl;
             
             const size_t vecSize = static_cast<size_t>(N) + 1;
-            const size_t nu = static_cast<size_t>(std::stoi(argv[4]));  
+            const size_t nu1 = static_cast<size_t>(std::stoi(argv[4]));
+            const size_t nu2 = static_cast<size_t>(std::stoi(argv[5]));
+            const size_t gamma = static_cast<size_t>(std::stoi(argv[6]));  
             m_type u0(vecSize, std::vector<double>(vecSize, 0.0));
             m_type u_ex(vecSize, std::vector<double>(vecSize, 0.0));
 
@@ -55,14 +57,32 @@ int main (int argc, char *argv[]) {
                     }
                 }
 
-                m_type u = GaussSeidel(u0, u_ex, f, nu, N);
+                m_type u = GaussSeidel(u0, u_ex, f, nu1, N);
 
                 std::cout << "initial error: " << initError << std::endl;
 
             } else if (!static_cast<bool>(strcmp(argv[1], "mg"))) {
-                std::cout << "Testing Restriction" << std::endl;
+                
+                u_ex = getExactSolution(N, grid);
+                printSolution(u_ex, "u_ex.txt");
+                MG mg(N, n, false);
+                mg.setStaticVariables(gamma,nu1,nu2);
+                mg.MG_Algorithm(n, u0, mg.f_rhs);
+                printSolution(u0, "u.txt");
+
+                double maxError = -1;
+                for( size_t i = 1; i < N; i++) {
+                    for(size_t j = 1; j < N; j++) {
+                        double tmp = abs(u0[i][j] - u_ex[i][j]);
+                        if(tmp > maxError)
+                            maxError = tmp;
+                    }
+                }
+                std::cout << "maxError MG: " << maxError << std::endl;
+
+                /* std::cout << "Testing Restriction" << std::endl;
                 //Test restriction
-                MG mg(N, n);
+                MG mg(N, n, true);
                 double N_c = N/2;
                 std::cout << "N_c grid points: " << N_c << std::endl;
                 const std::vector<std::pair<double, double>> grid_c = getGrid(N_c, true, "grid_coarse.txt");
@@ -97,8 +117,7 @@ int main (int argc, char *argv[]) {
                             maxError = tmp;
                     }
                 }
-                std::cout << "maxError Prolongation: " << maxError << std::endl;
-
+                std::cout << "maxError Prolongation: " << maxError << std::endl; */
             } 
             break;
         }

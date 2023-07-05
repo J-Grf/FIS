@@ -36,15 +36,15 @@ inline m_type getExactSolution(const size_t N, const std::vector<std::pair<doubl
     return u_ex;
 }
 
-inline void printExactSolution(const m_type& u_ex, const std::string& File = "") {
-    assert(u_ex.size() == u_ex[0].size());
+inline void printSolution(const m_type& u, const std::string& File = "") {
+    assert(u.size() == u[0].size());
     
-    const size_t size = u_ex.size();
+    const size_t size = u.size();
     std::ofstream out;
     out.open(File);
     for(size_t i = 0; i < size; i++) {
         for(size_t j = 0; j < size; j++) {
-            out << u_ex[i][j] << std::endl;
+            out << u[i][j] << std::endl;
         }
     }
     out.close();
