@@ -60,6 +60,7 @@ m_type MG::Restriction(const m_type& u, const size_t N_c) {
 }
 
 m_type MG::Prolongation(const m_type& u, const size_t N_c) {
+    std::cout << "Prolongation from " << log2(N_c) << "to" << log2(2 * N_c) << std::endl;
     std::ofstream out;
     if(writeToOutput)
         out.open("Prolongation.txt");

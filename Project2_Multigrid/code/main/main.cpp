@@ -46,7 +46,7 @@ int main (int argc, char *argv[]) {
                 //Loop over inner points
                 m_type f(vecSize, std::vector<double>(vecSize, 0.0));
                 double tmp; 
-                double initError = -1;
+                double initError = 0.0;
                 for( size_t i = 1; i < N; i++) {
                     for(size_t j = 1; j < N; j++) {
                         tmp = sin(2 * M_PI * grid[i * vecSize + j].first) * sin(2 * M_PI * grid[i * vecSize + j].second);
@@ -56,8 +56,11 @@ int main (int argc, char *argv[]) {
                             initError = abs(u_ex[i][j]);
                     }
                 }
+                printSolution(u_ex, "u_ex.txt");
 
                 m_type u = GaussSeidel(u0, u_ex, f, nu1, N);
+
+                printSolution(u, "u_est.txt");
 
                 std::cout << "initial error: " << initError << std::endl;
 
@@ -88,7 +91,7 @@ int main (int argc, char *argv[]) {
                 const std::vector<std::pair<double, double>> grid_c = getGrid(N_c, true, "grid_coarse.txt");
                 
                 m_type u_ex = getExactSolution(N, grid);
-                printExactSolution(u_ex, "u_ex.txt");
+                printSolution(u_ex, "u_ex.txt");
                 m_type u_coarse = mg.Restriction(u_ex, N_c);
                 
                 double maxError = -1;
@@ -107,7 +110,7 @@ int main (int argc, char *argv[]) {
                 double N_f = 2 * N;
                 const std::vector<std::pair<double, double>> grid_f = getGrid(N_f, true, "grid_fine.txt");
                 m_type u_ex_f = getExactSolution(N_f, grid_f);
-                printExactSolution(u_ex_f, "u_ex_fine.txt");
+                printSolution(u_ex_f, "u_ex_fine.txt");
                 m_type u_fine = mg.Prolongation(u_ex, N);
                 maxError = -1;
                 for( size_t i = 1; i < N_f; i++) {

@@ -45,16 +45,7 @@ m_type GaussSeidel(m_type& u, const m_type& u_ex, const m_type& f, const size_t 
     std::cout << "maximum converged error: " << max_error << std::endl;
     out.close();
     out2.close();
-
-    out.open("u_est.txt");
-    //including the boundary nodes
-    for(size_t i = 0; i <= N; i++) {
-        for(size_t j = 0; j <= N; j++) {
-            out << u[i][j] << std::endl;
-        }
-    }
-    out.close();
-
+    
     return u;
 }
 
