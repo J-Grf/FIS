@@ -1,6 +1,7 @@
 #include <iostream>
 #include <string>
 #include <cmath>
+#include <chrono>
 
 #include "multigrid.hpp"
 
@@ -35,7 +36,12 @@ int main (int argc, char *argv[]) {
         m_type u0(vecSize, std::vector<double>(vecSize, 0.0));
         m_type u_ex(vecSize, std::vector<double>(vecSize, 0.0));
 
-        const std::vector<std::pair<double, double>> grid = getGrid(N, true, "grid.txt");
+        bool gridIO = false;
+#ifndef DISABLEIO
+        gridIO = true;
+#endif
+        
+        const std::vector<std::pair<double, double>> grid = getGrid(N, gridIO, "grid.txt");
 
         if(!static_cast<bool>(strcmp(argv[1], "sg"))) {
             
@@ -63,11 +69,25 @@ int main (int argc, char *argv[]) {
         } else if (!static_cast<bool>(strcmp(argv[1], "mg"))) {
             
             u_ex = getExactSolution(N, grid);
+
+#ifndef DISABLEIO
             printSolution(u_ex, "u_ex.txt");
+#endif
             MG mg(N, n, false);
             mg.setStaticVariables(gamma,nu1,nu2);
+
+            using namespace std::chrono;
+            
+            high_resolution_clock::time_point t1 = high_resolution_clock::now();
             mg.MG_Algorithm(n, u0, mg.f_rhs);
+            high_resolution_clock::time_point t2 = high_resolution_clock::now();
+            auto time = duration_cast<nanoseconds>(t2 - t1);
+
+            printf("MG_Algorithm required:  %.5f seconds.\n", time.count() * 1e-9);
+
+#ifndef DISABLEIO
             printSolution(u0, "u.txt");
+#endif
 
             double maxError = -1;
             for( size_t i = 1; i < N; i++) {
