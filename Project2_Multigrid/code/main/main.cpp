@@ -2,6 +2,7 @@
 #include <string>
 #include <cmath>
 #include <chrono>
+#include <iomanip>
 
 #include "multigrid.hpp"
 
@@ -84,6 +85,14 @@ int main (int argc, char *argv[]) {
             auto time = duration_cast<nanoseconds>(t2 - t1);
 
             printf("MG_Algorithm required:  %.5f seconds.\n", time.count() * 1e-9);
+
+            std::ofstream out;
+            out.open("../../rawData/timings.txt", std::ios::app);
+            /* out << std::left << std::setw(3) << "n" << std::setw(17) << "time in seconds" 
+                << std::setw(5) << "nu1" << std::setw(5) << "nu2" << std::setw(7) << "gamma" << std::endl; */
+            out << std::left << std::setw(3) << n << std::setw(17) << time.count() * 1e-9 
+                << std::setw(5) << nu1 << std::setw(5) << nu2 << std::setw(7) << gamma << std::endl;
+            out.close();
 
 #ifndef DISABLEIO
             printSolution(u0, "u.txt");
