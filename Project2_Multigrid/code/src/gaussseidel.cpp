@@ -45,7 +45,7 @@ m_type GaussSeidel(m_type& u, const m_type& u_ex, const m_type& f, const size_t 
     std::cout << "maximum converged error: " << max_error << std::endl;
     out.close();
     out2.close();
-    
+
     return u;
 }
 
@@ -57,16 +57,15 @@ m_type GaussSeidel(m_type& u, const m_type& f, const size_t nu, const size_t N) 
         - u[i-1][j] and u[i][j-1] at k
         - u[i+1][j] and u[i][j+1] at k - 1 from previous iteration!
     */
-    size_t k = 0;
-    do {
-        k++;
+    
+    for(size_t k = 0; k < nu; k++) {
         //excluding boundary nodes
         for(size_t i = 1; i < N; i++) {
             for(size_t j = 1; j < N; j++) {
                 u[i][j] = 0.25 * (hsq * f[i][j] + u[i-1][j] + u[i+1][j] + u[i][j-1] + u[i][j+1]);
             }
         }
-    } while(k < nu);
+    }
     
     return u;
 }
