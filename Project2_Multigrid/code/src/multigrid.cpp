@@ -60,7 +60,7 @@ m_type MG::Restriction(const m_type& u, const size_t N_c) {
 }
 
 m_type MG::Prolongation(const m_type& u, const size_t N_c) {
-    std::cout << "Prolongation from " << log2(N_c) << "to" << log2(2 * N_c) << std::endl;
+    //std::cout << "Prolongation from " << log2(N_c) << "to" << log2(2 * N_c) << std::endl;
     std::ofstream out;
     if(writeToOutput)
         out.open("Prolongation.txt");
@@ -106,6 +106,7 @@ m_type MG::Prolongation(const m_type& u, const size_t N_c) {
 
     return f_fine;
 }
+
 m_type MG::ComputeResidual(const m_type& f, const m_type& u, const size_t N) {
     const size_t vecSize = N + 1;
     m_type res(vecSize, std::vector<double>(vecSize, 0.0));
@@ -119,9 +120,24 @@ m_type MG::ComputeResidual(const m_type& f, const m_type& u, const size_t N) {
     return res;
 }
 
+double MG::GetInfNormResidual(const m_type& f, const m_type& u, const size_t N) {
+    double maxRes = -1, tmp = 0.0;
+    const double N1DHSQ = pow(N, 2);
+
+    for(size_t i = 1; i < N; i++) {
+        for(size_t j = 1; j < N; j++) {
+            tmp = f[i][j] + ((u[i-1][j] - 2 * u[i][j] + u[i+1][j]) + (u[i][j-1] - 2 * u[i][j] + u[i][j+1])) * N1DHSQ;
+            tmp = abs(tmp);
+            if(tmp > maxRes) maxRes = tmp;
+        }
+    }
+
+    return maxRes;
+}
+
 //recursive multigrid function
 void MG::MG_Algorithm(const size_t l, m_type& u, const m_type& f) {
-    std::cout << "MG_Algorithm: l=" << l << " gamma= " << gamma << " nu1= " << nu1 << " nu2= " << nu2 << std::endl;
+    //std::cout << "MG_Algorithm: l=" << l << " gamma= " << gamma << " nu1= " << nu1 << " nu2= " << nu2 << std::endl;
     const size_t N = pow(2, l);
     const m_type u_tmp = GaussSeidel(u, f, nu1, N);
     const m_type res = ComputeResidual(f, u_tmp, N);
@@ -130,7 +146,7 @@ void MG::MG_Algorithm(const size_t l, m_type& u, const m_type& f) {
 
     m_type e;
     if(l == 1) { 
-        std::cout << "reached l=1, N=" << N << std::endl; 
+        //std::cout << "reached l=1, N=" << N << std::endl; 
         //m_type zero(N+1, std::vector<double>(N+1, 0.0));
         m_type a(3, std::vector<double>(3, 0.0));
         e = std::move(a);

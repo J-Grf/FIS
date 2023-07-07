@@ -35,6 +35,7 @@ class MG {
     m_type Restriction(const m_type& r_fine, const size_t N_c);
     m_type Prolongation(const m_type& u_coarse, const size_t N_c);
     m_type ComputeResidual(const m_type& f, const m_type& u, const size_t N);
+    double GetInfNormResidual(const m_type& f, const m_type& u, const size_t N);
     void MG_Algorithm(const size_t l, m_type& u, const m_type& f);
 
     void printFToFile();

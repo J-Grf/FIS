@@ -77,10 +77,32 @@ int main (int argc, char *argv[]) {
             MG mg(N, n, false);
             mg.setStaticVariables(gamma,nu1,nu2);
 
+#ifndef DISABLEIO
+            const double infNormR0 = mg.GetInfNormResidual(mg.f_rhs, u0, N);
+            double infNormR = infNormR0;
+            double Ratio = 1.0;
+            std::ofstream outR;
+            outR.open("residualRatio_" + std::to_string(n) + "_" + std::to_string(nu1) + "_" + std::to_string(nu2) + ".txt");
+            outR << std::left << std::setw(3) << "it" << std::setw(10) << "G" << std::endl;
+            outR << std::left << std::setw(3) << 0 << std::setw(10) << Ratio << std::endl;
+#endif
+
+            size_t it = 0;
             using namespace std::chrono;
-            
             high_resolution_clock::time_point t1 = high_resolution_clock::now();
-            mg.MG_Algorithm(n, u0, mg.f_rhs);
+            while(Ratio > eps) {
+                it++;
+                mg.MG_Algorithm(n, u0, mg.f_rhs);
+                infNormR = mg.GetInfNormResidual(mg.f_rhs, u0, N);
+                Ratio = infNormR / infNormR0;
+#ifndef DISABLEIO
+                std::cout << std::left << std::setw(3) << it << std::setw(10) << Ratio << std::endl;
+                outR << std::left << std::setw(3) << it << std::setw(10) << Ratio << std::endl;
+#endif
+            }
+#ifndef DISABLEIO
+            outR.close();
+#endif
             high_resolution_clock::time_point t2 = high_resolution_clock::now();
             auto time = duration_cast<nanoseconds>(t2 - t1);
 

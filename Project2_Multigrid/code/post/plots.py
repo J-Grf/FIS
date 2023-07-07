@@ -9,7 +9,9 @@ import sys
 path = '../main/' 
 plotdir = '../../plots/'
 pgfdir = '../../report/pgf/'
-U_data = ['maxError.txt', 'infNorm.txt', 'u.txt','u_est.txt', 'u_ex.txt', 'u_ex_fine.txt', 'Restriction.txt', 'Prolongation.txt', 'grid_coarse.txt', 'grid_fine.txt', 'grid.txt']
+U_data = ['maxError.txt', 'infNorm.txt', 'u.txt','u_est.txt', 'u_ex.txt', 
+          'u_ex_fine.txt', 'Restriction.txt', 'Prolongation.txt', 'grid_coarse.txt', 
+          'grid_fine.txt', 'grid.txt']
 data = {}
 fs = 15
 N = 4
@@ -167,3 +169,5 @@ if(int(sys.argv[1]) == 3):
     fig.colorbar(surf, shrink=0.5, aspect=5, pad = 0.15)
 
     plt.savefig(plotdir + "u_mg.pdf", dpi=100)
+
+if(int(sys.argv[1]) == 4):

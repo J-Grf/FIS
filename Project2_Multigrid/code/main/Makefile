@@ -1,7 +1,7 @@
 INCLUDE_DIR=../inc
 EXE=$(addsuffix .exe, $(basename $(wildcard *.cpp)))
 # BOOST_LIB = /opt/homebrew/Cellar/boost/1.81.0_1/lib
-COMPILER_FLAGS=-O2 -Wall -Wextra -pedantic -std=c++20 -DDISABLEIO
+COMPILER_FLAGS=-march=native -O2 -Wall -Wextra -pedantic -std=c++20 #-DDISABLEIO
 COMPILER=g++
 
 # for every objectfile execute recipe
