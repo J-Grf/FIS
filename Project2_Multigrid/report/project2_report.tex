@@ -9,6 +9,7 @@
 \usepackage{graphicx}
 \usepackage{url}
 \usepackage{pgf}
+\usepackage{subcaption}
 
 \makeatletter
 \def\@maketitle{%
@@ -111,7 +112,84 @@ The code was written in C++, compiled using the Clang compiler and executed on a
 \section{Multigrid Method - MG}
 \label{chapter:MG}
 
-\subsection{Relative residuals for GMRES with and without preconditioning}
+\subsection{Convergence Plots}
+
+\begin{figure}[h!]
+	\centering
+	\begin{subfigure}[h!]{.49\textwidth}
+		\begin{center}
+			\resizebox{0.52\width}{!}{\input{plots/ResidualPlot_nu1_1.pgf}}
+			\caption{$\nu_1 = \nu_2 = 1$}
+			\label{fig::Res1}
+		\end{center}	
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}[h!]{.49\textwidth}
+		\centering
+		\resizebox{0.52\width}{!}{\input{plots/ResidualPlot_nu1_2.pgf}}
+		\caption{$\nu_1 = 2,  \nu_2 = 1$}
+		\label{fig::Res2}
+	\end{subfigure}
+	\label{fig::Res}
+	\caption{Convergence against multigrid iterations $m$ for meshes $n=4$ and $n=7$ }
+\end{figure}
+
+%\begin{figure}[!htbp]
+%	\centering
+%	\hspace*{0.8cm}
+%	\leavevmode
+%	\resizebox{0.82\width}{!}{\input{pgf/relResiduals.pgf}}
+%	\caption{Comparison of the different preconditioning options for the GMRES procedure to the full GMRES Method without preconditioning using m = 600 Krylov vectors as an input.}
+%	\label{fig::Residuals}
+%\end{figure}
+
+\subsection{Convergence for different $\nu_1$}
+
+\begin{figure}[h!]
+	\centering
+	\begin{subfigure}[h!]{.49\textwidth}
+		\begin{center}
+			\resizebox{0.52\width}{!}{\input{plots/Timings_NU_4.pgf}}
+			\caption{$n=4$}
+			\label{fig::TimNu1}
+		\end{center}	
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}[h!]{.49\textwidth}
+		\centering
+		\resizebox{0.52\width}{!}{\input{plots/Timings_NU_7.pgf}}
+		\caption{$n=7$}
+		\label{fig::TimNu2}
+	\end{subfigure}
+	\label{fig::TimNu}
+	\caption{Runtime against number of smoothing iterations $\nu_1 = 1...50 $ for meshes $n=4$ and $n=7$ }
+\end{figure}
+
+%\subsection{Convergence for different $\nu2$}
+
+\subsection{Convergence for different $\gamma$}
+
+\begin{figure}[h!]
+	\centering
+	\begin{subfigure}[h!]{.49\textwidth}
+		\begin{center}
+			\resizebox{0.52\width}{!}{\input{plots/Timings_GAMMA_4.pgf}}
+			\caption{$n=4$}
+			\label{fig::TimGamma1}
+		\end{center}	
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}[h!]{.49\textwidth}
+		\centering
+		\resizebox{0.52\width}{!}{\input{plots/Timings_GAMMA_7.pgf}}
+		\caption{$n=7$}
+		\label{fig::TimGamma2}
+	\end{subfigure}
+	\label{fig::TimGamma}
+	\caption{Runtime against number of $\gamma$-cycles for $\gamma = 1...10 $ for meshes $n=4$ and $n=7$ }
+\end{figure}
+
+
 
 
 %
