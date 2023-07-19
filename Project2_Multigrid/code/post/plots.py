@@ -169,5 +169,3 @@ if(int(sys.argv[1]) == 3):
     fig.colorbar(surf, shrink=0.5, aspect=5, pad = 0.15)
 
     plt.savefig(plotdir + "u_mg.pdf", dpi=100)
-
-if(int(sys.argv[1]) == 4):

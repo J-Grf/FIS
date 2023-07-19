@@ -8,7 +8,7 @@
 
 int main (int argc, char *argv[]) {
     
-    if(argc == 7) {
+    if(argc == 8) {
         std::cout << argv[1] << std::endl;
         const std::string strArg1 = std::string(argv[1]);
         const char Arg2 = argv[2][0];
@@ -33,7 +33,8 @@ int main (int argc, char *argv[]) {
         const size_t vecSize = static_cast<size_t>(N) + 1;
         const size_t nu1 = static_cast<size_t>(std::stoi(argv[4]));
         const size_t nu2 = static_cast<size_t>(std::stoi(argv[5]));
-        const size_t gamma = static_cast<size_t>(std::stoi(argv[6]));  
+        const size_t gamma = static_cast<size_t>(std::stoi(argv[6]));
+        const std::string timingsType = argv[7];  
         m_type u0(vecSize, std::vector<double>(vecSize, 0.0));
         m_type u_ex(vecSize, std::vector<double>(vecSize, 0.0));
 
@@ -108,8 +109,16 @@ int main (int argc, char *argv[]) {
 
             printf("MG_Algorithm required:  %.5f seconds.\n", time.count() * 1e-9);
 
+            std::string fileName = "";
+            if(timingsType == "-") {
+                fileName = "../../rawData/timings.txt";
+            } else if (timingsType == "NU") {
+                fileName = "../../rawData/timings_nu_" + std::to_string(n) + ".txt";
+            } else if (timingsType == "GAMMA") {
+                fileName = "../../rawData/timings_gamma_" + std::to_string(n) + ".txt";
+            }
             std::ofstream out;
-            out.open("../../rawData/timings.txt", std::ios::app);
+            out.open(fileName, std::ios::app);
             /* out << std::left << std::setw(3) << "n" << std::setw(17) << "time in seconds" 
                 << std::setw(5) << "nu1" << std::setw(5) << "nu2" << std::setw(7) << "gamma" << std::endl; */
             out << std::left << std::setw(3) << n << std::setw(17) << time.count() * 1e-9 
@@ -172,7 +181,7 @@ int main (int argc, char *argv[]) {
         } 
         
     } else {
-        std::cerr << "provide method <sg, mg, test>, choose <'N' N,'n' n> grid parameter (N = 2^n) and iteration parameters <nu1> <nu2> <gamma> " << std::endl;
+        std::cerr << "provide method <sg, mg, test>, choose <'N' N,'n' n> grid parameter (N = 2^n) and iteration parameters <nu1> <nu2> <gamma> and timingsType <-,NU,GAMMA>" << std::endl;
         return -1; 
     }
     
