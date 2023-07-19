@@ -1,0 +1,129 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[a4paper, margin=0.8in]{geometry}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{amsfonts}
+\usepackage{natbib}
+\usepackage{wrapfig}
+\usepackage{graphicx}
+\usepackage{url}
+\usepackage{pgf}
+
+\makeatletter
+\def\@maketitle{%
+	\newpage
+	\null
+	\vskip 2em%
+	\begin{center}%
+		\let \footnote \thanks
+		{\LARGE \@title \par}%
+		\vskip 1em%
+		{\Large Fast Iterative Solvers, Project 2\par}%
+		\vskip 1.5em%
+		{\large
+			\lineskip .5em%
+			\begin{tabular}[t]{c}%
+				\@author
+			\end{tabular}\par}%
+		\vskip 1em%
+		{\large \@date}%
+	\end{center}%
+	\par
+	\vskip 1.5em}
+\makeatother
+
+\title{Multigrid Method}
+\author{Johannes Leonard Grafen, 380149}
+\makeindex
+
+%new commands
+\newcommand{\refFig}[1]{Fig. \ref{#1}}
+\newcommand{\refEq}[1]{Eq. (\ref{#1})}
+\newcommand{\refTab}[1]{Tab. \ref{#1}}
+
+%hyperref stuff ----------------------------------------------------------------------------------------------------------------------------------------------
+\ifpdf
+	\usepackage[ plainpages = false, pdfpagelabels, 
+	%                 pdfpagelayout = useoutlines,
+	bookmarks,
+	bookmarksopen = true,
+	bookmarksnumbered = true,
+	breaklinks = true,
+	linktocpage,
+	colorlinks = false,  % was true
+	linkcolor = blue,
+	urlcolor  = blue,
+	citecolor = blue,
+	anchorcolor = blue,
+	hyperindex = true,
+	hyperfigures
+	]{hyperref} 
+	
+	\DeclareGraphicsExtensions{.png, .jpg, .jpeg, .pdf, .gif} %GIF doesn't work??
+	\usepackage{graphicx}
+	\pdfcompresslevel=9
+	\graphicspath{{0_frontmatter/figures/PNG/}{0_frontmatter/figures/PDF/}{0_frontmatter/figures/}}
+\else
+	\usepackage[ dvips, 
+	plainpages = false, 
+	pdfpagelabels, 
+	bookmarksnumbered = true,
+	breaklinks = true,
+	linktocpage,
+	colorlinks = false,
+	linkcolor = blue,
+	urlcolor  = blue,
+	citecolor = blue,
+	anchorcolor = white,
+	hyperindex = false,
+	]{hyperref}
+	
+	\DeclareGraphicsExtensions{.eps, .ps}
+	\usepackage{epsfig}
+	\usepackage{graphicx}
+	\graphicspath{{0_frontmatter/figures/EPS/}{0_frontmatter/figures/}}
+\fi
+
+\ifpdf  
+\hypersetup{pdfauthor={Johannes Leonard Grafen},%
+	pdftitle={Fast Iterative Solvers, Project 2},%
+}
+\fi
+%------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+\begin{document}
+\renewcommand\baselinestretch{1.0}
+\baselineskip=18pt plus1pt	
+
+\pagenumbering{gobble}
+\maketitle
+\newpage
+\pagenumbering{arabic}
+\tableofcontents
+\listoffigures	% print list of figures
+\listoftables  % print list of tables
+\newpage
+
+\section{Remarks on used architecture and compiler options}
+The code was written in C++, compiled using the Clang compiler and executed on an Apple Silicon M1 Pro Chip featuring the ARM64 architecture. To measure timings, the high resolution clock of the std chrono library was employed. The following flags where passed to the compiler to enhance code performance of the aforementioned architecture: -march=native, -O2. 
+
+\section{Multigrid Method - MG}
+\label{chapter:MG}
+
+\subsection{Relative residuals for GMRES with and without preconditioning}
+
+
+%
+%\begin{figure}[!htbp]
+%	\centering
+%	\hspace*{0.8cm}
+%	\leavevmode
+%	\resizebox{0.82\width}{!}{\input{pgf/relResiduals.pgf}}
+%	\caption{Comparison of the different preconditioning options for the GMRES procedure to the full GMRES Method without preconditioning using m = 600 Krylov vectors as an input.}
+%	\label{fig::Residuals}
+%\end{figure}
+%
+
+
+\end{document}
