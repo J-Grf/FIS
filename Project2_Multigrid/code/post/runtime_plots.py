@@ -10,7 +10,7 @@ import subprocess
 timingsDir = "/Users/johannes/Desktop/FIS/projects/Project2_Multigrid/rawData/"
 plotDir = "/Users/johannes/Desktop/FIS/projects/Project2_Multigrid/plots/"
 pgfDir  = "/Users/johannes/Desktop/FIS/projects/Project2_Multigrid/report/plots/"
-maxNu = 10
+maxNu = 50
 maxGamma = 10
 maxIt = 0
 timingsFile = ""
@@ -39,7 +39,10 @@ def createPlots(Type, timingsFile, n, maxIt):
     with open(timingsFile, 'r') as f:
         data = f.readlines()
         for line in data:
-            times.append(float(re.match(r'(\d+[.]\d+)').group(1)))
+            match = re.findall(r'(\d+[.]\d+)', line)
+            if len(match) >= 1:
+                #print(times)
+                times.append(float(match[0]))
     
     #plot
     name = "Timings"
@@ -48,7 +51,7 @@ def createPlots(Type, timingsFile, n, maxIt):
     ax = fig.gca()
     ax.plot([i for i in range(maxIt)], times, label = r"$n = $" + str(n))
 
-    ax.set_ylim(ymax=0, ymin=1.1 * times)
+    ax.set_ylim(ymin=0, ymax=1.1 * max(times))
     ax.set_xlim(xmin=0, xmax=maxIt+1)
     xlab = ""
     if Type == "NU":
@@ -57,13 +60,12 @@ def createPlots(Type, timingsFile, n, maxIt):
         xlab = r"$\gamma$"
 
     ax.set_xlabel(xlab, fontsize=fs)
-    ax.set_ylabel("runtime in s", rotation = 0, fontsize = fs, labelpad = 28)
-    ax.legend()
-
+    ax.set_ylabel("runtime [s]", rotation = 0, fontsize = fs, labelpad = 35)
+    
     ax.grid()
     plt.tight_layout()
     plt.savefig(plotDir + "Timings_" + Type + "_" + str(n) + ".pdf", dpi = 100)
-    pgf.savePgf(plotDir + "Timings_" + Type + "_" + str(n) + ".pgf", factor = 0.8)
+    pgf.savePgf(pgfDir + "Timings_" + Type + "_" + str(n) + ".pgf", factor = 0.8)
 
 n = int(sys.argv[2])
 if sys.argv[1] == "NU":
@@ -79,5 +81,4 @@ else:
 
 removeFileIfExists(timingsFile)
 runMG(maxIt, Type, n)
-exit(1)
 createPlots(Type, timingsFile, n, maxIt)

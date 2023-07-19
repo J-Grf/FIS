@@ -10,8 +10,11 @@ hfont = {'fontname':'Helvetica'}
 rootdir = "/Users/johannes/Desktop/FIS/projects/Project2_Multigrid/code/main/"
 plotDir = "/Users/johannes/Desktop/FIS/projects/Project2_Multigrid/plots/"
 pgfDir  = "/Users/johannes/Desktop/FIS/projects/Project2_Multigrid/report/plots/"
-regex = re.compile(r'residualRatio_(\d+)_(\d+)_(\d+).txt')
 fs = 15
+
+nu = int(sys.argv[1])
+regex = re.compile(r'residualRatio_(\d+)_' + str(nu) + r'_(\d+).txt')
+print(str(regex))
 
 fileMap = {}
 n = nu1 = nu2 = 0 
@@ -22,8 +25,8 @@ for root, dirs, files in os.walk(rootdir):
     if match:
        fileMap[file] = []
        fileMap[file].append(match.group(1))
+       fileMap[file].append(str(nu))
        fileMap[file].append(match.group(2))
-       fileMap[file].append(match.group(3))
 
 print(fileMap)
 
@@ -33,19 +36,20 @@ for file in fileMap.keys():
     data[file] = []
     with open(rootdir + file) as inp:
         content = inp.readlines()
+        data[file].append(1.0)
         for line in content:
             #print(line)
             match = regexFloat.findall(line)
             if(len(match) > 0):
                 data[file].append(float(match[0]))
     #print(data)
-
+print(data)
 name = "ResidualPlot"
 fig = plt.figure(name)
 fig.clear()
 ax = fig.gca()
 
-
+legendmap = {}
 for k, v in data.items():
     color = ""
     if fileMap[k][0] == str(4):
@@ -55,16 +59,24 @@ for k, v in data.items():
     idx = [i for i in range(len(v))]
     print(idx)
     print(v)
-    ax.semilogy(idx, v, label = r"$n = $" + fileMap[k][0], color = color)
+    legendmap[fileMap[k][0]], = ax.semilogy(idx, v, label = r"$n = $" + fileMap[k][0], color = color)
 
-ax.set_ylim(ymax=1, ymin=1E-11)
+ax.set_ylim(ymax = 1, ymin=1E-11)
+ticks = [1.0, 1E-2, 1E-4, 1E-6, 1E-8, 1E-10, 1E-12]
+ax.yaxis.set_ticks(ticks)
+#ax.yaxis.set_ticklabels(ticks)
 ax.set_xlim(xmin=0, xmax=12)
 ax.set_xlabel(r"$m$", fontsize=fs)
 ax.set_ylabel(r"$\frac{||r^{(m)}||_{\infty}}{||r^{(0)}||_{\infty}}$", rotation = 0, fontsize = fs, labelpad = 28)
-ax.legend()
+
+#handles, labels = ax.get_legend_handles_labels()
+#ax.legend([legendmap['4'], legendmap['7']], [r"$n = 4$", r"$n = 7$"])
+
+leg = ax.legend([legendmap['4'], legendmap['7']], [r"$n = 4$", r"$n = 7$"], loc='upper right', framealpha=1.0, fontsize=12)
+leg.get_frame().set_edgecolor('k')
 
 fileId = ""
-if(int(sys.argv[1]) == 1):
+if(nu == 1):
     fileId = "_nu1_1"
 else:
     fileId = "_nu1_2"
