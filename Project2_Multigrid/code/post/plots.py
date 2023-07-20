@@ -5,16 +5,18 @@ from matplotlib import cm
 from matplotlib.ticker import LinearLocator
 import numpy as np
 import sys
+import pgf
 
 path = '../main/' 
 plotdir = '../../plots/'
-pgfdir = '../../report/pgf/'
+pgfdir = '../../report/plots/'
 U_data = ['maxError.txt', 'infNorm.txt', 'u.txt','u_est.txt', 'u_ex.txt', 
           'u_ex_fine.txt', 'Restriction.txt', 'Prolongation.txt', 'grid_coarse.txt', 
           'grid_fine.txt', 'grid.txt']
 data = {}
 fs = 15
 N = 4
+n = sys.argv[2]
 
 for f in U_data:
     data[f] = []
@@ -25,7 +27,7 @@ for f in U_data:
                 data[f].append(float(line))
     except FileNotFoundError:
         continue
-print(data)
+#print(data)
 
 if(int(sys.argv[1]) == 1):
     for f in ['maxError.txt', 'infNorm.txt']:
@@ -155,17 +157,60 @@ if(int(sys.argv[1]) == 3):
             Error[i][j] = abs(U_ex[i][j] - U_est[i][j])
     
     fig = plt.figure(figsize=plt.figaspect(0.5))
-    ax = fig.add_subplot(1, 3, 1, projection='3d')
-    ax.set_title("U_ex")
+    ax = fig.add_subplot(1, 3, 1, projection='3d', aspect='auto')
+    ax.set_title(r"$\mathbf{U}_{ex}$")
     surf = ax.plot_surface(X, Y, U_ex, cmap=cm.coolwarm, linewidth=0, antialiased=False)
-    fig.colorbar(surf, shrink=0.5, aspect=5, pad = 0.15)
-    ax = fig.add_subplot(1, 3, 2, projection='3d')
-    ax.set_title("U_est")
+    #ax.set_zticks([-1.0, 0.0, 1.0])
+    #ax.set_xticklabels([0.0, 0.5, 1.0])
+    #ax.set_zticklabels([0.0, 0.5, 1.0])
+    #cbar = fig.colorbar(surf, shrink=0.5, aspect=3, pad = 0.15)
+    #cbar.set_ticks([-1, 0, 1])
+    
+    ax = fig.add_subplot(1, 3, 2, projection='3d', aspect='auto')
+    ax.set_title(r"$\mathbf{U}_{est}$")
     surf = ax.plot_surface(X, Y, U_est, cmap=cm.coolwarm, linewidth=0, antialiased=False)
-    fig.colorbar(surf, shrink=0.5, aspect=5, pad = 0.15)
-    ax = fig.add_subplot(1, 3, 3, projection='3d')
+    #fig.colorbar(surf, shrink=0.5, aspect=3, pad = 0.15)
+    
+    ax = fig.add_subplot(1, 3, 3, projection='3d', aspect='auto')
     ax.set_title("Error")
     surf = ax.plot_surface(X, Y, Error, cmap=cm.coolwarm, linewidth=0, antialiased=False)
-    fig.colorbar(surf, shrink=0.5, aspect=5, pad = 0.15)
+    fig.update_layout(height=800, width=800)
+    #fig.colorbar(surf, shrink=0.5, aspect=3, pad = 0.17)
+    #fig.subplots_adjust(wspace=1, hspace=1)
+    
 
-    plt.savefig(plotdir + "u_mg.pdf", dpi=100)
+if(int(sys.argv[1]) == 4):
+    X, Y = np.meshgrid(data['grid.txt'], data['grid.txt'])
+
+    size = len(data['grid.txt'])
+    U_ex = np.zeros(shape = (size, size))
+    U_est = np.zeros(shape = (size, size))
+    Error = np.zeros(shape = (size, size))
+    maxError = 0
+    for i in range(size):
+        for j in range(size):
+            U_est[i][j] = data['u.txt'][i * size + j]
+            U_ex[i][j]  = data['u_ex.txt'][i * size + j]
+            Error[i][j] = abs(U_ex[i][j] - U_est[i][j])
+            if(Error[i][j] > maxError):
+                maxError = Error[i][j]
+    print("maxError: " + str(maxError))
+
+    s = ["u_ex_mg_" + n, "u_est_mg_" + n, "error_" + n]
+
+    for i, obj in enumerate([U_ex, U_est, Error]):
+        fig = plt.figure()
+        ax = fig.add_subplot(1, 1, 1, projection='3d')
+        surf = ax.plot_surface(X, Y, obj, cmap=cm.coolwarm, linewidth=0, antialiased=False)
+        if i < 2: 
+            ax.set_zticks([-1.0, -0.5, 0.0, 0.5, 1.0])
+        else:
+            if n == '7':
+                ax.set_zticks([0.0, 0.00005, 0.0001, 0.00015, 0.0002])
+            else:
+                ax.set_zticks([0.0, 0.003, 0.006, 0.009, 0.012])
+        fig.tight_layout()
+        plt.savefig(plotdir + s[i] + ".pdf", dpi=100)
+        pgf.savePgf(pgfdir + s[i] + ".pgf", factor=0.8)
+
+    

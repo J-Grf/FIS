@@ -78,11 +78,12 @@ int main (int argc, char *argv[]) {
             MG mg(N, n, false);
             mg.setStaticVariables(gamma,nu1,nu2);
 
-#ifndef DISABLEIO
             const double infNormR0 = mg.GetInfNormResidual(mg.f_rhs, u0, N);
             double infNormR = infNormR0;
             double Ratio = 1.0;
             std::ofstream outR;
+
+#ifndef DISABLEIO
             outR.open("residualRatio_" + std::to_string(n) + "_" + std::to_string(nu1) + "_" + std::to_string(nu2) + ".txt");
             outR << std::left << std::setw(3) << "it" << std::setw(10) << "G" << std::endl;
             outR << std::left << std::setw(3) << 0 << std::setw(10) << Ratio << std::endl;

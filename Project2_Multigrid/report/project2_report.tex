@@ -103,7 +103,7 @@
 \pagenumbering{arabic}
 \tableofcontents
 \listoffigures	% print list of figures
-\listoftables  % print list of tables
+%\listoftables  % print list of tables
 \newpage
 
 \section{Remarks on used architecture and compiler options}
@@ -111,6 +111,68 @@ The code was written in C++, compiled using the Clang compiler and executed on a
 
 \section{Multigrid Method - MG}
 \label{chapter:MG}
+For the Multigrid iterations, W-cycles ($\gamma = 2$) were used. An iteration was considered as converged with the criterion 
+\begin{equation}
+	\frac{|| r^{(m)}||_{\infty}}{|| r^{(0)}||_{\infty}} < 10^{-10} ,
+\end{equation}
+were $r^{(m)}$ denotes the residual of the $m$-th iteration and $r^{(0)}$ the initial residual using $\mathbf{u} = \mathbf{0}$ as an initial guess for the solution vector.
+
+\subsection{Validation of MG Method}
+The solution obtained by the multigrid method is compared to the exact solution $\mathbf{U}_{ex}(x,y) = sin(2\pi x)sin(2 \pi y)$ in \refFig{fig::Val4} for $n=4$ and in \refFig{fig::Val7} for $n=7$. The estimated solution is in good agreement with the exact solution, the max error for $n=4$ is $\max_{i,j} e_{i,j} = 1.295 \cdot 10^{-2}$ and for $n=7$ the max error measures $\max_{i,j} e_{i,j} = 2.01 \cdot 10^{-4}$. 
+%
+\begin{figure}[h!]
+	\centering
+	\begin{subfigure}[h!]{.3\textwidth}
+			\centering
+			\resizebox{0.4\width}{!}{\input{plots/u_ex_mg_4.pgf}}
+			\caption{$\mathbf{U}_{ex}$}
+			\label{fig::Uex4}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}[h!]{.3\textwidth}
+		\centering
+		\resizebox{0.4\width}{!}{\input{plots/u_est_mg_4.pgf}}
+		\caption{$\mathbf{U}_{est}$}
+		\label{fig::Uest4}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}[h!]{.3\textwidth}
+		\centering
+		\resizebox{0.4\width}{!}{\input{plots/error_4.pgf}}
+		\caption{Error $\mathbf{e} = |\mathbf{U}_{ex} - \mathbf{U}_{est}|$}
+		\label{fig::Error4}
+	\end{subfigure}
+	\label{fig::Val4}
+	\caption{Plots of exact solution, approximated solution and corresponding error for $n=4$ }
+	\label{fig::Val4}
+\end{figure}
+%
+\begin{figure}[h!]
+	\centering
+	\begin{subfigure}[h!]{.3\textwidth}
+		\centering
+		\resizebox{0.4\width}{!}{\input{plots/u_ex_mg_7.pgf}}
+		\caption{$\mathbf{U}_{ex}$}
+		\label{fig::Uex7}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}[h!]{.3\textwidth}
+		\centering
+		\resizebox{0.4\width}{!}{\input{plots/u_est_mg_7.pgf}}
+		\caption{$\mathbf{U}_{est}$}
+		\label{fig::Uest7}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}[h!]{.3\textwidth}
+		\centering
+		\resizebox{0.4\width}{!}{\input{plots/error_7.pgf}}
+		\caption{Error $\mathbf{e} = |\mathbf{U}_{ex} - \mathbf{U}_{est}|$}
+		\label{fig::Error7}
+	\end{subfigure}
+	\caption{Plots of exact solution, approximated solution and corresponding error for $n=7$ }
+	\label{fig::Val7}
+\end{figure}
+%
 
 \subsection{Convergence Plots}
 
@@ -133,15 +195,6 @@ The code was written in C++, compiled using the Clang compiler and executed on a
 	\label{fig::Res}
 	\caption{Convergence against multigrid iterations $m$ for meshes $n=4$ and $n=7$ }
 \end{figure}
-
-%\begin{figure}[!htbp]
-%	\centering
-%	\hspace*{0.8cm}
-%	\leavevmode
-%	\resizebox{0.82\width}{!}{\input{pgf/relResiduals.pgf}}
-%	\caption{Comparison of the different preconditioning options for the GMRES procedure to the full GMRES Method without preconditioning using m = 600 Krylov vectors as an input.}
-%	\label{fig::Residuals}
-%\end{figure}
 
 \subsection{Convergence for different $\nu_1$}
 
