@@ -14,8 +14,6 @@
 \usepackage{tikz}
 \usetikzlibrary{shapes.geometric, arrows, positioning, patterns}
 
-
-
 \makeatletter
 \def\@maketitle{%
 	\newpage
@@ -116,7 +114,7 @@ The code was written in C++, compiled using the Clang compiler and executed on a
 
 \section{Multigrid Method - MG}
 \label{chapter:MG}
-For the Multigrid iterations, W-cycles ($\gamma = 2$) were used. An iteration was considered as converged with the criterion 
+For the multigrid iterations, W-cycles ($\gamma = 2$) were used. Convergence was determined by the criterion
 \begin{equation}
 	\frac{|| r^{(m)}||_{\infty}}{|| r^{(0)}||_{\infty}} < 10^{-10} ,
 	\label{eq::measure}
@@ -124,7 +122,7 @@ For the Multigrid iterations, W-cycles ($\gamma = 2$) were used. An iteration wa
 were $r^{(m)}$ denotes the residual of the $m$-th iteration and $r^{(0)}$ the initial residual using $\mathbf{u} = \mathbf{0}$ as an initial guess for the solution vector.
 
 \subsection{Validation of MG Method}
-The solution obtained by the multigrid method is compared to the exact solution $\mathbf{U}_{ex}(x,y) = sin(2\pi x)sin(2 \pi y)$ in \refFig{fig::Val4} for $n=4$ and in \refFig{fig::Val7} for $n=7$. The estimated solution is in good agreement with the exact solution, the max error for $n=4$ is $\max_{i,j} e_{i,j} = 1.295 \cdot 10^{-2}$ and for $n=7$ the max error measures $\max_{i,j} e_{i,j} = 2.01 \cdot 10^{-4}$. 
+The solution obtained by the multigrid method is compared to the exact solution $\mathbf{U}_{ex}(x,y) = sin(2\pi x)sin(2 \pi y)$ in \refFig{fig::Val4} for $n=4$ and in \refFig{fig::Val7} for $n=7$. The estimated solution is in good agreement with the exact solution, with a maximum error of $\max_{i,j} e_{i,j} = 1.295 \cdot 10^{-2}$ for $n=4$ and $\max_{i,j} e_{i,j} = 2.01 \cdot 10^{-4}$ for $n=7$. 
 %
 \begin{figure}[h!]
 	\centering
@@ -180,7 +178,7 @@ The solution obtained by the multigrid method is compared to the exact solution 
 %
 \newpage
 \subsection{Convergence Plots}
-In \refFig{fig::Res} the convergence of the MG method for $\nu_1=nu_2=1$ and  $\nu_1 = 2, \nu_2=1$ for two different meshes ($n=4, n=7$) is shown. A simulation is considered converged, if the criterion as in \refEq{eq::measure} is met. We can observe a faster convergence for the finer mesh compared to the coarser mesh. By increasing the number of the pre smoothing iterations $\nu_1$ a faster convergence can be achieved. The finer mesh with $n=7$ converges after 8 iterations for $\nu_1=2$ opposed to just using a single pre smoothing iteration ($\nu_1 = 1$), which requires 10 iterations to reduce the residual according to \refEq{eq::measure}. A similar observation can be made for the coarser mesh as well. Further influence of the number of pre smoothing iterations $\nu_1$ is investigated in Sec. 2.3.
+In \refFig{fig::Res} the convergence of the MG method for $\nu_1=\nu_2=1$ and  $\nu_1 = 2, \nu_2=1$ for two different meshes ($n=4, n=7$) is shown. The simulation is considered converged when the criterion as in \refEq{eq::measure} is satisfied. Notably, the finer mesh ($n=7$) exhibits faster convergence compared to the coarser mesh ($n=4$). Increasing the number of pre-smoothing iterations $\nu_1$ leads to accelerated convergence. Specifically, the finer mesh with $n=7$ achieves convergence after 8 iterations for $\nu_1 = 2$, while a single pre-smoothing iteration ($\nu_1 = 1$) requires 10 iterations to meet the criterion in \refEq{eq::measure}. A similar trend is observed for the coarser mesh as well. The influence of the number of pre-smoothing iterations $\nu_1$ is further investigated in Sec. 2.3.
 \begin{figure}[h!]
 	\centering
 	\begin{subfigure}[h!]{.49\textwidth}
@@ -203,11 +201,13 @@ In \refFig{fig::Res} the convergence of the MG method for $\nu_1=nu_2=1$ and  $\
 
 \newpage
 \section{Further Analysis}
-This section is dedicated to the analysis of the number of pre smoothing iterations $\nu_1$ that are used in the Gauss-Seidel Smoother and the number of coarse grid cycles $\gamma$ to obtain a sufficient convergence as in \refEq{eq::measure}. 
-\subsection{Convergence for different $\nu_1$}
-In \refFig{fig::TimNu} simulations on two meshes ($n=\{4, 7\}$) were performed for various number of pre smoothing iterations $\nu_1 = 1...50$. The number of post smoothing iterations $\nu_2 = 1$ was set constant throughout all simulations and two coarse grid cycles were used $\gamma = 2$.
-From \refFig{fig::TimNu} it can be concluded, that there is no further decrease in runtime for a  $\nu_1 > 10$ for both meshes. The coarser mesh shown a relatively constant course of the runtime for $\nu_1 > 10$ (\refFig{fig::TimNu1}), were as simulations on the finer mesh (\refFig{fig::TimNu2}) are subject to a linear increase in runtime for the aforementioned bound.
+This section focuses on analyzing the impact of the number of pre-smoothing iterations $\nu_1$ used in the Gauss-Seidel Smoother and the number of coarse grid cycles $\gamma$ required to achieve sufficient convergence as defined in \refEq{eq::measure}.
 
+\subsection{Convergence for different $\nu_1$}
+In \refFig{fig::TimNu}, simulations were conducted on two meshes ($n={4, 7}$) using varying numbers of pre-smoothing iterations $\nu_1 = 1...50$. The number of post-smoothing iterations $\nu_2$ was fixed at 1 for all simulations, and two coarse grid cycles ($\gamma = 2$) were applied.
+
+Observing \refFig{fig::TimNu}, it can be inferred that there is no further decrease in runtime beyond $\nu_1 > 10$ for both meshes. For the coarser mesh (\refFig{fig::TimNu1}), the runtime remains relatively constant for $\nu_1 > 10$, while simulations on the finer mesh (\refFig{fig::TimNu2}) exhibit a linear increase in runtime beyond the same threshold.
+%
 \begin{figure}[h!]
 	\centering
 	\begin{subfigure}[h!]{.49\textwidth}
@@ -231,10 +231,18 @@ From \refFig{fig::TimNu} it can be concluded, that there is no further decrease 
 %\subsection{Convergence for different $\nu2$}
 
 \subsection{Convergence for different $\gamma$}
-For the investigation of different number of coarse grid cycles $\gamma = 1...10$, the number of pre- and post smoothing iterations was set constant $\nu_1 = \nu_2 = 1$. Different $\gamma$ were analysed for a coarse and fine mesh, similar to the previous section. Figure \ref{fig::GAMMA} displays the Runtime for different $\gamma$ in the range $1...3$, following the theoretical trend for the workload $W_k$ that was discussed in the lecture
+
+In this section, we explore the effect of different numbers of coarse grid cycles $\gamma = 1...10$, while keeping the number of pre- and post-smoothing iterations constant at $\nu_1 = \nu_2 = 1$. Similar to the previous section, we analyze different $\gamma$ values for both a coarse and fine mesh.
+
+Figure \ref{fig::GAMMA} illustrates the runtime for different $\gamma$ values within the range $1...3$, following the theoretical trend for the workload $W_k$ discussed in the lecture:
 \begin{equation}
 	W_k \leq C \frac{1}{1 - \frac{\gamma}{4}} N_k.
 \end{equation}
+
+As expected, both the runtime and the workload increase with an increasing $\gamma$. However, an interesting observation is that for very fine meshes with $n \geq 10$, the runtime for $\gamma = 2$ was found to be lower than for $\gamma = 1$. For example, for a mesh with $N = 1024$ nodes ($n=10$), the runtime for a single coarse grid cycle is $0.453 s$, while for two coarse grid cycles, the runtime decreases to $0.368 s$. This is in contrast to the trend observed for meshes with a parameter $n < 10$.
+
+Furthermore, in the lecture was proven that we require $\gamma < 4$, otherwise the workload becomes unbounded.
+Nevertheless, I conducted further investigations with $\gamma = 1...10$, which resulted in an exponential increase in runtime, in agreement with our theoretical prediction as shown in \refFig{fig::TimGamma}.
 %
 \begin{figure}[h!]
 	\centering
@@ -266,7 +274,7 @@ For the investigation of different number of coarse grid cycles $\gamma = 1...10
 					%				}
 				]
 				\addplot [style={blue, fill=blue, mark=none}]
-				coordinates{ (1, 0.000313459) (2, 0.000723542) (3, 0.001591)};
+				coordinates{ (1, 0.000404958) (2, 0.000851125) (3, 0.00198617)};
 			\end{axis}
 		\end{tikzpicture}
 		\caption{\label{fig::GAMMA4} coarse mesh $n=4$}
@@ -294,15 +302,13 @@ For the investigation of different number of coarse grid cycles $\gamma = 1...10
 				node near coord style={black}
 				]
 				\addplot [style={red, fill=red, mark=none}]
-				coordinates{ (1, 0.00472279) (2, 0.00779279) (3, 0.0351571)};
+				coordinates{ (1, 0.00579512) (2, 0.0100865) (3, 0.045706)};
 			\end{axis}
 		\end{tikzpicture}
 		\caption{\label{fig::GAMMA7} fine mesh $n=7$}
 	\end{subfigure}
 	\caption{\label{fig::GAMMA} Runtime for $\gamma = \{1,2,3\}$ for both meshes }
 \end{figure}
-%
-Furthermore, in the lecture was proven that we require $\gamma < 4$, otherwise the workload becomes unbounded. Nevertheless, I conducted further investigations with $\gamma = 1...10$, resulting in an exponential evolution of the runtime as shown in \refFig{fig::TimGamma}.
 %
 \begin{figure}[h!]
 	\centering
@@ -320,20 +326,8 @@ Furthermore, in the lecture was proven that we require $\gamma < 4$, otherwise t
 		\caption{$n=7$}
 		\label{fig::TimGamma2}
 	\end{subfigure}
-	\caption{Runtime against number of $\gamma$-cycles for $\gamma = 1...10 $ for meshes $n=4$ and $n=7$ }
+	\caption{Runtime against number of coarse grid cycles $\gamma = 1...10 $ for meshes $n=4$ and $n=7$ }
 	\label{fig::TimGamma}
 \end{figure}
-
 %
-%\begin{figure}[!htbp]
-%	\centering
-%	\hspace*{0.8cm}
-%	\leavevmode
-%	\resizebox{0.82\width}{!}{\input{pgf/relResiduals.pgf}}
-%	\caption{Comparison of the different preconditioning options for the GMRES procedure to the full GMRES Method without preconditioning using m = 600 Krylov vectors as an input.}
-%	\label{fig::Residuals}
-%\end{figure}
-%
-
-
 \end{document}

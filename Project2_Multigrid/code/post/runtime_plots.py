@@ -52,12 +52,12 @@ def createPlots(Type, timingsFile, n, maxIt):
     ax.plot([i for i in range(1, maxIt+1)], times, label = r"$n = $" + str(n))
     
     yt = ax.get_yticks()
-    yt = [round(i,4) for i in yt if i >= -1E-8]
+    yt = [round(i,4) for i in yt if (i >= -1E-8) and (i > 0.9 * min(times))]
     ax.set_yticklabels(yt)
     #ax.set_yticks(yt[::]) # set new tick positions
     print(yt)
     #print(yt)
-    ax.set_ylim(ymin=0, ymax=max(yt))
+    ax.set_ylim(ymin=min(yt), ymax=max(yt))
     ax.set_xlim(xmin=1, xmax=maxIt+1)
     xlab = ""
     if Type == "NU":
