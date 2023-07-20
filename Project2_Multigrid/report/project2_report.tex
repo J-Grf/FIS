@@ -10,6 +10,11 @@
 \usepackage{url}
 \usepackage{pgf}
 \usepackage{subcaption}
+\usepackage{pgfplots}
+\usepackage{tikz}
+\usetikzlibrary{shapes.geometric, arrows, positioning, patterns}
+
+
 
 \makeatletter
 \def\@maketitle{%
@@ -107,13 +112,14 @@
 \newpage
 
 \section{Remarks on used architecture and compiler options}
-The code was written in C++, compiled using the Clang compiler and executed on an Apple Silicon M1 Pro Chip featuring the ARM64 architecture. To measure timings, the high resolution clock of the std chrono library was employed. The following flags where passed to the compiler to enhance code performance of the aforementioned architecture: -march=native, -O2. 
+The code was written in C++, compiled using the Clang compiler and executed on an Apple Silicon M1 Pro Chip featuring the ARM64 architecture. To measure timings, the high resolution clock of the std chrono library was employed. The following flags where passed to the compiler to enhance code performance of the aforementioned architecture: -march=native, -O2. To suppress the output to measure runtime accurately the flag "DISABLEIO" was introduced and passed to the compiler via the "-D" option.
 
 \section{Multigrid Method - MG}
 \label{chapter:MG}
 For the Multigrid iterations, W-cycles ($\gamma = 2$) were used. An iteration was considered as converged with the criterion 
 \begin{equation}
 	\frac{|| r^{(m)}||_{\infty}}{|| r^{(0)}||_{\infty}} < 10^{-10} ,
+	\label{eq::measure}
 \end{equation}
 were $r^{(m)}$ denotes the residual of the $m$-th iteration and $r^{(0)}$ the initial residual using $\mathbf{u} = \mathbf{0}$ as an initial guess for the solution vector.
 
@@ -142,7 +148,6 @@ The solution obtained by the multigrid method is compared to the exact solution 
 		\caption{Error $\mathbf{e} = |\mathbf{U}_{ex} - \mathbf{U}_{est}|$}
 		\label{fig::Error4}
 	\end{subfigure}
-	\label{fig::Val4}
 	\caption{Plots of exact solution, approximated solution and corresponding error for $n=4$ }
 	\label{fig::Val4}
 \end{figure}
@@ -173,9 +178,9 @@ The solution obtained by the multigrid method is compared to the exact solution 
 	\label{fig::Val7}
 \end{figure}
 %
-
+\newpage
 \subsection{Convergence Plots}
-
+In \refFig{fig::Res} the convergence of the MG method for $\nu_1=nu_2=1$ and  $\nu_1 = 2, \nu_2=1$ for two different meshes ($n=4, n=7$) is shown. A simulation is considered converged, if the criterion as in \refEq{eq::measure} is met. We can observe a faster convergence for the finer mesh compared to the coarser mesh. By increasing the number of the pre smoothing iterations $\nu_1$ a faster convergence can be achieved. The finer mesh with $n=7$ converges after 8 iterations for $\nu_1=2$ opposed to just using a single pre smoothing iteration ($\nu_1 = 1$), which requires 10 iterations to reduce the residual according to \refEq{eq::measure}. A similar observation can be made for the coarser mesh as well. Further influence of the number of pre smoothing iterations $\nu_1$ is investigated in Sec. 2.3.
 \begin{figure}[h!]
 	\centering
 	\begin{subfigure}[h!]{.49\textwidth}
@@ -192,11 +197,16 @@ The solution obtained by the multigrid method is compared to the exact solution 
 		\caption{$\nu_1 = 2,  \nu_2 = 1$}
 		\label{fig::Res2}
 	\end{subfigure}
-	\label{fig::Res}
 	\caption{Convergence against multigrid iterations $m$ for meshes $n=4$ and $n=7$ }
+	\label{fig::Res}
 \end{figure}
 
+\newpage
+\section{Further Analysis}
+This section is dedicated to the analysis of the number of pre smoothing iterations $\nu_1$ that are used in the Gauss-Seidel Smoother and the number of coarse grid cycles $\gamma$ to obtain a sufficient convergence as in \refEq{eq::measure}. 
 \subsection{Convergence for different $\nu_1$}
+In \refFig{fig::TimNu} simulations on two meshes ($n=\{4, 7\}$) were performed for various number of pre smoothing iterations $\nu_1 = 1...50$. The number of post smoothing iterations $\nu_2 = 1$ was set constant throughout all simulations and two coarse grid cycles were used $\gamma = 2$.
+From \refFig{fig::TimNu} it can be concluded, that there is no further decrease in runtime for a  $\nu_1 > 10$ for both meshes. The coarser mesh shown a relatively constant course of the runtime for $\nu_1 > 10$ (\refFig{fig::TimNu1}), were as simulations on the finer mesh (\refFig{fig::TimNu2}) are subject to a linear increase in runtime for the aforementioned bound.
 
 \begin{figure}[h!]
 	\centering
@@ -214,14 +224,86 @@ The solution obtained by the multigrid method is compared to the exact solution 
 		\caption{$n=7$}
 		\label{fig::TimNu2}
 	\end{subfigure}
-	\label{fig::TimNu}
 	\caption{Runtime against number of smoothing iterations $\nu_1 = 1...50 $ for meshes $n=4$ and $n=7$ }
+	\label{fig::TimNu}
 \end{figure}
 
 %\subsection{Convergence for different $\nu2$}
 
 \subsection{Convergence for different $\gamma$}
-
+For the investigation of different number of coarse grid cycles $\gamma = 1...10$, the number of pre- and post smoothing iterations was set constant $\nu_1 = \nu_2 = 1$. Different $\gamma$ were analysed for a coarse and fine mesh, similar to the previous section. Figure \ref{fig::GAMMA} displays the Runtime for different $\gamma$ in the range $1...3$, following the theoretical trend for the workload $W_k$ that was discussed in the lecture
+\begin{equation}
+	W_k \leq C \frac{1}{1 - \frac{\gamma}{4}} N_k.
+\end{equation}
+%
+\begin{figure}[h!]
+	\centering
+	\begin{subfigure}[h!]{.49\textwidth}
+		\centering
+		\begin{tikzpicture}
+			\begin{axis}[
+				ybar,
+				width = 0.85 * \textwidth,
+				height = 8cm,
+				major x tick style = transparent,
+				bar width = 14pt,
+				ymajorgrids = true,
+				xlabel = {$\gamma$},
+				ylabel = {Runtime in [s]},
+				ylabel near ticks, 
+				symbolic x coords = {1, 2, 3},
+				xtick = data,
+				scaled y ticks = false,
+				enlarge x limits = 0.25,
+				ymin = 0,
+				nodes near coords,
+				node near coord style={black}
+				%				legend cell align=left,
+				%				legend style={
+					%					at={(1,1.05)},
+					%					anchor=south east,
+					%					column sep=1ex
+					%				}
+				]
+				\addplot [style={blue, fill=blue, mark=none}]
+				coordinates{ (1, 0.000313459) (2, 0.000723542) (3, 0.001591)};
+			\end{axis}
+		\end{tikzpicture}
+		\caption{\label{fig::GAMMA4} coarse mesh $n=4$}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}[h!]{.49\textwidth}
+		\centering
+		\begin{tikzpicture}
+			\begin{axis}[
+				ybar,
+				width = 0.85 * \textwidth,
+				height = 8cm,
+				major x tick style = transparent,
+				bar width = 14pt,
+				ymajorgrids = true,
+				xlabel = {$\gamma$},
+				ylabel = {Runtime in [s]},
+				ylabel near ticks, 
+				symbolic x coords = {1, 2, 3},
+				xtick = data,
+				scaled y ticks = false,
+				enlarge x limits = 0.25,
+				ymin = 0,
+				nodes near coords,
+				node near coord style={black}
+				]
+				\addplot [style={red, fill=red, mark=none}]
+				coordinates{ (1, 0.00472279) (2, 0.00779279) (3, 0.0351571)};
+			\end{axis}
+		\end{tikzpicture}
+		\caption{\label{fig::GAMMA7} fine mesh $n=7$}
+	\end{subfigure}
+	\caption{\label{fig::GAMMA} Runtime for $\gamma = \{1,2,3\}$ for both meshes }
+\end{figure}
+%
+Furthermore, in the lecture was proven that we require $\gamma < 4$, otherwise the workload becomes unbounded. Nevertheless, I conducted further investigations with $\gamma = 1...10$, resulting in an exponential evolution of the runtime as shown in \refFig{fig::TimGamma}.
+%
 \begin{figure}[h!]
 	\centering
 	\begin{subfigure}[h!]{.49\textwidth}
@@ -238,12 +320,9 @@ The solution obtained by the multigrid method is compared to the exact solution 
 		\caption{$n=7$}
 		\label{fig::TimGamma2}
 	\end{subfigure}
-	\label{fig::TimGamma}
 	\caption{Runtime against number of $\gamma$-cycles for $\gamma = 1...10 $ for meshes $n=4$ and $n=7$ }
+	\label{fig::TimGamma}
 \end{figure}
-
-
-
 
 %
 %\begin{figure}[!htbp]
