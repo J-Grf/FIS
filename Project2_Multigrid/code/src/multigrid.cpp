@@ -67,31 +67,23 @@ m_type MG::Prolongation(const m_type& u, const size_t N_c) {
 
     const size_t N = 2 * N_c;
     const size_t vecSize = N + 1;
-    m_type f_fine;
     size_t ii{0}, jj{0};
-    if(u.size() == 1) {
-        m_type a(3, std::vector<double>(3, 0.0));
-        f_fine = std::move(a);
-        f_fine[1][1] = u[0][0];
-    } else {
-        m_type a(vecSize, std::vector<double>(vecSize, 0.0));
-        f_fine = std::move(a);
-        for(size_t i = 1; i < N_c; i++) {
-            ii = 2*i;
-            for(size_t j = 1; j < N_c; j++) {
-                jj = 2*j;
-                f_fine[ii-1][jj-1] += N1D4 * u[i][j];
-                f_fine[ii][jj-1] += N1D2 * u[i][j];
-                f_fine[ii+1][jj-1] += N1D4 * u[i][j];
-                
-                f_fine[ii-1][jj] += N1D2 * u[i][j];
-                f_fine[ii][jj] += u[i][j];
-                f_fine[ii+1][jj] += N1D2 * u[i][j];
-                
-                f_fine[ii-1][jj+1] += N1D4 * u[i][j];
-                f_fine[ii][jj+1] += N1D2 * u[i][j];
-                f_fine[ii+1][jj+1] += N1D4 * u[i][j];
-            }
+    m_type f_fine(vecSize, std::vector<double>(vecSize, 0.0));
+    for(size_t i = 1; i < N_c; i++) {
+        ii = 2*i;
+        for(size_t j = 1; j < N_c; j++) {
+            jj = 2*j;
+            f_fine[ii-1][jj-1] += N1D4 * u[i][j];
+            f_fine[ii][jj-1] += N1D2 * u[i][j];
+            f_fine[ii+1][jj-1] += N1D4 * u[i][j];
+            
+            f_fine[ii-1][jj] += N1D2 * u[i][j];
+            f_fine[ii][jj] += u[i][j];
+            f_fine[ii+1][jj] += N1D2 * u[i][j];
+            
+            f_fine[ii-1][jj+1] += N1D4 * u[i][j];
+            f_fine[ii][jj+1] += N1D2 * u[i][j];
+            f_fine[ii+1][jj+1] += N1D4 * u[i][j];
         }
     }
 
