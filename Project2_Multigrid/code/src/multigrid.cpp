@@ -27,7 +27,6 @@ void MG::printFToFile() {
     out.close();
 }
 
-//maybe move
 m_type MG::Restriction(const m_type& u, const size_t N_c) {
     std::ofstream out;
     if(writeToOutput)
@@ -129,7 +128,6 @@ double MG::GetInfNormResidual(const m_type& f, const m_type& u, const size_t N) 
 
 //recursive multigrid function
 void MG::MG_Algorithm(const size_t l, m_type& u, const m_type& f) {
-    //std::cout << "MG_Algorithm: l=" << l << " gamma= " << gamma << " nu1= " << nu1 << " nu2= " << nu2 << std::endl;
     const size_t N = pow(2, l);
     const m_type u_tmp = GaussSeidel(u, f, nu1, N);
     const m_type res = ComputeResidual(f, u_tmp, N);
@@ -138,8 +136,6 @@ void MG::MG_Algorithm(const size_t l, m_type& u, const m_type& f) {
 
     m_type e;
     if(l == 1) { 
-        //std::cout << "reached l=1, N=" << N << std::endl; 
-        //m_type zero(N+1, std::vector<double>(N+1, 0.0));
         m_type a(3, std::vector<double>(3, 0.0));
         e = std::move(a);
         e = GaussSeidel(e, -res, 1, N);

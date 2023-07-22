@@ -71,10 +71,6 @@ if(int(sys.argv[1]) == 2):
     X_c, Y_c = np.meshgrid(data['grid_coarse.txt'], data['grid_coarse.txt'])
     X_f, Y_f = np.meshgrid(data['grid_fine.txt'], data['grid_fine.txt'])
 
-    """ XEX = np.arange(0, 1, 1/1000)
-    YEX = np.arange(0, 1, 1/1000)
-    XEX, YEX = np.meshgrid(XEX, YEX) """
-
     #Check Restriction
     size = len(data['grid_coarse.txt'])
     size_f = 2 * size - 1
@@ -160,11 +156,7 @@ if(int(sys.argv[1]) == 3):
     ax = fig.add_subplot(1, 3, 1, projection='3d', aspect='auto')
     ax.set_title(r"$\mathbf{U}_{ex}$")
     surf = ax.plot_surface(X, Y, U_ex, cmap=cm.coolwarm, linewidth=0, antialiased=False)
-    #ax.set_zticks([-1.0, 0.0, 1.0])
-    #ax.set_xticklabels([0.0, 0.5, 1.0])
-    #ax.set_zticklabels([0.0, 0.5, 1.0])
-    #cbar = fig.colorbar(surf, shrink=0.5, aspect=3, pad = 0.15)
-    #cbar.set_ticks([-1, 0, 1])
+    
     
     ax = fig.add_subplot(1, 3, 2, projection='3d', aspect='auto')
     ax.set_title(r"$\mathbf{U}_{est}$")

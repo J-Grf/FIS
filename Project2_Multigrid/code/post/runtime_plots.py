@@ -54,9 +54,7 @@ def createPlots(Type, timingsFile, n, maxIt):
     yt = ax.get_yticks()
     yt = [round(i,4) for i in yt if (i >= -1E-8) and (i > 0.9 * min(times))]
     ax.set_yticklabels(yt)
-    #ax.set_yticks(yt[::]) # set new tick positions
-    print(yt)
-    #print(yt)
+    
     ax.set_ylim(ymin=min(yt), ymax=max(yt))
     ax.set_xlim(xmin=1, xmax=maxIt+1)
     xlab = ""
