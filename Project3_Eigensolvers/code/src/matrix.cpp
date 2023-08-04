@@ -3,7 +3,7 @@
 Matrix::Matrix (const std::string& _inputDir ) : inputDir(_inputDir) {}
 
 Matrix::Matrix (const size_t _dim, const size_t _array_size, const char _sym_flag) : 
-JM(std::vector<int>(_array_size)), VM(std::vector<double>(_array_size)), dim(_dim), array_size(_array_size), sym_flag(_sym_flag) {}
+sym_flag(_sym_flag), dim(_dim), array_size(_array_size), JM(std::vector<int>(_array_size)), VM(std::vector<double>(_array_size)) {}
 
 void Matrix::print() const {
 

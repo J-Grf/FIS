@@ -28,8 +28,8 @@ public:
     Matrix(const size_t _dim, const size_t _array_size, const char _sym_flag);
     size_t getDim() const { return dim; };
     size_t getArrSize() const { return array_size; };
-    double a_VM(size_t i) { return VM[i]; };
-    int a_JM(size_t i) {return JM[i]; };
+    double& a_VM(size_t i) { return VM[i]; };
+    int& a_JM(size_t i) {return JM[i]; };
 
     void print() const;
     Matrix& operator=(const Matrix&) = default;
