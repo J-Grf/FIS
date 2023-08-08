@@ -15,22 +15,22 @@ double powerIteration(const Matrix& A, const std::vector<double>& q0, double eps
     high_resolution_clock::time_point t1 = high_resolution_clock::now();
 #endif
 
-    std::vector<double> z(A.getDim()), q(q0);
+    std::vector<double> z(A.getDim()), q(q0), Aq(vectorProduct(A, q0));
     double lambdaMax = 0.0, lambdaOld = 0.0, diff = 0.0;
     size_t k = 0;
     while(diff > eps || k < 2) {
         k++;
-        z = vectorProduct(A, q);
-        double tmp = norm2(z);
-        q = z / tmp;
-        lambdaMax = dotP(q, vectorProduct(A, q));
+        double tmp = norm2(Aq);
+        q = Aq / tmp;
+        Aq = vectorProduct(A, q);
+        lambdaMax = dotP(q, Aq);
         diff = abs(lambdaMax - lambdaOld);
 
 #ifndef DISABLEIO
         high_resolution_clock::time_point t2 = high_resolution_clock::now();
         auto time = duration_cast<nanoseconds>(t2 - t1);
         std::cout << k << " " << diff << std::endl;
-        out << std::left << std::setw(3) << k << std::setw(12) << time.count() * 1e-9 <<std::setw(12) << diff << std::endl;
+        out << std::left << std::setw(12) << k << std::setw(12) << time.count() * 1e-9 <<std::setw(12) << diff << std::endl;
 #endif
         lambdaOld = lambdaMax;
     }
