@@ -1,6 +1,6 @@
 INCLUDE_DIR=../inc
 EXE=$(addsuffix .exe, $(basename $(wildcard *.cpp)))
-COMPILER_FLAGS=-march=native -O3 -Wall -Wextra -pedantic -std=c++20 #-DDISABLEIO
+COMPILER_FLAGS=-march=native -O3 -Wall -Wextra -pedantic -std=c++20 -DDISABLEIO
 COMPILER=g++
 
 # for every objectfile execute recipe
