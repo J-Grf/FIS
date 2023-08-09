@@ -1,0 +1,206 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[a4paper, margin=0.8in]{geometry}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{amsfonts}
+\usepackage{natbib}
+\usepackage{wrapfig}
+\usepackage{graphicx}
+\usepackage{url}
+\usepackage{pgf}
+\usepackage{subcaption}
+\usepackage{pgfplots}
+\usepackage{tikz}
+\usetikzlibrary{shapes.geometric, arrows, positioning, patterns}
+
+\makeatletter
+\def\@maketitle{%
+	\newpage
+	\null
+	\vskip 2em%
+	\begin{center}%
+		\let \footnote \thanks
+		{\LARGE \@title \par}%
+		\vskip 1em%
+		{\Large Fast Iterative Solvers, Project 3\par}%
+		\vskip 1.5em%
+		{\large
+			\lineskip .5em%
+			\begin{tabular}[t]{c}%
+				\@author
+			\end{tabular}\par}%
+		\vskip 1em%
+		{\large \@date}%
+	\end{center}%
+	\par
+	\vskip 1.5em}
+\makeatother
+
+\title{Eigensolvers}
+\author{Johannes Leonard Grafen, 380149}
+\makeindex
+
+%new commands
+\newcommand{\refFig}[1]{Fig. \ref{#1}}
+\newcommand{\refEq}[1]{Eq. (\ref{#1})}
+\newcommand{\refTab}[1]{Tab. \ref{#1}}
+
+%hyperref stuff ----------------------------------------------------------------------------------------------------------------------------------------------
+\ifpdf
+	\usepackage[ plainpages = false, pdfpagelabels, 
+	%                 pdfpagelayout = useoutlines,
+	bookmarks,
+	bookmarksopen = true,
+	bookmarksnumbered = true,
+	breaklinks = true,
+	linktocpage,
+	colorlinks = false,  % was true
+	linkcolor = blue,
+	urlcolor  = blue,
+	citecolor = blue,
+	anchorcolor = blue,
+	hyperindex = true,
+	hyperfigures
+	]{hyperref} 
+	
+	\DeclareGraphicsExtensions{.png, .jpg, .jpeg, .pdf, .gif} %GIF doesn't work??
+	\usepackage{graphicx}
+	\pdfcompresslevel=9
+	\graphicspath{{0_frontmatter/figures/PNG/}{0_frontmatter/figures/PDF/}{0_frontmatter/figures/}}
+\else
+	\usepackage[ dvips, 
+	plainpages = false, 
+	pdfpagelabels, 
+	bookmarksnumbered = true,
+	breaklinks = true,
+	linktocpage,
+	colorlinks = false,
+	linkcolor = blue,
+	urlcolor  = blue,
+	citecolor = blue,
+	anchorcolor = white,
+	hyperindex = false,
+	]{hyperref}
+	
+	\DeclareGraphicsExtensions{.eps, .ps}
+	\usepackage{epsfig}
+	\usepackage{graphicx}
+	\graphicspath{{0_frontmatter/figures/EPS/}{0_frontmatter/figures/}}
+\fi
+
+\ifpdf  
+\hypersetup{pdfauthor={Johannes Leonard Grafen},%
+	pdftitle={Fast Iterative Solvers, Project 3},%
+}
+\fi
+%------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+\begin{document}
+\renewcommand\baselinestretch{1.0}
+\baselineskip=18pt plus1pt	
+
+\pagenumbering{gobble}
+\maketitle
+\newpage
+\pagenumbering{arabic}
+\tableofcontents
+\listoffigures	% print list of figures
+\listoftables  % print list of tables
+\newpage
+
+\section{Remarks on used architecture and compiler options}
+The code was written in C++, compiled using the Clang compiler and executed on an Apple Silicon M1 Pro Chip featuring the ARM64 architecture. To measure timings, the high resolution clock of the std chrono library was employed. The following flags where passed to the compiler to enhance code performance of the aforementioned architecture: -march=native, -O3. To suppress the output to measure runtime accurately the flag "DISABLEIO" was introduced and passed to the compiler via the "-D" option.
+
+\section{Power Iteration}
+\subsection{"{power\_test\_msr}" - Matrix}
+A power iteration method was implemented as discussed in the lecture. For the \textbf{power\_test\_msr} matrix a maximum eigenvalue of $\lambda_{max} = 7.65060331390989758e+06$ was found after 770 iterations using the stopping criterion 
+\begin{equation}
+	|\lambda^{(k)} - \lambda^{(k-1)}| < 10^{-8}
+	\label{eq::convergence}
+\end{equation}
+an an initial guess of $\mathbf{x} = \frac{1}{\sqrt{n}} (1,1, ..., 1)^T$ as described in the project's instructions. 
+\begin{figure}[!htbp]
+	\centering
+	\hspace*{0.8cm}
+	\leavevmode
+	\resizebox{0.9\width}{!}{\input{plots/PowerIt_test_convergence.pgf}}
+	\caption{Convergence according to \refEq{eq::convergence} for the test matrix \textbf{power\_test\_msr}}
+	\label{fig::convTest}
+\end{figure}
+
+\refFig{fig::convTest} shows the evolution of the convergence criterion as in \refEq{eq::convergence}. After an initial peak, the power iteration method converges linearly with an increasing iteration index. Small oscillations are observed in the region close to the stopping criterion ($10^{-8}$).
+
+\subsection{"{cg\_test\_msr}" - Matrix}
+Using the power iteration method to determine the maximum eigenvalue for the \textbf{cg\_test\_msr} matrix yields a maximum eigenvalue of $\lambda_{max} = 9.59860808796396850e+03$. The pure power iteration method required 3.02973 seconds. The error is defined as $\epsilon = |\lambda_{cg}^{ex} - \lambda^{(k)}|$, where $\lambda_{cg}^{ex} = 9.5986080894852857e+3$ denotes the exact maximum eigenvalue of the \textbf{cg\_test\_msr} matrix, as given in the instructions. The error is plotted against the iteration index and runtime in \refFig{fig::PowerIt}. The minimum error is $\epsilon =$ 1.52132e-6 for the \textbf{cg\_test\_msr} matrix.
+
+\begin{figure}[h!]
+	\centering
+	\begin{subfigure}[h!]{.49\textwidth}
+		\begin{center}
+			\resizebox{0.52\width}{!}{\input{plots/PowerIt_1_error.pgf}}
+			\caption{Error against iteration index}
+			\label{fig::Power1}
+		\end{center}	
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}[h!]{.49\textwidth}
+		\centering
+		\resizebox{0.52\width}{!}{\input{plots/PowerIt_2_error.pgf}}
+		\caption{Error against runtime}
+		\label{fig::Power2}
+	\end{subfigure}
+	\caption{Error against iteration index and runtime on a semi-log scale for the \textbf{cg\_test\_msr} matrix}
+	\label{fig::PowerIt}
+\end{figure}
+	
+\section{Lanczos Method}
+In addition to the pure power iteration, the Lanczos method was also used to determine the eigenvalues of the \textbf{cg\_test\_msr} matrix, using $m = 30,50,75,100$, where $m$ corresponds to the dimension of the Krylov space. A power iteration method is used to compute the  maximum eigenvalue of the tridiagonal Lanczos matrix. In \refTab{tab:Lanc} the runtime for different number of Krylov vectors as well as the final error are presented. The error decreases with an increasing number of Krylov vectors (compare \refFig{fig::Lanc2}). On the other hand, the runtime increases approximately linear with the number of Krylov vectors as \refFig{fig::Lanc1} illustrates. 
+
+\newpage
+\renewcommand{\arraystretch}{2}
+\begin{table}[h!]
+	\begin{center}
+		\begin{tabular}{ p{2cm} p{2cm} p{5cm} p{5cm}}
+			\hline
+			\hline
+			$m$ & runtime $[s]$ & $\lambda_{max}$ & $\epsilon = |\lambda_{cg}^{ex} - \lambda^{(k)}|$ \\
+			\hline
+			\hline
+			30 & 0.0408837  & 9.58291974574370579e+03 & 1.56883437415799563e+01\\
+			\hline
+			50 & 0.0720155  & 9.59853122138019717e+03 & 7.68681050885788864e-02\\
+			\hline
+			75 & 0.122493  & 9.59860793744963121e+03 & 1.52035654537030496e-04\\
+			\hline
+			100 & 0.181394   & 9.59860808946861471e+03  & 1.66710378834977746e-08\\
+			\hline
+			\hline
+		\end{tabular}
+		\caption{\label{tab:Lanc}  Runtime, maximum eigenvalue and final error for different number of Krylov vectors}
+	\end{center}
+\end{table}
+\renewcommand{\arraystretch}{1}
+
+\begin{figure}[h!]
+	\centering
+	\begin{subfigure}[h!]{.49\textwidth}
+		\begin{center}
+			\resizebox{0.52\width}{!}{\input{plots/Lanczos_Timings.pgf}}
+			\caption{Runtime against dimension of the Krylov space}
+			\label{fig::Lanc1}
+		\end{center}	
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}[h!]{.49\textwidth}
+		\centering
+		\resizebox{0.52\width}{!}{\input{plots/Lanczos_Errors.pgf}}
+		\caption{$\lambda_{max}$ against dimension of the Krylov space}
+		\label{fig::Lanc2}
+	\end{subfigure}
+	\caption{Runtime and maximum eigenvalue against dimension of the Krylov space}
+	\label{fig::Lanc}
+\end{figure}
+
+
+\end{document}
