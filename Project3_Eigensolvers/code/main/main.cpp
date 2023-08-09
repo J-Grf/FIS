@@ -42,7 +42,9 @@ int main (int argc, char* argv[]) {
         auto time = duration_cast<nanoseconds>(t2 - t1);
 
         out2.open("../../rawData/timings_Lanczos.txt", std::ios::app);
-        out2 << std::left << std::setw(3) << m << std::setw(10) << time.count() * 1e-9 << std::endl;
+        out2 << std::left << std::setw(12) << m << std::setw(12) << time.count() * 1e-9 << std::setw(12) 
+             << std::setprecision(17) << std::scientific << lambdaMax << std::endl;
+             //abs(lambdaCG - lambdaMax) << std::endl;
         out2.close();
         
         std::cout << std::setprecision(17) << std::scientific << "LambdaMax: " << lambdaMax << std::endl;

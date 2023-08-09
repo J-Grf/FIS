@@ -4,7 +4,8 @@
 #include <vector>
 #include "matrix.hpp"
 
-const double EPS = 1E-12;
+constexpr double EPS = 1E-12;
+constexpr double lambdaCG = 9.5986080894852857E3;
 
 double powerIteration(const Matrix& A, const std::vector<double>& q0, double eps = 1E-8);
 
