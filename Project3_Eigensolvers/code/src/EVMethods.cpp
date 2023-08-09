@@ -4,42 +4,50 @@
 #include <unordered_map>
 #include <chrono>
 
-//TODO just one vectorProduct?
-double powerIteration(const Matrix& A, const std::vector<double>& q0, double eps) {
+PowItObj::PowItObj() {
+    diff.resize(bufSize);
+    times.resize(bufSize);
+    error.resize(bufSize);
+}
+
+double powerIteration(const Matrix& A, const std::vector<double>& q0, std::unique_ptr<PowItObj>& PowItPtr, double eps) {
     assert(A.getDim() == q0.size());
     using namespace std::chrono;
 
 #ifndef DISABLEIO
+    if(PowItPtr == nullptr) {
+        throw std::string("PowItPtr is nullptr, please use DISABLEIO flag when compiling!");
+    }
     std::cout << "Using tolerance eps = " << eps << " for power iteration" << std::endl;
-    std::ofstream out("../../rawData/powerIterationConvergence.txt");
     high_resolution_clock::time_point t1 = high_resolution_clock::now();
 #endif
 
     std::vector<double> z(A.getDim()), q(q0), Aq(vectorProduct(A, q0));
-    double lambdaMax = 0.0, lambdaOld = 0.0, diff = 0.0, error = 0.0;
+    double lambdaMax = 0.0, lambdaOld = 0.0, diff = 0.0;
     size_t k = 0;
     while(diff > eps || k < 2) {
-        k++;
         double tmp = norm2(Aq);
         q = Aq / tmp;
         Aq = vectorProduct(A, q);
         lambdaMax = dotP(q, Aq);
         diff = abs(lambdaMax - lambdaOld);
-        error = abs(lambdaCG - lambdaMax);
 
         //To plot error over runtime
 #ifndef DISABLEIO
+        PowItPtr->diff[k] = diff;
+        PowItPtr->error[k] = abs(lambdaCG - lambdaMax);
         high_resolution_clock::time_point t2 = high_resolution_clock::now();
         auto time = duration_cast<nanoseconds>(t2 - t1);
-        std::cout << k << " " << diff << " " << std::setprecision(17) << std::scientific << lambdaMax << std::endl;
-        out << std::left << std::setw(12) << k << std::setw(12) << time.count() * 1e-9 
-            << std::setw(12) << diff << std::setw(12) << error << std::endl;
+        PowItPtr->times[k] = time.count() * 1e-9;
+        std::cout << k << " " << PowItPtr->diff[k] << " " << std::setprecision(17) << std::scientific << lambdaMax << std::endl;
 #endif
         lambdaOld = lambdaMax;
+        k++;
     }
 
 #ifndef DISABLEIO
-    out.close();
+    PowItPtr->lambdaMax = lambdaMax;
+    PowItPtr->maxIdx = k;
 #endif
 
     return lambdaMax;
@@ -97,7 +105,8 @@ double LanczosMethod(const Matrix& A, std::vector<double>& v, const size_t m) {
 
     const std::vector<double> q0(m, 1/sqrt(m));
     
-    const double res = powerIteration(TM, q0, tolMap.at(m));
+    std::unique_ptr<PowItObj> dummy = nullptr;
+    const double res = powerIteration(TM, q0, dummy, tolMap.at(m));
 
     return res;
 }
