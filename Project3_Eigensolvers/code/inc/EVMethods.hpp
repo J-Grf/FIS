@@ -10,4 +10,6 @@ double powerIteration(const Matrix& A, const std::vector<double>& q0, double eps
 
 double LanczosMethod(const Matrix& A, std::vector<double>& v, const size_t m);
 
+void printAlphaBeta(const std::vector<double>& alpha, const std::vector<double>& beta);
+
 #endif

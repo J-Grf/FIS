@@ -35,6 +35,35 @@ void Matrix::print() const {
               << "----------------VM-array:-------" << std::endl
               << VMS << std::endl;
 
+    std::vector<std::vector<double>> M(dim, std::vector<double>(dim));
+    for(size_t i = 0; i < dim; i++){
+        M[i][i] = VM[i];
+    }
+    for(size_t i = 0; i < dim; i++) {
+        int i1 = JM.at(i);
+        int i2 = JM.at(i+1);
+        int tmplen = i2 - i1;
+        for(int j = 0; j < tmplen; j++) {
+            if(abs(VM.at(i1-1)) > 1E-20) {
+                M.at(i).at(JM[i1-1]-1) = VM.at(i1-1);
+                if(sym_flag == 's')
+                    M.at(JM[i1-1]-1).at(i) = VM.at(i1-1);
+                i1 += 1;
+            }
+        } 
+    }
+
+    std::string MString = "[\n";
+    for(size_t i = 0; i < dim; i++) {
+        MString += "[ ";
+        for(size_t j = 0; j < dim; j++) {
+            MString += std::to_string(M[i][j]) + " ";
+        }
+        MString += "] \n";
+    }
+    MString += "]";
+
+    std::cout << MString << std::endl;
 }
 
 void readFromFile (Matrix& A) {

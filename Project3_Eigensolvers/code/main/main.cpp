@@ -22,11 +22,11 @@ int main (int argc, char* argv[]) {
     std::ofstream out2;
     if(!static_cast<bool>(strcmp(argv[1], "POW"))) {
         high_resolution_clock::time_point t1 = high_resolution_clock::now();
-        const double lambdaMax = powerIteration(A, x);
+        const double lambdaMax = powerIteration(A, x, 1E-8);
         high_resolution_clock::time_point t2 = high_resolution_clock::now();
         auto time = duration_cast<nanoseconds>(t2 - t1);
         
-        std::cout << "LambdaMax: " << lambdaMax << std::endl;
+        std::cout << std::setprecision(17) << std::scientific <<"LambdaMax: " << lambdaMax << std::endl;
         printf("Power Iteration required:  %.5f seconds.\n", time.count() * 1e-9);
 
     } else if (!static_cast<bool>(strcmp(argv[1], "LANC"))) {
@@ -45,7 +45,7 @@ int main (int argc, char* argv[]) {
         out2 << std::left << std::setw(3) << m << std::setw(10) << time.count() * 1e-9 << std::endl;
         out2.close();
         
-        std::cout << "LambdaMax: " << lambdaMax << std::endl;
+        std::cout << std::setprecision(17) << std::scientific << "LambdaMax: " << lambdaMax << std::endl;
         printf("Lanczos Method required:  %.5f seconds.\n", time.count() * 1e-9);
 
     } else {

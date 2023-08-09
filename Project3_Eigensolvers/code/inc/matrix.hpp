@@ -72,7 +72,6 @@ std::vector<T>& operator-=(std::vector<T>& v, const std::vector<T>& a) {
     return v;
 }
 
-
 template<typename T>
 std::vector<T> operator-(const std::vector<T>& v, const std::vector<T>& a) {
     assert(v.size() == a.size());
