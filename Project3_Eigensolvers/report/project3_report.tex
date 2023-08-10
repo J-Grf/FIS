@@ -114,12 +114,15 @@ The code was written in C++, compiled using the Clang compiler and executed on a
 
 \section{Power Iteration}
 \subsection{"{power\_test\_msr}" - Matrix}
-A power iteration method was implemented as discussed in the lecture. For the \textbf{power\_test\_msr} matrix a maximum eigenvalue of $\lambda_{max} = 7.65060331390989758e+06$ was found after 770 iterations using the stopping criterion 
+A power iteration method was implemented as discussed in the lecture. For the \textbf{power\_test\_msr} matrix a maximum eigenvalue of $\lambda_{max} = 7.65060331390989758$E+6 was attained after 770 iterations. Convergence was determined using the stopping criterion 
+%
 \begin{equation}
 	|\lambda^{(k)} - \lambda^{(k-1)}| < 10^{-8}
 	\label{eq::convergence}
 \end{equation}
-an an initial guess of $\mathbf{x} = \frac{1}{\sqrt{n}} (1,1, ..., 1)^T$ as described in the project's instructions. 
+%
+and an initial guess of $\mathbf{x} = \frac{1}{\sqrt{n}} (1,1, ..., 1)^T$ as described in the project's instructions. 
+%
 \begin{figure}[!htbp]
 	\centering
 	\hspace*{0.8cm}
@@ -129,10 +132,10 @@ an an initial guess of $\mathbf{x} = \frac{1}{\sqrt{n}} (1,1, ..., 1)^T$ as desc
 	\label{fig::convTest}
 \end{figure}
 
-\refFig{fig::convTest} shows the evolution of the convergence criterion as in \refEq{eq::convergence}. After an initial peak, the power iteration method converges linearly with an increasing iteration index. Small oscillations are observed in the region close to the stopping criterion ($10^{-8}$).
+The convergence progression is depicted in \refFig{fig::convTest}. Following an initial peak, the power iteration method exhibited linear convergence with increasing iterations. Minor oscillations were noticeable in proximity to the stopping criterion ($\mathcal{O}(10^{-8})$).
 
 \subsection{"{cg\_test\_msr}" - Matrix}
-Using the power iteration method to determine the maximum eigenvalue for the \textbf{cg\_test\_msr} matrix yields a maximum eigenvalue of $\lambda_{max} = 9.59860808796396850e+03$. The pure power iteration method required 2.83192 seconds suppressing any I/O. \refFig{fig::Power2} required I/O operations to track the runtime and the corresponding error. The error is defined as $\epsilon = |\lambda_{cg}^{ex} - \lambda^{(k)}|$, where $\lambda_{cg}^{ex} = 9.5986080894852857e+3$ denotes the exact maximum eigenvalue of the \textbf{cg\_test\_msr} matrix, as given in the instructions. The error is plotted against the iteration index and runtime in \refFig{fig::PowerIt}. The minimum and final error is $\epsilon =$ 1.52132e-6 for the \textbf{cg\_test\_msr} matrix.
+Using the power iteration method to determine the maximum eigenvalue for the \textbf{cg\_test\_msr} matrix yields a maximum eigenvalue of $\lambda_{max} = 9.59860808796396850$E+3. The pure power iteration method required 2.83192 seconds suppressing any I/O. \refFig{fig::Power2} required I/O operations to track the runtime and the corresponding error. The error is defined as $\epsilon = |\lambda_{cg}^{ex} - \lambda^{(k)}|$, where $\lambda_{cg}^{ex} = 9.5986080894852857$E+3 denotes the exact maximum eigenvalue of the \textbf{cg\_test\_msr} matrix, as given in the instructions. The error is plotted against the iteration index and runtime in \refFig{fig::PowerIt}. The minimum and final error is $\epsilon =$ 1.52132E-6 for the \textbf{cg\_test\_msr} matrix.
 
 \begin{figure}[h!]
 	\centering
@@ -155,8 +158,8 @@ Using the power iteration method to determine the maximum eigenvalue for the \te
 \end{figure}
 	
 \section{Lanczos Method}
-In addition to the pure power iteration, the Lanczos method was also used to determine the eigenvalues of the \textbf{cg\_test\_msr} matrix, using $m = 30,50,75,100$, where $m$ corresponds to the dimension of the Krylov space. A power iteration method is used to compute the  maximum eigenvalue of the tridiagonal Lanczos matrix. In \refTab{tab:Lanc} the runtime for different number of Krylov vectors as well as the final error are presented. The error decreases with an increasing number of Krylov vectors (compare \refFig{fig::Lanc2}). On the other hand, the runtime increases approximately linear with the number of Krylov vectors as \refFig{fig::Lanc1} illustrates. 
-Compared to the pure powerIteration the runtime for the Lanczos Method with $m=100$ is significantly faster, requiring only 6.23 \% of the runtime of the pure power iteration for the \textbf{cg\_test\_msr} matrix. Furthermore, the Lanczos Method with $m=100$ results in an error that is two orders of magnitude lower than the error obtained by the pure power iteration.
+In addition to the pure power iteration, the Lanczos method was also used to determine the maximum eigenvalue of the \textbf{cg\_test\_msr} matrix, using varying Krylov space dimensions $m = 30,50,75,100$. A power iteration method is used to compute the  maximum eigenvalue of the tridiagonal Lanczos matrix. \refTab{tab:Lanc} displays runtime and final error for different numbers of Krylov vectors. The error decreases with an increasing number of Krylov vectors (compare \refFig{fig::Lanc2}). On the other hand, the runtime increases approximately linear with the number of Krylov vectors, as \refFig{fig::Lanc1} illustrates. 
+Compared to the pure power iteration the runtime for the Lanczos Method is significantly faster, requiring only 6.23\% of the runtime of the pure power iteration for the \textbf{cg\_test\_msr} matrix for $m=100$. Furthermore, the Lanczos Method with $m=100$ yields an error that is two orders of magnitude lower than the error obtained by the pure power iteration. For $m=30,50,75$ the pure power iteration is more accurate.
 
 \newpage
 \renewcommand{\arraystretch}{2}
@@ -168,13 +171,13 @@ Compared to the pure powerIteration the runtime for the Lanczos Method with $m=1
 			$m$ & runtime $[s]$ & $\lambda_{max}$ & $\epsilon = |\lambda_{cg}^{ex} - \lambda^{(k)}|$ \\
 			\hline
 			\hline
-			30 & 0.041932  & 9.58291974574370579e+03 & 1.56883437415799563e+01\\
+			30 & 0.041932  & 9.58291974574370579E+03 & 1.56883437415799563E+01\\
 			\hline
-			50 & 0.070548  & 9.59853122138019717e+03 & 7.68681050885788864e-02\\
+			50 & 0.070548  & 9.59853122138019717E+03 & 7.68681050885788864E-02\\
 			\hline
-			75 & 0.119099  & 9.59860793744963121e+03 & 1.52035654537030496e-04\\
+			75 & 0.119099  & 9.59860793744963121E+03 & 1.52035654537030496E-04\\
 			\hline
-			100 & 0.176473   & 9.59860808946861471e+03  & 1.66710378834977746e-08\\
+			100 & 0.176473   & 9.59860808946861471E+03  & 1.66710378834977746E-08\\
 			\hline
 			\hline
 		\end{tabular}
@@ -204,7 +207,7 @@ Compared to the pure powerIteration the runtime for the Lanczos Method with $m=1
 \end{figure}
 
 \subsection{Optional Task: Investigation of different tolerances}
-In order to determine optimal tolerances for different number of Krylov vectors $m$ a parameter study with different tolerances $\varepsilon = |\theta^{(k)} - \theta^{(k-1)}|$ for the power iteration of the tridiagonal Lanczos matrix was performed. \refFig{fig::mLanc} shows the results of this study. For $m=30$ and $m=50$ the tolerances as given in the instructions proved to be an appropriate bound as no significant changes are recorded below these tolerances (compare \refFig{fig::m30} and \refFig{fig::m50}). For $m=75$ and $m=100$, the prescribed tolerances are $10^{-6}$ and $10^{-8}$ respectively. In contrast we can observe no significant changes only below an $\varepsilon$ of $10^{-10}$ for $m=75$ and $10^{-12}$ for $m=100$ from the corresponding evolutions of the error. Adjusted tolerances $\varepsilon^*$ are presented in \refTab{tab:Tol}.
+To determine optimal tolerances for different number of Krylov vectors $m$ a parameter study  for the power iteration of the tridiagonal Lanczos matrix was performed with various tolerances $\varepsilon = |\theta^{(k)} - \theta^{(k-1)}|$, ranging from 1 to $10^{-14}$. \refFig{fig::mLanc} shows the results of this study. Notably, for $m=30$ and $m=50$, the provided tolerances align well with observed trends as changes become insignificant beneath these values (compare \refFig{fig::m30} and \refFig{fig::m50}). For $m=75$ and $m=100$, the prescribed tolerances are $10^{-6}$ and $10^{-8}$ respectively. However, to obtain the minimal possible error, tolerances of  $\varepsilon = 10^{-10}$ for $m=75$ and $\varepsilon = 10^{-12}$ for $m=100$ are required (compare \refFig{fig::m75} and \refFig{fig::m100}). Adjusted tolerances $\varepsilon^*$ are presented in \refTab{tab:Tol}.
 
 \begin{figure}[h!]
 	\centering
@@ -254,7 +257,7 @@ In order to determine optimal tolerances for different number of Krylov vectors 
 			\hline
 			\hline
 		\end{tabular}
-		\caption{\label{tab:Tol}  prescribed tolerance $\varepsilon$ and newly suggested tolerance $\varepsilon^*$ for different number of Krylov vectors $m$}
+		\caption{\label{tab:Tol}  Prescribed tolerance $\varepsilon$ and newly suggested tolerance $\varepsilon^*$ for different number of Krylov vectors $m$}
 	\end{center}
 \end{table}
 \renewcommand{\arraystretch}{1}
