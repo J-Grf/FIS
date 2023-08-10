@@ -61,6 +61,8 @@ def PlotLogLog(name, x, y, xlab, ylab):
     ax.set_ylabel(ylab, fontsize=fs, labelpad=40, rotation = 0)
     
     if "Errors" in name:
+        ax.set_yticks([1E-10, 1E-8, 1E-6, 1E-4, 1E-2, 1E0, 1E2])
+        ax.set_yticklabels([1E-10, 1E-8, 1E-6, 1E-4, 1E-2, 1E0, 1E2])
         ax.set_xticks([1E0, 1E-2, 1E-4, 1E-6, 1E-8, 1E-10, 1E-12, 1E-14])
         ax.set_xticklabels([1E0, 1E-2, 1E-4, 1E-6, 1E-8, 1E-10, 1E-12, 1E-14])
             
@@ -111,11 +113,11 @@ if sys.argv[1] == "2":
         for line in data:
             match = re.findall(regexFloat, line)
             if len(match) >= 1:
-                print(times)
                 eps.append(float(match[0]))
                 times.append(float(match[1]))
                 lambdas.append(float(match[2]))
                 errors.append(float(match[3]))
+    #print(errors)
     
     PlotLogLog("Lanczos_Timings" + str(m), eps, times, r"$\varepsilon$", r"$t \ [s]$")
     PlotLogLog("Lanczos_Lambdas" + str(m), eps, lambdas, r"$\varepsilon$", r"$\lambda_{max}$")

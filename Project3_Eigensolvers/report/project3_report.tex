@@ -132,7 +132,7 @@ an an initial guess of $\mathbf{x} = \frac{1}{\sqrt{n}} (1,1, ..., 1)^T$ as desc
 \refFig{fig::convTest} shows the evolution of the convergence criterion as in \refEq{eq::convergence}. After an initial peak, the power iteration method converges linearly with an increasing iteration index. Small oscillations are observed in the region close to the stopping criterion ($10^{-8}$).
 
 \subsection{"{cg\_test\_msr}" - Matrix}
-Using the power iteration method to determine the maximum eigenvalue for the \textbf{cg\_test\_msr} matrix yields a maximum eigenvalue of $\lambda_{max} = 9.59860808796396850e+03$. The pure power iteration method required 2.83192 seconds. The error is defined as $\epsilon = |\lambda_{cg}^{ex} - \lambda^{(k)}|$, where $\lambda_{cg}^{ex} = 9.5986080894852857e+3$ denotes the exact maximum eigenvalue of the \textbf{cg\_test\_msr} matrix, as given in the instructions. The error is plotted against the iteration index and runtime in \refFig{fig::PowerIt}. The minimum and final error is $\epsilon =$ 1.52132e-6 for the \textbf{cg\_test\_msr} matrix.
+Using the power iteration method to determine the maximum eigenvalue for the \textbf{cg\_test\_msr} matrix yields a maximum eigenvalue of $\lambda_{max} = 9.59860808796396850e+03$. The pure power iteration method required 2.83192 seconds suppressing any I/O. \refFig{fig::Power2} required I/O operations to track the runtime and the corresponding error. The error is defined as $\epsilon = |\lambda_{cg}^{ex} - \lambda^{(k)}|$, where $\lambda_{cg}^{ex} = 9.5986080894852857e+3$ denotes the exact maximum eigenvalue of the \textbf{cg\_test\_msr} matrix, as given in the instructions. The error is plotted against the iteration index and runtime in \refFig{fig::PowerIt}. The minimum and final error is $\epsilon =$ 1.52132e-6 for the \textbf{cg\_test\_msr} matrix.
 
 \begin{figure}[h!]
 	\centering
@@ -203,5 +203,60 @@ Compared to the pure powerIteration the runtime for the Lanczos Method with $m=1
 	\label{fig::Lanc}
 \end{figure}
 
+\subsection{Optional Task: Investigation of different tolerances}
+In order to determine optimal tolerances for different number of Krylov vectors $m$ a parameter study with different tolerances $\varepsilon = |\theta^{(k)} - \theta^{(k-1)}|$ for the power iteration of the tridiagonal Lanczos matrix was performed. \refFig{fig::mLanc} shows the results of this study. For $m=30$ and $m=50$ the tolerances as given in the instructions proved to be an appropriate bound as no significant changes are recorded below these tolerances (compare \refFig{fig::m30} and \refFig{fig::m50}). For $m=75$ and $m=100$, the prescribed tolerances are $10^{-6}$ and $10^{-8}$ respectively. In contrast we can observe no significant changes only below an $\varepsilon$ of $10^{-10}$ for $m=75$ and $10^{-12}$ for $m=100$ from the corresponding evolutions of the error. Adjusted tolerances $\varepsilon^*$ are presented in \refTab{tab:Tol}.
+
+\begin{figure}[h!]
+	\centering
+	\begin{subfigure}[h!]{0.5\textwidth}
+		\begin{center}
+			\resizebox{0.37\width}{!}{\input{plots/Lanczos_Errors30.pgf}}
+			\caption{$m=30$}
+			\label{fig::m30}
+		\end{center}	
+	\end{subfigure}
+	\begin{subfigure}[h!]{0.49\textwidth}
+		\resizebox{0.37\width}{!}{\input{plots/Lanczos_Errors50.pgf}}
+		\caption{$m=50$}
+		\label{fig::m50}
+	\end{subfigure}
+	\begin{subfigure}[h!]{0.5\textwidth}
+		\begin{center}
+			\resizebox{0.37\width}{!}{\input{plots/Lanczos_Errors75.pgf}}
+			\caption{$m=75$}
+			\label{fig::m75}
+		\end{center}	
+	\end{subfigure}
+	\begin{subfigure}[h!]{0.49\textwidth}
+		\resizebox{0.37\width}{!}{\input{plots/Lanczos_Errors100.pgf}}
+		\caption{$m=100$}
+		\label{fig::m100}
+	\end{subfigure}
+	\caption{\label{fig::mLanc} Comparison of error $\epsilon = |\lambda_{cg}^{ex} - \lambda^{(k)}|$ for different tolerances $\varepsilon = |\theta^{(k)} - \theta^{(k-1)}|$ for different number of Krylov vectors $m$}
+\end{figure}
+
+\renewcommand{\arraystretch}{2}
+\begin{table}[h!]
+	\begin{center}
+		\begin{tabular}{ p{2cm} p{2cm} p{2cm}}
+			\hline
+			\hline
+			$m$ & $\varepsilon$ & $\varepsilon^*$ \\
+			\hline
+			\hline
+			30 &  $10^{-2}$ & $10^{-2}$\\
+			\hline
+			50 & $10^{-4}$ & $10^{-4}$\\
+			\hline
+			75 & $10^{-6}$ & $10^{-10}$\\
+			\hline
+			100 & $10^{-10}$ & $10^{-12}$\\
+			\hline
+			\hline
+		\end{tabular}
+		\caption{\label{tab:Tol}  prescribed tolerance $\varepsilon$ and newly suggested tolerance $\varepsilon^*$ for different number of Krylov vectors $m$}
+	\end{center}
+\end{table}
+\renewcommand{\arraystretch}{1}
 
 \end{document}
