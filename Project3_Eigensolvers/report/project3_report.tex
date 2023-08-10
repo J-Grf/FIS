@@ -132,7 +132,7 @@ an an initial guess of $\mathbf{x} = \frac{1}{\sqrt{n}} (1,1, ..., 1)^T$ as desc
 \refFig{fig::convTest} shows the evolution of the convergence criterion as in \refEq{eq::convergence}. After an initial peak, the power iteration method converges linearly with an increasing iteration index. Small oscillations are observed in the region close to the stopping criterion ($10^{-8}$).
 
 \subsection{"{cg\_test\_msr}" - Matrix}
-Using the power iteration method to determine the maximum eigenvalue for the \textbf{cg\_test\_msr} matrix yields a maximum eigenvalue of $\lambda_{max} = 9.59860808796396850e+03$. The pure power iteration method required 3.02973 seconds. The error is defined as $\epsilon = |\lambda_{cg}^{ex} - \lambda^{(k)}|$, where $\lambda_{cg}^{ex} = 9.5986080894852857e+3$ denotes the exact maximum eigenvalue of the \textbf{cg\_test\_msr} matrix, as given in the instructions. The error is plotted against the iteration index and runtime in \refFig{fig::PowerIt}. The minimum error is $\epsilon =$ 1.52132e-6 for the \textbf{cg\_test\_msr} matrix.
+Using the power iteration method to determine the maximum eigenvalue for the \textbf{cg\_test\_msr} matrix yields a maximum eigenvalue of $\lambda_{max} = 9.59860808796396850e+03$. The pure power iteration method required 2.83192 seconds. The error is defined as $\epsilon = |\lambda_{cg}^{ex} - \lambda^{(k)}|$, where $\lambda_{cg}^{ex} = 9.5986080894852857e+3$ denotes the exact maximum eigenvalue of the \textbf{cg\_test\_msr} matrix, as given in the instructions. The error is plotted against the iteration index and runtime in \refFig{fig::PowerIt}. The minimum and final error is $\epsilon =$ 1.52132e-6 for the \textbf{cg\_test\_msr} matrix.
 
 \begin{figure}[h!]
 	\centering
@@ -156,6 +156,7 @@ Using the power iteration method to determine the maximum eigenvalue for the \te
 	
 \section{Lanczos Method}
 In addition to the pure power iteration, the Lanczos method was also used to determine the eigenvalues of the \textbf{cg\_test\_msr} matrix, using $m = 30,50,75,100$, where $m$ corresponds to the dimension of the Krylov space. A power iteration method is used to compute the  maximum eigenvalue of the tridiagonal Lanczos matrix. In \refTab{tab:Lanc} the runtime for different number of Krylov vectors as well as the final error are presented. The error decreases with an increasing number of Krylov vectors (compare \refFig{fig::Lanc2}). On the other hand, the runtime increases approximately linear with the number of Krylov vectors as \refFig{fig::Lanc1} illustrates. 
+Compared to the pure powerIteration the runtime for the Lanczos Method with $m=100$ is significantly faster, requiring only 6.23 \% of the runtime of the pure power iteration for the \textbf{cg\_test\_msr} matrix. Furthermore, the Lanczos Method with $m=100$ results in an error that is two orders of magnitude lower than the error obtained by the pure power iteration.
 
 \newpage
 \renewcommand{\arraystretch}{2}
@@ -167,13 +168,13 @@ In addition to the pure power iteration, the Lanczos method was also used to det
 			$m$ & runtime $[s]$ & $\lambda_{max}$ & $\epsilon = |\lambda_{cg}^{ex} - \lambda^{(k)}|$ \\
 			\hline
 			\hline
-			30 & 0.0408837  & 9.58291974574370579e+03 & 1.56883437415799563e+01\\
+			30 & 0.041932  & 9.58291974574370579e+03 & 1.56883437415799563e+01\\
 			\hline
-			50 & 0.0720155  & 9.59853122138019717e+03 & 7.68681050885788864e-02\\
+			50 & 0.070548  & 9.59853122138019717e+03 & 7.68681050885788864e-02\\
 			\hline
-			75 & 0.122493  & 9.59860793744963121e+03 & 1.52035654537030496e-04\\
+			75 & 0.119099  & 9.59860793744963121e+03 & 1.52035654537030496e-04\\
 			\hline
-			100 & 0.181394   & 9.59860808946861471e+03  & 1.66710378834977746e-08\\
+			100 & 0.176473   & 9.59860808946861471e+03  & 1.66710378834977746e-08\\
 			\hline
 			\hline
 		\end{tabular}

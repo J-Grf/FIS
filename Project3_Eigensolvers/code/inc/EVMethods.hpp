@@ -21,7 +21,7 @@ struct PowItObj{
 
 double powerIteration(const Matrix& A, const std::vector<double>& q0, std::unique_ptr<PowItObj>& PowItPtr, double eps = 1E-8);
 
-double LanczosMethod(const Matrix& A, std::vector<double>& v, const size_t m);
+double LanczosMethod(const Matrix& A, std::vector<double>& v, const size_t m, double customEps = -1.0);
 
 void printAlphaBeta(const std::vector<double>& alpha, const std::vector<double>& beta);
 

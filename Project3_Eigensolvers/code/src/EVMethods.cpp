@@ -53,7 +53,7 @@ double powerIteration(const Matrix& A, const std::vector<double>& q0, std::uniqu
     return lambdaMax;
 }
 
-double LanczosMethod(const Matrix& A, std::vector<double>& v, const size_t m) {
+double LanczosMethod(const Matrix& A, std::vector<double>& v, const size_t m, double customEps) {
     
     const std::unordered_map<size_t, double> tolMap = {{3, 1E-1}, {30, 1E-2}, {50, 1E-4}, {75, 1E-6}, {100, 1E-10}};
 
@@ -106,7 +106,14 @@ double LanczosMethod(const Matrix& A, std::vector<double>& v, const size_t m) {
     const std::vector<double> q0(m, 1/sqrt(m));
     
     std::unique_ptr<PowItObj> dummy = nullptr;
-    const double res = powerIteration(TM, q0, dummy, tolMap.at(m));
+    
+    double _eps = 0.0;
+    if(customEps > 0.0) {
+        _eps = customEps;
+    } else {
+        _eps = tolMap.at(m);
+    }
+    const double res = powerIteration(TM, q0, dummy, _eps);
 
     return res;
 }

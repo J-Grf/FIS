@@ -8,7 +8,7 @@
 
 int main (int argc, char* argv[]) {
 
-    if(argc > 4 || argc < 3) {
+    if(argc > 5 || argc < 3) {
         std::cerr << "Provide method and path to input-File" << std::endl;
         return -1;
     }
@@ -39,16 +39,17 @@ int main (int argc, char* argv[]) {
         printf("Power Iteration required:  %.5f seconds.\n", time.count() * 1e-9);
 
     } else if (!static_cast<bool>(strcmp(argv[1], "LANC"))) {
-        if(argc != 4) {
+        if(argc != 5) {
             std::cerr << "For Lanczos method, path to input-File and the desired dimensions \
-            of the Krylov space have to be specified!" << std::endl;
+            of the Krylov space have to be specified and a custom eps (if the default eps are desired then enter -1)!" << std::endl;
             return -1;
         }
         const size_t m = static_cast<size_t>(std::stoi(argv[3]));
+        const double _eps = static_cast<double>(std::stod(argv[4]));
         high_resolution_clock::time_point t1 = high_resolution_clock::now();
         double lambdaMax = 0.0;
         try {
-            lambdaMax = LanczosMethod(A, x, m);
+            lambdaMax = LanczosMethod(A, x, m, _eps);
         } catch (std::string& E) {
             std::cerr << E << std::endl;
             return -1;
@@ -56,8 +57,14 @@ int main (int argc, char* argv[]) {
         high_resolution_clock::time_point t2 = high_resolution_clock::now();
         auto time = duration_cast<nanoseconds>(t2 - t1);
 
-        out2.open("../../rawData/timings_Lanczos.txt", std::ios::app);
-        out2 << std::left << std::setw(12) << m << std::setw(12) << time.count() * 1e-9 << std::setw(25) 
+        std::string path = "";
+        if(_eps < 0){
+            path = "../../rawData/timings_Lanczos.txt";
+        } else {
+            path = "../../rawData/timings_Lanczos_" + std::string(argv[3]) +".txt";
+        }
+        out2.open(path, std::ios::app);
+        out2 << std::left << std::setw(12) << m << std::setw(20) << std::scientific << _eps << std::defaultfloat << std::setw(20) << time.count() * 1e-9 << std::setw(25) 
              << std::setprecision(17) << std::scientific << lambdaMax << std::setw(25) << abs(lambdaCG - lambdaMax) << std::endl;
         out2.close();
         
